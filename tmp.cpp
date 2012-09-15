@@ -82,7 +82,6 @@ int main()
 		cin >> st;
 		v.pb(&st);
 	}
-	// cout << ""
 
 	tr(it, v)
 		cout << *it << endl;
