@@ -66,7 +66,13 @@ public:
 
 string LeftRightDigitsGame2::minNumber (string digits, string lowerBound) 
 {
-	string ret;
+	ST tmpDigits = digits;
+	sort(all(tmpDigits), greater <char>());
+	DEBUG(tmpDigits);
+	if(tmpDigits < lowerBound)
+		return "";
+		
+	string ret = "-1";
 	
 	return ret;
 }
