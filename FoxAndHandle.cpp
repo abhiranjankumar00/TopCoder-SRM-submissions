@@ -67,60 +67,17 @@ typedef vector <string> vs;
 #define DEBUG
 */
 
-class EllysCheckers
+class FoxAndHandle
 {
 public:
-	string getWinner(string board);
+	string lexSmallestName(string S);
 };
-const int N = 1, P = 0;
 
-int Ans[1<<22];
-
-int set_(int idx, int n) {
-	return n | (1<<idx);
-}
-int reset_(int idx, int n) {
-	return (n & ~(1<<idx));
-}
-int get_(int idx, int n) {
-	return ((n & (1<<idx) ) ? 1 : 0);
-}
-
-int solve(int board) {
-	board = reset_(0, board);
-
-	int &ret = Ans[board];
-	if(ret > -1)
-		return ret;
-	ret = P;
-
-	rep(id, 20, 0)	if( get_(id, board)) {
-		if(id-1 >= 0 && get_(id-1, board) == 0) {
-			int tmp = set_(id-1, reset_(id, board));
-			if(solve(tmp) == P)
-				return ret = N;
-		}
-		if(id-1 >= 0 && get_(id-1, board) == 1 && id-2 >= 0 && get_(id-2, board) == 1 && id-3 >= 0 && get_(id-3, board) == 0) {
-			int tmp = board;
-			tmp = reset_(id, tmp);
-			tmp = set_(id-3, tmp);
-			if(solve(tmp) == P)
-				return ret = N;
-		}
-	}
-	return ret;
-}
-
-string EllysCheckers::getWinner (string board) 
+string FoxAndHandle::lexSmallestName (string S) 
 {
-	CL(Ans, -1);
-	reverse(all(board));
-	int bd = 0;
-	forn(i, board.size()) if(board[i] == 'o')
-		bd = set_(i, bd);
-	string yes = "YES", no = "NO";
-	return solve(bd) ? yes : no;
+	string ret;
 	
+	return ret;
 }
 
 // BEGIN KAWIGIEDIT TESTING
@@ -132,11 +89,11 @@ using namespace std;
 bool KawigiEdit_RunTest(int testNum, string p0, bool hasAnswer, string p1) {
 	cout << "Test " << testNum << ": [" << "\"" << p0 << "\"";
 	cout << "]" << endl;
-	EllysCheckers *obj;
+	FoxAndHandle *obj;
 	string answer;
-	obj = new EllysCheckers();
+	obj = new FoxAndHandle();
 	clock_t startTime = clock();
-	answer = obj->getWinner(p0);
+	answer = obj->lexSmallestName(p0);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -173,55 +130,49 @@ int main() {
 	
 	{
 	// ----- test 0 -----
-	p0 = ".o...";
-	p1 = "YES";
+	p0 = "foxfox";
+	p1 = "fox";
 	all_right = KawigiEdit_RunTest(0, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	p0 = "..o..o";
-	p1 = "YES";
+	p0 = "ccieliel";
+	p1 = "ceil";
 	all_right = KawigiEdit_RunTest(1, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	p0 = ".o...ooo..oo..";
-	p1 = "NO";
+	p0 = "abaabbab";
+	p1 = "aabb";
 	all_right = KawigiEdit_RunTest(2, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	p0 = "......o.ooo.o......";
-	p1 = "YES";
+	p0 = "bbbbaaaa";
+	p1 = "bbaa";
 	all_right = KawigiEdit_RunTest(3, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 4 -----
-	p0 = ".o..o...o....o.....o";
-	p1 = "NO";
+	p0 = "fedcbafedcba";
+	p1 = "afedcb";
 	all_right = KawigiEdit_RunTest(4, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 5 -----
-	p0 = "ooo.ooo.ooo.ooo.ooo.";
-	all_right = KawigiEdit_RunTest(5, p0, false, p1) && all_right;
-	// ------------------
-	}
-	
-	{
-	// ----- test 6 -----
-	p0 = "oooooooooooooooooooo";
-	all_right = KawigiEdit_RunTest(6, p0, false, p1) && all_right;
+	p0 = "nodevillivedon";
+	p1 = "deilvon";
+	all_right = KawigiEdit_RunTest(5, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
@@ -233,68 +184,93 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// Elly and Kriss play a game. The game is played on a single row that consists of N cells; we will call it the board. The cells of the board are numbered 0 through N-1, from the left to the right. Each cell of the board is either empty or occupied by a single checker. The girls take alternating turns, until one of them cannot make a move. The girl who is unable to make a move loses the game.
+// We say that a string Z can be obtained by shuffling two strings X and Y together, if it is possible to interleave the letters of X and Y so that Z is obtained. It is not allowed to change the order of letters in X and Y.
+// For example, you can shuffle the strings X="abcd" and Y="efg" to produce any of the strings "abcdefg", "aebfcgd", "abcefgd", or "eabcfdg", but you cannot produce the string "bacdefg".
 // 
-// In each move the current player selects a cell containing a checker and performs one of the following two types of moves:
 // 
-// A step, in which the checker is moved one cell to the right. The step can only be made if the target cell is empty.
-// A jump, in which the checker jumps three cells to the right. The jump can only be made if the target cell is empty and the cells it jumped over contain two other checkers.
 // 
-// Once a checker reaches the rightmost cell, it disappears immediately and no longer plays any role in the game.
+// Formally, let Shuffle(X,Y) be the set of all strings that can be produced by shuffling X and Y together.
+// We can define Shuffle inductively as follows:
 // 
-// The initial layout of the board will be given as a string board. The i-th character of board will be '.' (a period) if the i-th cell is empty at the
-// beginning, and it will be 'o' (lowercase letter o) if the i-th cell initially contains a checker. Assume that both girls play optimally. Return "YES" (quotes for clarity) if the first player wins the game and "NO" otherwise.
+// for any string X: Shuffle("",X) = Shuffle(X,"") = { X }
+// for any letters a, b and any strings X, Y:
+// Shuffle(aX,bY) = { aZ : Z belongs to Shuffle(X,bY) } united with { bZ : Z belongs to Shuffle(aX,Y) }.
+// 
+// 
+// 
+// 
+// Fox Ciel wants to register on TopCoder.
+// In order to do that, she has to pick a handle.
+// Ciel has a pet cat called S.
+// As her handle, Ciel wants to use a string H with the following property:
+// S can be obtained by shuffling H and some permutation of H together.
+// For example, if S="ceiiclel", one possible handle would be H="ciel":
+// she can permute H to obtain H'="eicl", and then shuffle these H and H' together to produce S.
+// 
+// 
+// 
+// You are given the string S.
+// The constraints guarantee that there is at least one possible handle H with the above property.
+// Find and return the lexicographically smallest valid H.
 // 
 // DEFINITION
-// Class:EllysCheckers
-// Method:getWinner
+// Class:FoxAndHandle
+// Method:lexSmallestName
 // Parameters:string
 // Returns:string
-// Method signature:string getWinner(string board)
-// 
-// 
-// NOTES
-// -If there is a checker on the rightmost cell in the beginning of the game, it disappears instantly (before the first move is made), as if it were never there.
-// -The rules of the game ensure that each cell contains at most one checker at any time, and that no checker can jump beyond the last cell.
+// Method signature:string lexSmallestName(string S)
 // 
 // 
 // CONSTRAINTS
-// -board will contain between 1 and 20 characters, inclusive.
-// -Each character of board will be either '.' or 'o'.
+// -S will contain between 2 and 50 characters, inclusive.
+// -Each character of S will be a lowercase letter ('a'-'z').
+// -Each letter ('a'-'z') will occur in S an even number of times.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// ".o..."
+// "foxfox"
 // 
-// Returns: "YES"
+// Returns: "fox"
 // 
-// With only one checker it is pretty obvious who will win.
+// There are five possible handles for Fox Ciel in this test case: "fox", "fxo", "ofx", "oxf", and "xfo".
+// The lexicographically smallest one is "fox".
 // 
 // 1)
-// "..o..o"
+// "ccieliel"
 // 
-// Returns: "YES"
+// Returns: "ceil"
 // 
-// Don't forget to ignore checkers on the rightmost cell.
+// Note that "ciel" is also a valid handle, but "ceil" is lexicographically smaller.
 // 
 // 2)
-// ".o...ooo..oo.."
+// "abaabbab"
 // 
-// Returns: "NO"
+// Returns: "aabb"
 // 
-// Here one can jump the checker from cell 5 to cell 8.
+// 
 // 
 // 3)
-// "......o.ooo.o......"
+// "bbbbaaaa"
 // 
-// Returns: "YES"
+// Returns: "bbaa"
+// 
+// 
 // 
 // 4)
-// ".o..o...o....o.....o"
+// "fedcbafedcba"
 // 
-// Returns: "NO"
+// Returns: "afedcb"
+// 
+// 
+// 
+// 5)
+// "nodevillivedon"
+// 
+// Returns: "deilvon"
+// 
+// 
 // 
 // END KAWIGIEDIT TESTING
 

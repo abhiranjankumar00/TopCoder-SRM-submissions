@@ -67,43 +67,21 @@ typedef vector <string> vs;
 #define DEBUG
 */
 
-class CompositeSmash
+class TheSimilarNumbers
 {
 public:
-	string thePossible(int N, int target);
+	int find(int lower, int upper);
 };
 
-const int sz =1e5+1;
-int flag[sz];
-
-int target;
-int find(int n) {
-	int &ret = flag[n];
-	if(ret > -1)
-		return ret;
-	if(n < target)
-		return 0;
-	if(n == target)
-		return ret = 1;
-	ret = -1;
-
-	for(int d = 2; d*d <=n; d++) if(n % d == 0) {
-		if(ret == -1)
-			ret = (find(d)|find(n/d));
-		else
-			ret &= (find(d)|find(n/d));
-	}
-	if(ret == -1)
-		ret = 0;
-	return ret;
-}
-
-string CompositeSmash::thePossible (int N, int _target) 
+int TheSimilarNumbers::find (int lower, int upper) 
 {
-	target = _target;
-	CL(flag, -1);
-	string yes = "Yes", no = "No";
-	return find(N)?yes: no;
+	int ret = 0;
+	while(lower <= upper) {
+		ret++;
+		lower = lower*10 + 1;
+	}
+	
+	return ret;
 }
 
 // BEGIN KAWIGIEDIT TESTING
@@ -112,14 +90,14 @@ string CompositeSmash::thePossible (int N, int _target)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, int p0, int p1, bool hasAnswer, string p2) {
+bool KawigiEdit_RunTest(int testNum, int p0, int p1, bool hasAnswer, int p2) {
 	cout << "Test " << testNum << ": [" << p0 << "," << p1;
 	cout << "]" << endl;
-	CompositeSmash *obj;
-	string answer;
-	obj = new CompositeSmash();
+	TheSimilarNumbers *obj;
+	int answer;
+	obj = new TheSimilarNumbers();
 	clock_t startTime = clock();
-	answer = obj->thePossible(p0, p1);
+	answer = obj->find(p0, p1);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -127,10 +105,10 @@ bool KawigiEdit_RunTest(int testNum, int p0, int p1, bool hasAnswer, string p2) 
 	cout << "Time: " << double(endTime - startTime) / CLOCKS_PER_SEC << " seconds" << endl;
 	if (hasAnswer) {
 		cout << "Desired answer:" << endl;
-		cout << "\t" << "\"" << p2 << "\"" << endl;
+		cout << "\t" << p2 << endl;
 	}
 	cout << "Your answer:" << endl;
-	cout << "\t" << "\"" << answer << "\"" << endl;
+	cout << "\t" << answer << endl;
 	if (hasAnswer) {
 		res = answer == p2;
 	}
@@ -153,86 +131,58 @@ int main() {
 	
 	int p0;
 	int p1;
-	string p2;
+	int p2;
 	
 	{
 	// ----- test 0 -----
-	p0 = 517;
-	p1 = 47;
-	p2 = "Yes";
+	p0 = 1;
+	p1 = 10;
+	p2 = 1;
 	all_right = KawigiEdit_RunTest(0, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	p0 = 8;
-	p1 = 4;
-	p2 = "Yes";
+	p0 = 5;
+	p1 = 511;
+	p2 = 3;
 	all_right = KawigiEdit_RunTest(1, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	p0 = 12;
-	p1 = 6;
-	p2 = "No";
+	p0 = 5;
+	p1 = 4747;
+	p2 = 3;
 	all_right = KawigiEdit_RunTest(2, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	p0 = 5;
-	p1 = 8;
-	p2 = "No";
+	p0 = 1;
+	p1 = 1000000;
+	p2 = 6;
 	all_right = KawigiEdit_RunTest(3, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 4 -----
-	p0 = 100000;
-	p1 = 100000;
-	p2 = "Yes";
+	p0 = 10;
+	p1 = 10110;
+	p2 = 3;
 	all_right = KawigiEdit_RunTest(4, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 5 -----
-	p0 = 5858;
-	p1 = 2;
-	p2 = "Yes";
-	all_right = KawigiEdit_RunTest(5, p0, p1, true, p2) && all_right;
-	// ------------------
-	}
-	
-	{
-	// ----- test 6 -----
-	p0 = 81461;
-	p1 = 2809;
-	p2 = "No";
-	all_right = KawigiEdit_RunTest(6, p0, p1, true, p2) && all_right;
-	// ------------------
-	}
-	
-	{
-	// ----- test 7 -----
-	p0 = 65536;
-	p1 = 256;
-	p2 = "No";
-	all_right = KawigiEdit_RunTest(7, p0, p1, true, p2) && all_right;
-	// ------------------
-	}
-	
-	{
-	// ----- test 8 -----
-	p0 = 24517;
-	p1 = 23868;
-	p2 = "No";
-	all_right = KawigiEdit_RunTest(8, p0, p1, true, p2) && all_right;
+	p0 = 1;
+	p1 = 111;
+	all_right = KawigiEdit_RunTest(5, p0, p1, false, p2) && all_right;
 	// ------------------
 	}
 	
@@ -244,95 +194,69 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// Toastwoman wants to be a magical girl. As training, she wants to make a ball that contains an integer target.
+// Two positive integers A and B are called similar if A <= 10*B and B <= 10*A. For example, 1 and 10 are similar, but 1 and 11 are not.
 // 
+// You are given ints lower and upper. You must select as many integers as possible so that:
 // 
-// Initially she has a ball that contains an integer N. She can smash a ball that contains a composite number (see notes for definition) and break it into two balls. Each new ball will also contain an integer. If she smashes a ball that contains a composite number x and it breaks into two balls that contain y and z, it satisfies y &ge 2, z &ge 2 and yz = x. For example, if she smashes a ball that contains 12, it breaks into 2 and 6 or 3 and 4. Toastwoman can control the ball she smashes, but she can't control the numbers in the two new balls when there are multiple pairs of (y, z) that satisfy the above conditions. She can apply the described ball smash operation arbitrary number of times, but she can't smash a ball that contains a non-composite number.
+// each selected integer is between lower and upper, inclusive;
+// no two selected integers are similar.
 // 
-// 
-// If she can always make a ball that contains target, return "Yes" (quotes for clarity). Otherwise, return "No" (quotes for clarity).
-// 
+// Return the maximum number of selected integers.
 // 
 // DEFINITION
-// Class:CompositeSmash
-// Method:thePossible
+// Class:TheSimilarNumbers
+// Method:find
 // Parameters:int, int
-// Returns:string
-// Method signature:string thePossible(int N, int target)
-// 
-// 
-// NOTES
-// -A positive integer x is called a composite number if it has at least one divisor other than 1 and x. For example, 4 and 6 are composite numbers, while 1 and 5 are not composite numbers.
+// Returns:int
+// Method signature:int find(int lower, int upper)
 // 
 // 
 // CONSTRAINTS
-// -N will be between 2 and 100,000, inclusive.
-// -target will be between 2 and 100,000, inclusive.
+// -upper will be between 1 and 1,000,000, inclusive.
+// -lower will be between 1 and upper, inclusive.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// 517
-// 47
+// 1
+// 10
 // 
-// Returns: "Yes"
+// Returns: 1
 // 
-// If she smashes 517, it breaks into 11 and 47.
+// Any two integers between 1 and 10 are similar. Therefore you may select only 1 number.
 // 
 // 1)
-// 8
-// 4
+// 5
+// 511
 // 
-// Returns: "Yes"
+// Returns: 3
 // 
-// If she smashes 8, it breaks into 2 and 4.
+// You can select 51, 5, and 511.
 // 
 // 2)
-// 12
-// 6
+// 5
+// 4747
 // 
-// Returns: "No"
+// Returns: 3
 // 
-// If she smashes 12 and it breaks into 3 and 4, she can't make 6.
+// 
 // 
 // 3)
-// 5
-// 8
+// 1
+// 1000000
 // 
-// Returns: "No"
+// Returns: 6
 // 
 // 
 // 
 // 4)
-// 100000
-// 100000
+// 10
+// 10110
 // 
-// Returns: "Yes"
-// 
-// She already has target.
-// 
-// 5)
-// 5858
-// 2
-// 
-// Returns: "Yes"
+// Returns: 3
 // 
 // 
-// 
-// 6)
-// 81461
-// 2809
-// 
-// Returns: "No"
-// 
-// 
-// 
-// 7)
-// 65536
-// 256
-// 
-// Returns: "No"
 // 
 // END KAWIGIEDIT TESTING
 

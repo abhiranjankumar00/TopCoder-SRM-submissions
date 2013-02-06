@@ -20,6 +20,8 @@
 #include <cassert>
 #include <climits>
 #include <cstring>
+#include <iterator>
+#include <fstream>
 using namespace std;
 
 typedef long long  int64;
@@ -30,10 +32,8 @@ typedef vector< vector <int> > vvi;
 typedef pair<int,int> ii;
 typedef vector <string> vs;
 
-#define endl 		("\n")
 #define DEBUG(x)	cout << #x << " = " << x << "\n"
-#define Pf		printf
-#define	Sf		scanf
+#define endl 		("\n")
 
 #define	ep		1e-9
 #define PI		M_PI
@@ -53,40 +53,31 @@ typedef vector <string> vs;
 #define forab(i, a, b)	for(int i = a, loop_ends_here = (int)b; i <= loop_ends_here; i++)
 #define rep(i, a, b)	for(int i = a, loop_ends_here = (int)b; i >= loop_ends_here; i--)
 
+#define Pf		printf
+#define	Sf		scanf
+
 #define read(n)		scanf("%d", &n)
 #define write(n)	printf("%d ", n)
 #define writeln(n)	printf("%d\n", n)
 
-class KingdomAndTrees
+/*
+#ifdef DEBUG
+	#undef DEBUG
+#endif
+#define DEBUG
+*/
+
+class ShuffleSort
 {
 public:
-	int minLevel(vector <int> heights);
+	double shuffle(vector <int> cards);
 };
 
-vi ht;
-
-bool check(int x) {
-	vi v(ht.size());
-	v[0] = max(1, ht[0] - x);
-	forab(i, 1, v.size()-1) {
-		v[i] =max(v[i-1]+1, ht[i]-x);
-		if(v[i] > ht[i] + x)
-			return false;
-	}
-	return true;
-}
-
-int binarySearch(int l = 0, int r = 1e9 + 111) {
-	if(l==r)
-		return l;
-	int mid = (l+r)/2;
-	return check(mid)? binarySearch(l, mid): binarySearch(mid+1, r);
-}
-
-int KingdomAndTrees::minLevel (vector <int> heights) 
+double ShuffleSort::shuffle (vector <int> cards) 
 {
-	ht = heights;
-	return binarySearch();
+	double ret;
+	
+	return ret;
 }
 
 // BEGIN KAWIGIEDIT TESTING
@@ -95,7 +86,7 @@ int KingdomAndTrees::minLevel (vector <int> heights)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, vector <int> p0, bool hasAnswer, int p1) {
+bool KawigiEdit_RunTest(int testNum, vector <int> p0, bool hasAnswer, double p1) {
 	cout << "Test " << testNum << ": [" << "{";
 	for (int i = 0; int(p0.size()) > i; ++i) {
 		if (i > 0) {
@@ -105,11 +96,11 @@ bool KawigiEdit_RunTest(int testNum, vector <int> p0, bool hasAnswer, int p1) {
 	}
 	cout << "}";
 	cout << "]" << endl;
-	KingdomAndTrees *obj;
-	int answer;
-	obj = new KingdomAndTrees();
+	ShuffleSort *obj;
+	double answer;
+	obj = new ShuffleSort();
 	clock_t startTime = clock();
-	answer = obj->minLevel(p0);
+	answer = obj->shuffle(p0);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -122,7 +113,7 @@ bool KawigiEdit_RunTest(int testNum, vector <int> p0, bool hasAnswer, int p1) {
 	cout << "Your answer:" << endl;
 	cout << "\t" << answer << endl;
 	if (hasAnswer) {
-		res = answer == p1;
+		res = answer == answer && fabs(p1 - answer) <= 1e-9 * max(1.0, fabs(p1));
 	}
 	if (!res) {
 		cout << "DOESN'T MATCH!!!!" << endl;
@@ -142,41 +133,50 @@ int main() {
 	all_right = true;
 	
 	vector <int> p0;
-	int p1;
+	double p1;
 	
 	{
 	// ----- test 0 -----
-	int t0[] = {9,5,11};
+	int t0[] = {1};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 3;
+	p1 = 1.0;
 	all_right = KawigiEdit_RunTest(0, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	int t0[] = {5,8};
+	int t0[] = {1,2};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 0;
+	p1 = 2.0;
 	all_right = KawigiEdit_RunTest(1, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	int t0[] = {1,1,1,1,1};
+	int t0[] = {2,3,1};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 4;
+	p1 = 4.0;
 	all_right = KawigiEdit_RunTest(2, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	int t0[] = {548,47,58,250,2012};
+	int t0[] = {15,16,4,8,42,23};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 251;
+	p1 = 16.0;
 	all_right = KawigiEdit_RunTest(3, p0, true, p1) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 4 -----
+	int t0[] = {1,1,1,1,1,1,1,1};
+			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
+	p1 = 1.0;
+	all_right = KawigiEdit_RunTest(4, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
@@ -188,59 +188,73 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// King Dengklek once planted N trees, conveniently numbered 0 through N-1, along the main highway in the Kingdom of Ducks. As time passed, the trees grew beautifully. Now, the height of the i-th tree is heights[i] units.
+// Fox Ciel has a deck of N cards numbered from 0 to N-1, inclusive. For each i, the i-th card has an integer cards[i] written on it. It is possible that the integers written on some cards are the same. Such cards are indistinguishable.
 // 
-// King Dengklek now thinks that the highway would be even more beautiful if the tree heights were in strictly ascending order. More specifically, in the desired configuration the height of tree i must be strictly smaller than the height of tree i+1, for all possible i. To accomplish this, King Dengklek will cast his magic spell. If he casts magic spell of level X, he can increase or decrease the height of each tree by at most X units. He cannot decrease the height of a tree into below 1 unit. Also, the new height of each tree in units must again be an integer.
+// Ciel wants to sort the cards. More exactly, she wants to place them in a line on the table so that the integers on the cards form a non-decreasing sequence. To achieve this goal, she takes the entire deck into her hand and applies the following process (starting from step 1).
 // 
-// Of course, a magic spell of a high level consumes a lot of energy. Return the smallest possible non-negative integer X such that King Dengklek can achieve his goal by casting his magic spell of level X.
+// She shuffles all cards in her hand. This is equivalent to permuting the order of cards uniformly at random.
+// Let X be the smallest of all integers written on cards she still holds in her hand. Ciel checks the topmost card of the deck she just shuffled. If the card contains an integer greater than X, she proceeds to step 1. Otherwise, she places the card onto the table. (If there are already some cards on the table, the new card is placed on their right to extend the line of sorted cards.) After she does that, if she has no more cards in her hand, she is done. Otherwise, she repeats step 2 (without shuffling the deck!).
+// 
+// Given the vector <int> cards, return the expected number of times that step 1 (a shuffle of the deck) will be executed during the sorting process described above.
+// 
 // 
 // DEFINITION
-// Class:KingdomAndTrees
-// Method:minLevel
+// Class:ShuffleSort
+// Method:shuffle
 // Parameters:vector <int>
-// Returns:int
-// Method signature:int minLevel(vector <int> heights)
+// Returns:double
+// Method signature:double shuffle(vector <int> cards)
+// 
+// 
+// NOTES
+// -The return value must have a relative or an absolute error of less than 1e-9.
+// -Informally, the return value can be seen as the average number of card shuffles required to sort a given deck of cards (where the average is taken over very many rounds of the experiment). For a formal definition, you can check http://en.wikipedia.org/wiki/Expected_value.
 // 
 // 
 // CONSTRAINTS
-// -heights will contain between 2 and 50 elements, inclusive.
-// -Each elements of heights will be between 1 and 1,000,000,000, inclusive.
+// -cards will contain between 1 and 50 elements, inclusive.
+// -Each element of cards will be between 1 and 50, inclusive.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// {9, 5, 11}
+// {1}
 // 
-// Returns: 3
+// Returns: 1.0
 // 
-// One possible solution that uses magic spell of level 3:
-// 
-// Decrease the height of the first tree by 2 units.
-// Increase the height of the second tree by 3 units.
-// 
-// The resulting heights are {7, 8, 11}.
+// There is just 1 card, but Ciel will still shuffle the cards once anyway.
 // 
 // 1)
-// {5, 8}
+// {1,2}
 // 
-// Returns: 0
+// Returns: 2.0
 // 
-// These heights are already sorted in strictly ascending order.
+// After a single shuffle of the cards, their order from top to bottom can be (1, 2) or (2, 1). If it is (1, 2), then both cards will be placed on the table and the process will stop. Otherwise, no cards will be placed on the table and shuffle will have to be repeated.
+// 
+// In average, the process will end after 2 card shuffles.
 // 
 // 2)
-// {1, 1, 1, 1, 1}
+// {2,3,1}
 // 
-// Returns: 4
+// Returns: 4.0
 // 
-// Since King Dengklek cannot decrease the heights of the trees below 1, the only possible solution is to cast his magic spell of level 4 to transform these heights into {1, 2, 3, 4, 5}.
+// The elements of cards are not necessarily given in a sorted order.
 // 
 // 3)
-// {548, 47, 58, 250, 2012}
+// {15,16,4,8,42,23}
 // 
-// Returns: 251
+// Returns: 16.0
 // 
 // 
+// 
+// 4)
+// {1,1,1,1,1,1,1,1}
+// 
+// 
+// Returns: 1.0
+// 
+// All cards are the same, so just one shuffle is always enough.
 // 
 // END KAWIGIEDIT TESTING
 

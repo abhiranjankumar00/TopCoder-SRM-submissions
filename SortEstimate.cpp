@@ -62,7 +62,7 @@ public:
 	double howMany(int c, int time)
 	{
 
-		double low = 0.0, high = 1e100, mid;
+		double low = 0.0, high = 1e20, mid;
 
 		forn(i, 400) {
 			mid = (low + high) / 2;

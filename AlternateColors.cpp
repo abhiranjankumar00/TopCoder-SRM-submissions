@@ -57,22 +57,59 @@ typedef vector <string> vs;
 #define write(n)	printf("%d ", n)
 #define writeln(n)	printf("%d\n", n)
 
-class FoxPaintingBalls
+class AlternateColors
 {
 public:
-	long long theMax(long long R, long long G, long long B, int N);
+	string getColor(long long r, long long g, long long b, long long k);
 };
 
 
-template<class T> T min(const T &a, const T &b, const T &c)	{	return min(a, min(b, c));	 }
-template<class T> T max(const T &a, const T &b, const T &c)	{	return max(a, max(b, c));	 }
-
-long long FoxPaintingBalls::theMax (long long R, long long G, long long B, int _N) 
+string AlternateColors::getColor (long long r, long long g, long long b, long long k) 
 {
-	int64 N = _N;
-	if(N%3==0 || N%3==2)
-		return min(R, min(B, G))/((_N*(_N+1)/6));
+	ST red = "RED", green = "GREEN", blue = "BLUE";
+	k--;
+	int64 mn = min(r, b);
+	mn = min(mn, g);
+	DEBUG(mn);
 
+	if(k < 3*mn) {
+		if(k%3 == 0)
+			return red;
+		return k % 3 == 1 ? green : blue;
+	}
+	r -= mn; b -= mn; g -= mn;
+	k -= 3*mn;
+// RGB
+	if(g > 0 && b > 0) {	// r == 0
+		mn = min(b, g);
+		if(k < 2*mn)
+			return k%2 == 0 ? green : blue;
+		k -= 2*mn;
+		g -= mn;
+		b -= mn;
+	}
+	else if(r > 0 && b > 0) {	// g == 0
+		mn = min(b, r);
+		if(k < 2*mn)
+			return k%2 == 0 ? red : blue;
+		k -= 2*mn;
+		r -= mn;
+		b -= mn;
+	}
+	else if(r > 0 && g > 0) {	// b == 0
+		mn = min(g, r);
+		if(k < 2*mn)
+			return k%2 == 0 ? red : green;
+		k -= 2*mn;
+		r -= mn;
+		g -= mn;
+	}
+	if(r > 0)
+		return red;
+	return g > 0 ? green : blue;
+	string ret;
+	
+	return ret;
 }
 
 // BEGIN KAWIGIEDIT TESTING
@@ -81,14 +118,14 @@ long long FoxPaintingBalls::theMax (long long R, long long G, long long B, int _
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, long long p0, long long p1, long long p2, int p3, bool hasAnswer, long long p4) {
+bool KawigiEdit_RunTest(int testNum, long long p0, long long p1, long long p2, long long p3, bool hasAnswer, string p4) {
 	cout << "Test " << testNum << ": [" << p0 << "," << p1 << "," << p2 << "," << p3;
 	cout << "]" << endl;
-	FoxPaintingBalls *obj;
-	long long answer;
-	obj = new FoxPaintingBalls();
+	AlternateColors *obj;
+	string answer;
+	obj = new AlternateColors();
 	clock_t startTime = clock();
-	answer = obj->theMax(p0, p1, p2, p3);
+	answer = obj->getColor(p0, p1, p2, p3);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -96,10 +133,10 @@ bool KawigiEdit_RunTest(int testNum, long long p0, long long p1, long long p2, i
 	cout << "Time: " << double(endTime - startTime) / CLOCKS_PER_SEC << " seconds" << endl;
 	if (hasAnswer) {
 		cout << "Desired answer:" << endl;
-		cout << "\t" << p4 << endl;
+		cout << "\t" << "\"" << p4 << "\"" << endl;
 	}
 	cout << "Your answer:" << endl;
-	cout << "\t" << answer << endl;
+	cout << "\t" << "\"" << answer << "\"" << endl;
 	if (hasAnswer) {
 		res = answer == p4;
 	}
@@ -123,83 +160,71 @@ int main() {
 	long long p0;
 	long long p1;
 	long long p2;
-	int p3;
-	long long p4;
+	long long p3;
+	string p4;
 	
 	{
 	// ----- test 0 -----
-	p0 = 2ll;
-	p1 = 2ll;
-	p2 = 2ll;
-	p3 = 3;
-	p4 = 1ll;
+	p0 = 1ll;
+	p1 = 1ll;
+	p2 = 1ll;
+	p3 = 3ll;
+	p4 = "BLUE";
 	all_right = KawigiEdit_RunTest(0, p0, p1, p2, p3, true, p4) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	p0 = 1ll;
-	p1 = 2ll;
-	p2 = 3ll;
-	p3 = 3;
-	p4 = 0ll;
+	p0 = 3ll;
+	p1 = 4ll;
+	p2 = 5ll;
+	p3 = 4ll;
+	p4 = "RED";
 	all_right = KawigiEdit_RunTest(1, p0, p1, p2, p3, true, p4) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	p0 = 8ll;
-	p1 = 6ll;
-	p2 = 6ll;
-	p3 = 4;
-	p4 = 2ll;
+	p0 = 7ll;
+	p1 = 7ll;
+	p2 = 1ll;
+	p3 = 7ll;
+	p4 = "GREEN";
 	all_right = KawigiEdit_RunTest(2, p0, p1, p2, p3, true, p4) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	p0 = 7ll;
-	p1 = 6ll;
-	p2 = 7ll;
-	p3 = 4;
-	p4 = 2ll;
+	p0 = 1000000000000ll;
+	p1 = 1ll;
+	p2 = 1ll;
+	p3 = 1000000000002ll;
+	p4 = "RED";
 	all_right = KawigiEdit_RunTest(3, p0, p1, p2, p3, true, p4) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 4 -----
-	p0 = 100ll;
-	p1 = 100ll;
-	p2 = 100ll;
-	p3 = 4;
-	p4 = 30ll;
+	p0 = 653ll;
+	p1 = 32ll;
+	p2 = 1230ll;
+	p3 = 556ll;
+	p4 = "BLUE";
 	all_right = KawigiEdit_RunTest(4, p0, p1, p2, p3, true, p4) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 5 -----
-	p0 = 19330428391852493ll;
-	p1 = 48815737582834113ll;
-	p2 = 11451481019198930ll;
-	p3 = 3456;
-	p4 = 5750952686ll;
-	all_right = KawigiEdit_RunTest(5, p0, p1, p2, p3, true, p4) && all_right;
-	// ------------------
-	}
-	
-	{
-	// ----- test 6 -----
 	p0 = 1ll;
 	p1 = 1ll;
 	p2 = 1ll;
-	p3 = 1;
-	p4 = 3ll;
-	all_right = KawigiEdit_RunTest(6, p0, p1, p2, p3, true, p4) && all_right;
+	p3 = 3ll;
+	all_right = KawigiEdit_RunTest(5, p0, p1, p2, p3, false, p4) && all_right;
 	// ------------------
 	}
 	
@@ -211,113 +236,80 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// A Ball Triangle is a set of identical balls placed in a triangular shape. A Ball Triangle has N rows, numbered 1 to N from top to bottom. For all i, 1 <= i <= N, the i-th row contains i balls. For example, the following image shows a Ball Triangle with N=3.
+// Bob is playing with his ball destroyer robot. Initially, Bob has r red balls, g green balls and b blue balls. The robot will repeat the following 3-step program until there are no balls left:
 // 
+// If there is at least one red ball available, destroy one red ball.
+// If there is at least one green ball available, destroy one green ball.
+// If there is at least one blue ball available, destroy one blue ball.
 // 
+// You are given the long longs r, g and b. You are also given a long long k. Find the color of the k-th ball (1-index based) that will be destroyed.
+// If the color of the k-th ball to be destroyed is red, return "RED" (quotes for clarity, returned values are case-sensitive).
+// If the color is green, return "GREEN".
+// If the color is blue, return "BLUE".
 // 
-// 
-// Fox Jiro has infinitely many Ball Triangles. He can paint a Ball Triangle according to the following conditions:
-// 
-// Each of the balls has to be painted either red, green, or blue.
-// No two adjacent balls may share the same color.
-// 
-// The following image shows one valid coloring of a Ball Triangle for N=3.
-// 
-// 
-// 
-// 
-// Jiro wants to paint as many Ball Triangles as he can.
-// As long as he follows the rules above, he may color the Ball Triangles in any way he likes.
-// Some of the colored Ball Triangles may look exactly the same, but they don't have to.
-// The only other constraint is the total amount of paint available to Jiro:
-// In all the triangles together, he can paint at most R balls red, G balls green, and B balls blue.
-// 
-// You are given the long longs R, G, and B.
-// You are also given the int N.
-// Return the maximum possible number of Ball Triangles Jiro can paint.
 // 
 // DEFINITION
-// Class:FoxPaintingBalls
-// Method:theMax
-// Parameters:long long, long long, long long, int
-// Returns:long long
-// Method signature:long long theMax(long long R, long long G, long long B, int N)
+// Class:AlternateColors
+// Method:getColor
+// Parameters:long long, long long, long long, long long
+// Returns:string
+// Method signature:string getColor(long long r, long long g, long long b, long long k)
 // 
 // 
 // CONSTRAINTS
-// -R, G and B will each be between 0 and 1,000,000,000,000,000,000 (10^18), inclusive.
-// -N will be between 1 and 1,000,000,000, inclusive.
+// -r, g and b  will each be between 1 and 1000000000000 (10^12), inclusive.
+// -k will be between 1 and r+g+b, inclusive.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// 2
-// 2
-// 2
+// 1
+// 1
+// 1
 // 3
 // 
-// Returns: 1
+// Returns: "BLUE"
 // 
-// Jiro can paint one Ball Triangle in the same way as in the image in the statement.
+// The order in which the balls are destroyed is: Red, green and blue. The third ball was blue.
 // 
 // 1)
-// 1
-// 2
 // 3
-// 3
-// 
-// Returns: 0
-// 
-// This time Jiro can paint no Ball Triangles.
-// 
-// 2)
-// 8
-// 6
-// 6
+// 4
+// 5
 // 4
 // 
-// Returns: 2
+// Returns: "RED"
+// 
+// The order in which the balls are destroyed is:  Red, green, blue, red, green, blue, red, green, blue, green, blue and blue.
+// 
+// 2)
+// 7
+// 7
+// 1
+// 7
+// 
+// Returns: "GREEN"
 // 
 // 
 // 
 // 3)
-// 7
-// 6
-// 7
-// 4
+// 1000000000000
+// 1
+// 1
+// 1000000000002
 // 
-// Returns: 2
+// Returns: "RED"
 // 
-// 
+// Once the only green and blue balls are destroyed, all of the remaining balls will be red.
 // 
 // 4)
-// 100
-// 100
-// 100
-// 4
+// 653
+// 32
+// 1230
+// 556
 // 
-// Returns: 30
-// 
-// 
-// 
-// 5)
-// 19330428391852493
-// 48815737582834113
-// 11451481019198930
-// 3456
-// 
-// Returns: 5750952686
-// 
-// 
-// 
-// 6)
-// 1
-// 1
-// 1
-// 1
-// 
-// Returns: 3
+// Returns: "BLUE"
 // 
 // 
 // 

@@ -67,43 +67,26 @@ typedef vector <string> vs;
 #define DEBUG
 */
 
-class CompositeSmash
+class NinjaTurtles
 {
 public:
-	string thePossible(int N, int target);
+	int countOpponents(int P, int K);
 };
 
-const int sz =1e5+1;
-int flag[sz];
-
-int target;
-int find(int n) {
-	int &ret = flag[n];
-	if(ret > -1)
-		return ret;
-	if(n < target)
-		return 0;
-	if(n == target)
-		return ret = 1;
-	ret = -1;
-
-	for(int d = 2; d*d <=n; d++) if(n % d == 0) {
-		if(ret == -1)
-			ret = (find(d)|find(n/d));
-		else
-			ret &= (find(d)|find(n/d));
+int binarySearch(int l, int r, int P, int K) {
+	if(l == r) {
+		return 3*(l/K) + l/3 == P ? l : -1;
 	}
-	if(ret == -1)
-		ret = 0;
-	return ret;
+	int n = (l+r)/2;
+
+	if(3*(n/K) + n/3 >= P)
+		return binarySearch(l, n, P, K);
+	return binarySearch(n+1, r, P, K);
 }
 
-string CompositeSmash::thePossible (int N, int _target) 
+int NinjaTurtles::countOpponents (int P, int K) 
 {
-	target = _target;
-	CL(flag, -1);
-	string yes = "Yes", no = "No";
-	return find(N)?yes: no;
+	return binarySearch(1, 1e9, P, K);
 }
 
 // BEGIN KAWIGIEDIT TESTING
@@ -112,14 +95,14 @@ string CompositeSmash::thePossible (int N, int _target)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, int p0, int p1, bool hasAnswer, string p2) {
+bool KawigiEdit_RunTest(int testNum, int p0, int p1, bool hasAnswer, int p2) {
 	cout << "Test " << testNum << ": [" << p0 << "," << p1;
 	cout << "]" << endl;
-	CompositeSmash *obj;
-	string answer;
-	obj = new CompositeSmash();
+	NinjaTurtles *obj;
+	int answer;
+	obj = new NinjaTurtles();
 	clock_t startTime = clock();
-	answer = obj->thePossible(p0, p1);
+	answer = obj->countOpponents(p0, p1);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -127,10 +110,10 @@ bool KawigiEdit_RunTest(int testNum, int p0, int p1, bool hasAnswer, string p2) 
 	cout << "Time: " << double(endTime - startTime) / CLOCKS_PER_SEC << " seconds" << endl;
 	if (hasAnswer) {
 		cout << "Desired answer:" << endl;
-		cout << "\t" << "\"" << p2 << "\"" << endl;
+		cout << "\t" << p2 << endl;
 	}
 	cout << "Your answer:" << endl;
-	cout << "\t" << "\"" << answer << "\"" << endl;
+	cout << "\t" << answer << endl;
 	if (hasAnswer) {
 		res = answer == p2;
 	}
@@ -153,86 +136,50 @@ int main() {
 	
 	int p0;
 	int p1;
-	string p2;
+	int p2;
 	
 	{
 	// ----- test 0 -----
-	p0 = 517;
-	p1 = 47;
-	p2 = "Yes";
+	p0 = 5;
+	p1 = 4;
+	p2 = 6;
 	all_right = KawigiEdit_RunTest(0, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	p0 = 8;
+	p0 = 1;
 	p1 = 4;
-	p2 = "Yes";
+	p2 = 3;
 	all_right = KawigiEdit_RunTest(1, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	p0 = 12;
+	p0 = 13;
 	p1 = 6;
-	p2 = "No";
+	p2 = -1;
 	all_right = KawigiEdit_RunTest(2, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	p0 = 5;
-	p1 = 8;
-	p2 = "No";
+	p0 = 13;
+	p1 = 17;
+	p2 = 30;
 	all_right = KawigiEdit_RunTest(3, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 4 -----
-	p0 = 100000;
-	p1 = 100000;
-	p2 = "Yes";
+	p0 = 122;
+	p1 = 21;
+	p2 = 258;
 	all_right = KawigiEdit_RunTest(4, p0, p1, true, p2) && all_right;
-	// ------------------
-	}
-	
-	{
-	// ----- test 5 -----
-	p0 = 5858;
-	p1 = 2;
-	p2 = "Yes";
-	all_right = KawigiEdit_RunTest(5, p0, p1, true, p2) && all_right;
-	// ------------------
-	}
-	
-	{
-	// ----- test 6 -----
-	p0 = 81461;
-	p1 = 2809;
-	p2 = "No";
-	all_right = KawigiEdit_RunTest(6, p0, p1, true, p2) && all_right;
-	// ------------------
-	}
-	
-	{
-	// ----- test 7 -----
-	p0 = 65536;
-	p1 = 256;
-	p2 = "No";
-	all_right = KawigiEdit_RunTest(7, p0, p1, true, p2) && all_right;
-	// ------------------
-	}
-	
-	{
-	// ----- test 8 -----
-	p0 = 24517;
-	p1 = 23868;
-	p2 = "No";
-	all_right = KawigiEdit_RunTest(8, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
@@ -244,95 +191,71 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// Toastwoman wants to be a magical girl. As training, she wants to make a ball that contains an integer target.
+// The Ninja Turtles often battle the Foot Clan ninjas. The Turtles celebrate each victory with a pizza party. The amount of pizza they eat depends on the number of opponents they have defeated. Denote the number of defeated opponents as N. Three of the four Turtles have a moderate appetite and only consume floor(N / K) pizzas each. The fourth Turtle is always hungry and eats floor(N / 3) pizzas.
 // 
 // 
-// Initially she has a ball that contains an integer N. She can smash a ball that contains a composite number (see notes for definition) and break it into two balls. Each new ball will also contain an integer. If she smashes a ball that contains a composite number x and it breaks into two balls that contain y and z, it satisfies y &ge 2, z &ge 2 and yz = x. For example, if she smashes a ball that contains 12, it breaks into 2 and 6 or 3 and 4. Toastwoman can control the ball she smashes, but she can't control the numbers in the two new balls when there are multiple pairs of (y, z) that satisfy the above conditions. She can apply the described ball smash operation arbitrary number of times, but she can't smash a ball that contains a non-composite number.
 // 
-// 
-// If she can always make a ball that contains target, return "Yes" (quotes for clarity). Otherwise, return "No" (quotes for clarity).
-// 
+// You are given ints P and K, where P is the total number of pizzas the Turtles ate after a battle. If there exists at least one value of N such that after defeating N opponents the Turtles would eat exactly P pizzas at the party, return the smallest such N. Otherwise, return -1.
 // 
 // DEFINITION
-// Class:CompositeSmash
-// Method:thePossible
+// Class:NinjaTurtles
+// Method:countOpponents
 // Parameters:int, int
-// Returns:string
-// Method signature:string thePossible(int N, int target)
+// Returns:int
+// Method signature:int countOpponents(int P, int K)
 // 
 // 
 // NOTES
-// -A positive integer x is called a composite number if it has at least one divisor other than 1 and x. For example, 4 and 6 are composite numbers, while 1 and 5 are not composite numbers.
+// -floor(X) is equal to the largest integer which is less or equal to X.
 // 
 // 
 // CONSTRAINTS
-// -N will be between 2 and 100,000, inclusive.
-// -target will be between 2 and 100,000, inclusive.
+// -P will be between 1 and 1,000,000, inclusive.
+// -K will be between 4 and 100, inclusive.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// 517
-// 47
-// 
-// Returns: "Yes"
-// 
-// If she smashes 517, it breaks into 11 and 47.
-// 
-// 1)
-// 8
+// 5
 // 4
 // 
-// Returns: "Yes"
+// Returns: 6
 // 
-// If she smashes 8, it breaks into 2 and 4.
+// If the Turtles defeated 6 opponents, three of the four Turtles would eat floor(6 / 4) = 1 pizza each and the fourth one would eat floor(6 / 3) = 2 pizzas, which makes 5 pizzas in total.
+// Note that you always have to return the smallest possible N. For example, in this scenario for N = 7 the Turtles would also eat 5 pizzas, but 7 is not a correct return value, because 6 is less than 7.
+// 
+// 1)
+// 1
+// 4
+// 
+// Returns: 3
+// 
+// After a fight with three opponents, only the hungry Turtle would eat a pizza.
 // 
 // 2)
-// 12
+// 13
 // 6
 // 
-// Returns: "No"
+// Returns: -1
 // 
-// If she smashes 12 and it breaks into 3 and 4, she can't make 6.
+// There is no value of N such that if the Turtles battle N opponents, they eat exactly 13 pizzas for K = 6.
 // 
 // 3)
-// 5
-// 8
+// 13
+// 17
 // 
-// Returns: "No"
+// Returns: 30
 // 
-// 
+// For K = 17, after defeating 30 opponents the Turtles will eat 13 pizzas in total.
 // 
 // 4)
-// 100000
-// 100000
+// 122
+// 21
 // 
-// Returns: "Yes"
-// 
-// She already has target.
-// 
-// 5)
-// 5858
-// 2
-// 
-// Returns: "Yes"
+// Returns: 258
 // 
 // 
-// 
-// 6)
-// 81461
-// 2809
-// 
-// Returns: "No"
-// 
-// 
-// 
-// 7)
-// 65536
-// 256
-// 
-// Returns: "No"
 // 
 // END KAWIGIEDIT TESTING
 

@@ -20,6 +20,8 @@
 #include <cassert>
 #include <climits>
 #include <cstring>
+#include <iterator>
+#include <fstream>
 using namespace std;
 
 typedef long long  int64;
@@ -30,10 +32,8 @@ typedef vector< vector <int> > vvi;
 typedef pair<int,int> ii;
 typedef vector <string> vs;
 
-#define endl 		("\n")
 #define DEBUG(x)	cout << #x << " = " << x << "\n"
-#define Pf		printf
-#define	Sf		scanf
+#define endl 		("\n")
 
 #define	ep		1e-9
 #define PI		M_PI
@@ -53,40 +53,41 @@ typedef vector <string> vs;
 #define forab(i, a, b)	for(int i = a, loop_ends_here = (int)b; i <= loop_ends_here; i++)
 #define rep(i, a, b)	for(int i = a, loop_ends_here = (int)b; i >= loop_ends_here; i--)
 
+#define Pf		printf
+#define	Sf		scanf
+
 #define read(n)		scanf("%d", &n)
 #define write(n)	printf("%d ", n)
 #define writeln(n)	printf("%d\n", n)
 
-class KingdomAndTrees
+/*
+#ifdef DEBUG
+	#undef DEBUG
+#endif
+#define DEBUG
+*/
+
+class PenguinTiles
 {
 public:
-	int minLevel(vector <int> heights);
+	int minMoves(vector <string> tiles);
 };
 
-vi ht;
-
-bool check(int x) {
-	vi v(ht.size());
-	v[0] = max(1, ht[0] - x);
-	forab(i, 1, v.size()-1) {
-		v[i] =max(v[i-1]+1, ht[i]-x);
-		if(v[i] > ht[i] + x)
-			return false;
-	}
-	return true;
-}
-
-int binarySearch(int l = 0, int r = 1e9 + 111) {
-	if(l==r)
-		return l;
-	int mid = (l+r)/2;
-	return check(mid)? binarySearch(l, mid): binarySearch(mid+1, r);
-}
-
-int KingdomAndTrees::minLevel (vector <int> heights) 
+int PenguinTiles::minMoves (vector <string> tiles) 
 {
-	ht = heights;
-	return binarySearch();
+	int x, y;
+	forn(i, tiles.size()) {
+		forn(j, tiles[j].size()) if(tiles[i][j] == '.') {
+			x = i, y = j;
+		}
+	}
+	DEBUG(x);
+	DEBUG(y);
+	if(x == tiles.size()-1 && y == tiles[0].size()-1)
+		return 0;
+	else if(x == tiles.size()-1 || y == tiles[0].size()-1)
+		return 1;
+	return 2;
 }
 
 // BEGIN KAWIGIEDIT TESTING
@@ -95,21 +96,21 @@ int KingdomAndTrees::minLevel (vector <int> heights)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, vector <int> p0, bool hasAnswer, int p1) {
+bool KawigiEdit_RunTest(int testNum, vector <string> p0, bool hasAnswer, int p1) {
 	cout << "Test " << testNum << ": [" << "{";
 	for (int i = 0; int(p0.size()) > i; ++i) {
 		if (i > 0) {
 			cout << ",";
 		}
-		cout << p0[i];
+		cout << "\"" << p0[i] << "\"";
 	}
 	cout << "}";
 	cout << "]" << endl;
-	KingdomAndTrees *obj;
+	PenguinTiles *obj;
 	int answer;
-	obj = new KingdomAndTrees();
+	obj = new PenguinTiles();
 	clock_t startTime = clock();
-	answer = obj->minLevel(p0);
+	answer = obj->minMoves(p0);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -141,42 +142,51 @@ int main() {
 	bool all_right;
 	all_right = true;
 	
-	vector <int> p0;
+	vector <string> p0;
 	int p1;
 	
 	{
 	// ----- test 0 -----
-	int t0[] = {9,5,11};
+	string t0[] = {"PP","P."};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 3;
+	p1 = 0;
 	all_right = KawigiEdit_RunTest(0, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	int t0[] = {5,8};
+	string t0[] = {"PPPPPPPP",".PPPPPPP"};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 0;
+	p1 = 1;
 	all_right = KawigiEdit_RunTest(1, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	int t0[] = {1,1,1,1,1};
+	string t0[] = {"PPP","P.P","PPP"};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 4;
+	p1 = 2;
 	all_right = KawigiEdit_RunTest(2, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	int t0[] = {548,47,58,250,2012};
+	string t0[] = {"P.","PP","PP","PP"};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 251;
+	p1 = 1;
 	all_right = KawigiEdit_RunTest(3, p0, true, p1) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 4 -----
+	string t0[] = {".PPP","PPPP","PPPP","PPPP"};
+			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
+	p1 = 2;
+	all_right = KawigiEdit_RunTest(4, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
@@ -188,57 +198,86 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// King Dengklek once planted N trees, conveniently numbered 0 through N-1, along the main highway in the Kingdom of Ducks. As time passed, the trees grew beautifully. Now, the height of the i-th tree is heights[i] units.
 // 
-// King Dengklek now thinks that the highway would be even more beautiful if the tree heights were in strictly ascending order. More specifically, in the desired configuration the height of tree i must be strictly smaller than the height of tree i+1, for all possible i. To accomplish this, King Dengklek will cast his magic spell. If he casts magic spell of level X, he can increase or decrease the height of each tree by at most X units. He cannot decrease the height of a tree into below 1 unit. Also, the new height of each tree in units must again be an integer.
+// Percy has just received a new game called Penguin Tiles. The game is played on a rectangular grid. Except for one square, each square of the grid contains a tile with a part of an image of a penguin. The one remaining square is empty, and it is called the open square. The player is allowed to slide one of the tiles adjacent to the open square onto the open square. After several moves the tile game is supposed to form a picture with the bottom right corner containing the open square.
 // 
-// Of course, a magic spell of a high level consumes a lot of energy. Return the smallest possible non-negative integer X such that King Dengklek can achieve his goal by casting his magic spell of level X.
+// 
+// 
+// Percy's version of Penguin Tiles is a misprint. Instead of each tile containing a different part of a penguin all tiles contain an image of the same penguin. In other words each pair of tiles in Percy's Penguin Tiles is indistinguishable.
+// 
+// 
+// 
+// Percy has decided to play with the game anyway but instead of moving just one tile at a time he has decided to move several tiles at once. In one move, Percy can either move some consecutive vertical tiles one square vertically, or some consecutive horizontal tiles one square horizontally. Of course, one of the tiles has to be moved onto the open square.
+// (In other words, instead of moving several tiles one at a time, Percy may move them all at once, if they all lie in the same row or in the same column.)
+// 
+// 
+// 
+// 
+// 
+// 
+// You are given a vector <string> tiles representing the game. The j-th character of the i-th element of tiles is 'P' if the square at row i, column j contains a tile, and it is '.' (a period) for the open square. Return the minimum number of moves to complete Percy's game.
+// 
 // 
 // DEFINITION
-// Class:KingdomAndTrees
-// Method:minLevel
-// Parameters:vector <int>
+// Class:PenguinTiles
+// Method:minMoves
+// Parameters:vector <string>
 // Returns:int
-// Method signature:int minLevel(vector <int> heights)
+// Method signature:int minMoves(vector <string> tiles)
 // 
 // 
 // CONSTRAINTS
-// -heights will contain between 2 and 50 elements, inclusive.
-// -Each elements of heights will be between 1 and 1,000,000,000, inclusive.
+// -tiles will contain between 2 and 50 elements, inclusive.
+// -Each element of tiles will contain between 2 and 50 characters, inclusive.
+// -Each element of tiles will contain the same number of characters.
+// -Each character of each element of tiles will be either 'P' or '.'.
+// -tiles will contain exactly 1 occurrence of the character '.'.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// {9, 5, 11}
-// 
-// Returns: 3
-// 
-// One possible solution that uses magic spell of level 3:
-// 
-// Decrease the height of the first tree by 2 units.
-// Increase the height of the second tree by 3 units.
-// 
-// The resulting heights are {7, 8, 11}.
-// 
-// 1)
-// {5, 8}
+// {"PP",
+//  "P."}
 // 
 // Returns: 0
 // 
-// These heights are already sorted in strictly ascending order.
+// The open tile is already in the bottom right corner.
+// 
+// 1)
+// {"PPPPPPPP",
+//  ".PPPPPPP"}
+// 
+// Returns: 1
+// 
+// 
 // 
 // 2)
-// {1, 1, 1, 1, 1}
+// {"PPP",
+//  "P.P",
+//  "PPP"}
 // 
-// Returns: 4
+// Returns: 2
 // 
-// Since King Dengklek cannot decrease the heights of the trees below 1, the only possible solution is to cast his magic spell of level 4 to transform these heights into {1, 2, 3, 4, 5}.
+// 
 // 
 // 3)
-// {548, 47, 58, 250, 2012}
+// {"P.",
+//  "PP",
+//  "PP",
+//  "PP"}
 // 
-// Returns: 251
+// Returns: 1
+// 
+// 
+// 
+// 4)
+// {".PPP",
+//  "PPPP",
+//  "PPPP",
+//  "PPPP"}
+// 
+// Returns: 2
 // 
 // 
 // 

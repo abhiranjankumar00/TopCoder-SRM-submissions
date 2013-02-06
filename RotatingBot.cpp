@@ -63,12 +63,85 @@ public:
 	int minArea(vector <int> moves);
 };
 
+vi moves;
+int X[] = {1, 0, -1, 0};
+int Y[] = {0, 1, 0, -1};
+int W, H;
+bool vis[55][55];
 
-int RotatingBot::minArea (vector <int> moves) 
+bool valid(int x, int y) {
+	return x >= 0 && x < W && y >= 0 && y < H;
+}
+
+bool simulate(int x, int y) {
+	CL(vis, 0);
+	vis[x][y] = true;
+	int sz = moves.size();
+	sz--;
+
+	forn(i, moves.size()) {
+		int xadd = X[i%4];
+		int yadd = Y[i%4];
+		forn(t, moves[i]) {
+			x += xadd;
+			y += yadd;
+			if(valid(x, y) == false)
+				return false;
+			if(vis[x][y] == true)
+				return false;
+			vis[x][y] = true;
+		}
+
+		if(i < sz && valid(x+xadd, y+yadd) && vis[x+xadd][y+yadd] == false)
+			return false;
+/*
+		if(i < sz && i%4 == 0) {
+			if(x+1==W || vis[x+1][y] == true)
+				;
+			else
+				return false;
+		}
+		if(i < sz && i%4 == 1) {
+			if(y+1 == H || vis[x][y+1] == true)
+				;
+			else
+				return false;
+		}
+		if(i < sz && i%4 == 2) {
+			if(x == 0 || vis[x-1][y] == true)
+				;
+			else
+				return false;
+		}
+		if(i < sz && i%4 == 3) {
+			if(y == 0 || vis[x][y-1] == true)
+				;
+			else
+				return false;
+		}
+*/
+	}
+	return true;
+}
+
+int RotatingBot::minArea (vector <int> _moves) 
 {
-	int ret;
-	
-	return ret;
+	moves = _moves;
+	if(moves.size() == 1)
+		return moves.front()+1;
+	if(moves.size()==2)
+		return (moves.front()+1)*(moves.back()+1);;
+	if(moves.size()==3) 
+		return max(moves[0]+1, moves[2]+1)*(moves[1]+1);
+
+	W = max(moves[0], moves[2])+1;
+	H = max(moves[1], moves[3])+1;
+
+	forn(x, W)
+		forn(y, H)
+			if(simulate(x, y))
+				return W*H;
+	return -1;
 }
 
 // BEGIN KAWIGIEDIT TESTING

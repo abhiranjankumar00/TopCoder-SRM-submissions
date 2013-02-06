@@ -20,6 +20,8 @@
 #include <cassert>
 #include <climits>
 #include <cstring>
+#include <iterator>
+#include <fstream>
 using namespace std;
 
 typedef long long  int64;
@@ -30,10 +32,8 @@ typedef vector< vector <int> > vvi;
 typedef pair<int,int> ii;
 typedef vector <string> vs;
 
-#define endl 		("\n")
 #define DEBUG(x)	cout << #x << " = " << x << "\n"
-#define Pf		printf
-#define	Sf		scanf
+#define endl 		("\n")
 
 #define	ep		1e-9
 #define PI		M_PI
@@ -53,9 +53,19 @@ typedef vector <string> vs;
 #define forab(i, a, b)	for(int i = a, loop_ends_here = (int)b; i <= loop_ends_here; i++)
 #define rep(i, a, b)	for(int i = a, loop_ends_here = (int)b; i >= loop_ends_here; i--)
 
+#define Pf		printf
+#define	Sf		scanf
+
 #define read(n)		scanf("%d", &n)
 #define write(n)	printf("%d ", n)
 #define writeln(n)	printf("%d\n", n)
+
+/*
+#ifdef DEBUG
+	#undef DEBUG
+#endif
+#define DEBUG
+*/
 
 class PointyWizardHats
 {
@@ -63,60 +73,53 @@ public:
 	int getNumHats(vector <int> topHeight, vector <int> topRadius, vector <int> bottomHeight, vector <int> bottomRadius);
 };
 
-int G[55][55];
-int ret, N, M;
-int lt[55], rt[55], vis[55];
+vi topHeight, topRadius, botHeight, botRadius;
 
-int dfs(int a) {
-	if(a < 0)
-		return 1;
-	if(vis[a])
+bool isEdge(int b, int t) {
+	if(botRadius[b] < topRadius[t])
+		return false;
+	return botHeight[b]*topRadius[t] < topHeight[t]*botRadius[b];
+}
+
+int lt[55], vis[55];
+
+int dfs(int v) {
+	if(vis[v])
 		return 0;
-	vis[a] = 1;
-
-	forn(i, M)	if(G[a][i])	if(dfs(rt[i])) {
-		lt[a] = i;
-		rt[i] = a;
+	if(v < 0) 
 		return 1;
+	vis[v] = 1;
+	forn(i, topHeight.size())	if(isEdge(v, i)) {
+		if(dfs(lt[i])) {
+			lt[i] = v;
+			return 1;
+		}
 	}
 	return 0;
 }
 
-int dfsExp(int a) {
-	CL(vis, 0);
-	return dfs(a);
-}
-
-int PointyWizardHats::getNumHats (vector <int> topHt, vector <int> topRd, vector <int> botHt, vector <int> botRd) 
+int PointyWizardHats::getNumHats (vector <int> _topHeight, vector <int> _topRadius, vector <int> bottomHeight, vector <int> bottomRadius) 
 {
-	CL(G, 0);
-	N = topHt.size();
-	M = botHt.size();
+	topHeight = _topHeight;
+	topRadius = _topRadius;
+	botHeight = bottomHeight;
+	botRadius = bottomRadius;
+	int ret = 0;
 
-	forn(i, N) 	forn(j, M) 	if(topRd[i] < botRd[j]) {
-		double ht = topRd[i]*botHt[j]*1.0 / botRd[j];
-
-//		Pf("top[%d] = (%d,  %d) \t -> \tbot[%d] = (%d, %d) \t ht = %lf \n", i, topHt[i], topRd[i], j, botHt[j], botRd[j], ht);
-//		DEBUG(ht);
-
-//		if(topHt[i] > ht + ep) {
-		if(topHt[i]*botRd[j] > topRd[i] * botHt[j]) {
-//			cout << "yes" << endl;
-			G[i][j] = 1;
-		}
+	forn(i, botRadius.size()) {
+		cout << botRadius[i] << ": ";
+		forn(j, topRadius.size())
+			if(isEdge(i, j))
+				write(j);
+		cout << endl;
 	}
-/*
-	forn(i, N)
-		forn(j, M)
-			if(G[i][j])
-				Pf("top[%d] = (%d,  %d) \t -> \tbot[%d] = (%d, %d)\n", i, topHt[i], topRd[i], j, botHt[j], botRd[j]);
-*/
-	ret = 0;
+
 	CL(lt, -1);
-	CL(rt, -1);
-	forn(i, N)	if(lt[i] < 0)
-		ret += dfsExp(i);
-		
+	forn(i, botHeight.size()) {
+		CL(vis, 0);
+		ret += dfs(i);
+	}
+	
 	return ret;
 }
 

@@ -20,8 +20,6 @@
 #include <cassert>
 #include <climits>
 #include <cstring>
-#include <iterator>
-#include <fstream>
 using namespace std;
 
 typedef long long  int64;
@@ -70,13 +68,15 @@ typedef vector <string> vs;
 class <%:class-name%>
 {
 public:
-	<%:return-type%> <%:method-name%>(<%:param-list%>)
-	{
-		<%:return-type%> ret;
-		<%:set-caret%>
-		return ret;
-	}
+	<%:return-type%> <%:method-name%>(<%:param-list%>);
 };
+
+<%:return-type%> <%:class-name%>::<%:method-name%> (<%:param-list%>) 
+{
+	<%:return-type%> ret;
+	<%:set-caret%>
+	return ret;
+}
 
 <%:testing-code%>
 

@@ -66,6 +66,14 @@ public:
 
 int TheBrickTowerEasyDivOne::find (int redCount, int redHeight, int blueCount, int blueHeight) 
 {
+	if(redHeight == blueHeight)
+		return redCount == blueCount ? 2*redCount : 2*min(redCount, blueCount) + 1;
+	if(redCount == blueCount)
+		return 3*blueCount;
+	return 3*min(redCount, blueCount)+1;
+
+	return -1;
+
 	int tmp = min(redCount, blueCount) + 1;
 	redCount = min(redCount, tmp);
 	blueCount = min(blueCount, tmp);

@@ -57,7 +57,31 @@ class LateProfessor
 public:
 	double getProbability(int waitTime, int walkTime, int lateTime, int bestArrival, int worstArrival)
 	{
-		double ret;
+		if(walkTime <= lateTime)
+			return 0.0;
+
+		if(bestArrival == worstArrival) {
+			int t = bestArrival;
+			t %= (walkTime + waitTime);
+			if(t > waitTime && t <= waitTime + walkTime - lateTime)
+				return 1.0;
+			else
+				return 0.0;
+		}
+
+		double ret = 0.0;
+		double p = 1.0/(worstArrival - bestArrival);
+
+		for(int k = bestArrival / (waitTime + walkTime); k*waitTime + (k-1)*walkTime <= worstArrival; k++) {
+			int b = k*waitTime + (k-1)*walkTime;
+			int e = b + walkTime - lateTime;
+			if(b > worstArrival || e < bestArrival)
+				continue;
+			b = max(b, bestArrival);
+			e = min(e, worstArrival);
+
+			ret += (e-b)*p;
+		}
 		
 		return ret;
 	}

@@ -20,6 +20,8 @@
 #include <cassert>
 #include <climits>
 #include <cstring>
+#include <iterator>
+#include <fstream>
 using namespace std;
 
 typedef long long  int64;
@@ -30,10 +32,8 @@ typedef vector< vector <int> > vvi;
 typedef pair<int,int> ii;
 typedef vector <string> vs;
 
-#define endl 		("\n")
 #define DEBUG(x)	cout << #x << " = " << x << "\n"
-#define Pf		printf
-#define	Sf		scanf
+#define endl 		("\n")
 
 #define	ep		1e-9
 #define PI		M_PI
@@ -53,40 +53,62 @@ typedef vector <string> vs;
 #define forab(i, a, b)	for(int i = a, loop_ends_here = (int)b; i <= loop_ends_here; i++)
 #define rep(i, a, b)	for(int i = a, loop_ends_here = (int)b; i >= loop_ends_here; i--)
 
+#define Pf		printf
+#define	Sf		scanf
+
 #define read(n)		scanf("%d", &n)
 #define write(n)	printf("%d ", n)
 #define writeln(n)	printf("%d\n", n)
 
-class KingdomAndTrees
+/*
+#ifdef DEBUG
+	#undef DEBUG
+#endif
+#define DEBUG
+*/
+
+class Zoo
 {
 public:
-	int minLevel(vector <int> heights);
+	long long theCount(vector <int> answers);
 };
 
-vi ht;
-
-bool check(int x) {
-	vi v(ht.size());
-	v[0] = max(1, ht[0] - x);
-	forab(i, 1, v.size()-1) {
-		v[i] =max(v[i-1]+1, ht[i]-x);
-		if(v[i] > ht[i] + x)
-			return false;
-	}
-	return true;
-}
-
-int binarySearch(int l = 0, int r = 1e9 + 111) {
-	if(l==r)
-		return l;
-	int mid = (l+r)/2;
-	return check(mid)? binarySearch(l, mid): binarySearch(mid+1, r);
-}
-
-int KingdomAndTrees::minLevel (vector <int> heights) 
+long long Zoo::theCount (vector <int> answers) 
 {
-	ht = heights;
-	return binarySearch();
+	long long ret = 0;
+	vi cnt(41);
+	tr(it, answers) {
+		if(*it > 40)
+			return 0;
+
+		cnt[*it]++;
+	}
+
+	bool isZero = false, isSingle = false;
+	forn(i, cnt.size()) {
+		if(cnt[i] > 2)
+			return 0;
+		else if(isSingle && cnt[i] == 2)
+			return 0;
+		else if(isZero && cnt[i] > 0)
+			return 0;
+		else if(cnt[i] == 0)
+			isZero = true;
+		else if(cnt[i] == 1)
+			isSingle = true;
+	}
+	int two = 0, one = 0;
+	forn(i, cnt.size()) {
+		if(cnt[i] == 2)
+			two++;
+		else if(cnt[i] == 1)
+			one++;
+	}
+	ret = 1ll<<two;
+	if(one)
+		ret <<= 1;
+	
+	return ret;
 }
 
 // BEGIN KAWIGIEDIT TESTING
@@ -95,7 +117,7 @@ int KingdomAndTrees::minLevel (vector <int> heights)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, vector <int> p0, bool hasAnswer, int p1) {
+bool KawigiEdit_RunTest(int testNum, vector <int> p0, bool hasAnswer, long long p1) {
 	cout << "Test " << testNum << ": [" << "{";
 	for (int i = 0; int(p0.size()) > i; ++i) {
 		if (i > 0) {
@@ -105,11 +127,11 @@ bool KawigiEdit_RunTest(int testNum, vector <int> p0, bool hasAnswer, int p1) {
 	}
 	cout << "}";
 	cout << "]" << endl;
-	KingdomAndTrees *obj;
-	int answer;
-	obj = new KingdomAndTrees();
+	Zoo *obj;
+	long long answer;
+	obj = new Zoo();
 	clock_t startTime = clock();
-	answer = obj->minLevel(p0);
+	answer = obj->theCount(p0);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -142,13 +164,13 @@ int main() {
 	all_right = true;
 	
 	vector <int> p0;
-	int p1;
+	long long p1;
 	
 	{
 	// ----- test 0 -----
-	int t0[] = {9,5,11};
+	int t0[] = {0,1,2,3,4};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 3;
+	p1 = 2ll;
 	all_right = KawigiEdit_RunTest(0, p0, true, p1) && all_right;
 	// ------------------
 	}
@@ -157,26 +179,35 @@ int main() {
 	// ----- test 1 -----
 	int t0[] = {5,8};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 0;
+	p1 = 0ll;
 	all_right = KawigiEdit_RunTest(1, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	int t0[] = {1,1,1,1,1};
+	int t0[] = {0,0,0,0,0,0};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 4;
+	p1 = 0ll;
 	all_right = KawigiEdit_RunTest(2, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	int t0[] = {548,47,58,250,2012};
+	int t0[] = {1,0,2,0,1};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 251;
+	p1 = 8ll;
 	all_right = KawigiEdit_RunTest(3, p0, true, p1) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 4 -----
+	int t0[] = {1,0,1};
+			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
+	p1 = 0ll;
+	all_right = KawigiEdit_RunTest(4, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
@@ -188,57 +219,62 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// King Dengklek once planted N trees, conveniently numbered 0 through N-1, along the main highway in the Kingdom of Ducks. As time passed, the trees grew beautifully. Now, the height of the i-th tree is heights[i] units.
+// There are N animals numbered 0 to N-1 in a zoo. Each animal is a rabbit or a cat. Their heights are pairwise distinct.
 // 
-// King Dengklek now thinks that the highway would be even more beautiful if the tree heights were in strictly ascending order. More specifically, in the desired configuration the height of tree i must be strictly smaller than the height of tree i+1, for all possible i. To accomplish this, King Dengklek will cast his magic spell. If he casts magic spell of level X, he can increase or decrease the height of each tree by at most X units. He cannot decrease the height of a tree into below 1 unit. Also, the new height of each tree in units must again be an integer.
 // 
-// Of course, a magic spell of a high level consumes a lot of energy. Return the smallest possible non-negative integer X such that King Dengklek can achieve his goal by casting his magic spell of level X.
+// Fox Jiro can't distinguish between rabbits and cats, so he asked the following question to each animal: "How many animals of the same kind as you are taller than you?" Each rabbit tells the number of rabbits taller than him, and each cat tells the number of cats taller than her. The differences of heights are slight, so Fox Jiro can't tell which animals are taller than other animals. However, each animal is able to determine which animals are taller that him and which ones are shorter.
+// 
+// 
+// The answer given by the i-th animal is answers[i]. Given these numbers, return the number of configurations resulting in exactly those numbers, assuming everyone tells the truth. Two configurations are different if there exists an i such that the i-th animal is a rabbit in one configuration and cat in the other configuration.
+// 
 // 
 // DEFINITION
-// Class:KingdomAndTrees
-// Method:minLevel
+// Class:Zoo
+// Method:theCount
 // Parameters:vector <int>
-// Returns:int
-// Method signature:int minLevel(vector <int> heights)
+// Returns:long long
+// Method signature:long long theCount(vector <int> answers)
 // 
 // 
 // CONSTRAINTS
-// -heights will contain between 2 and 50 elements, inclusive.
-// -Each elements of heights will be between 1 and 1,000,000,000, inclusive.
+// -answers will contain between 1 and 40 elements, inclusive.
+// -Each element of answers will be between 0 and 40, inclusive.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// {9, 5, 11}
+// {0, 1, 2, 3, 4}
 // 
-// Returns: 3
+// Returns: 2
 // 
-// One possible solution that uses magic spell of level 3:
-// 
-// Decrease the height of the first tree by 2 units.
-// Increase the height of the second tree by 3 units.
-// 
-// The resulting heights are {7, 8, 11}.
+// There are two possible configurations: all animals are rabbits or all animals are cats.
 // 
 // 1)
 // {5, 8}
 // 
 // Returns: 0
 // 
-// These heights are already sorted in strictly ascending order.
+// There are only two animals. These animals are definitely lying.
 // 
 // 2)
-// {1, 1, 1, 1, 1}
+// {0, 0, 0, 0, 0, 0}
 // 
-// Returns: 4
+// Returns: 0
 // 
-// Since King Dengklek cannot decrease the heights of the trees below 1, the only possible solution is to cast his magic spell of level 4 to transform these heights into {1, 2, 3, 4, 5}.
+// 
 // 
 // 3)
-// {548, 47, 58, 250, 2012}
+// {1, 0, 2, 0, 1}
 // 
-// Returns: 251
+// Returns: 8
+// 
+// 
+// 
+// 4)
+// {1, 0, 1}
+// 
+// Returns: 0
 // 
 // 
 // 

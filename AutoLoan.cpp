@@ -9,49 +9,33 @@ using namespace std;
 
 class AutoLoan
 {
-	char s[55];
 
-	double Round(double x)
+	bool loanPaid(double bal, double pay, int time, double rate)
 	{
-		sprintf(s, "%0.2lf", x);
-		scanf(s, "%lf" , &x);
-		return x;
-	}
-
-	bool Cal(double bal, double pay, int time, double rate)
-	{
-//		printf("Intial balance = %lf, rate = %lf , actual rate = %lf\n", bal, rate, rate/1200.0);
-		double in;
+		double interest;
 
 		forn(i, time)
 		{
-			in = bal*rate/1200.0;
-			bal = bal + in - pay;
-//			printf("Interest = %lf , bal = %lf\n", in, bal);
+			interest = bal*rate/1200.0;
+			bal = bal + interest - pay;
 		}
-		return bal <= ep;
+		return bal <= 0;
 	}
 
 public:
 	double interestRate(double price, double monthlyPayment, int loanTerm)
 	{
-		double ret;
-		
-//		Cal(price, monthlyPayment, loanTerm,  9.56205462458368);
 		double lo = 0.0, hi = 100.0;
-		int cnt = 0;
 
-		while(abs(hi - lo) > ep)
+		forn(pqr, 100)
 		{
-			++cnt;
-			double mid = lo + (hi-lo)/2.0;
-			if( Cal(price, monthlyPayment, loanTerm, mid) )
+			double mid = (lo + hi)/2;
+			if( loanPaid(price, monthlyPayment, loanTerm, mid) )
 				lo = mid;
 			else
 				hi = mid;
 		}
 
-		cout << "Steps req = " << cnt << endl;
 
 		return (lo+hi)/2.0;
 	}

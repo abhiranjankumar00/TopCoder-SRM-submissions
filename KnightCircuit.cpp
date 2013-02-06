@@ -57,22 +57,18 @@ typedef vector <string> vs;
 #define write(n)	printf("%d ", n)
 #define writeln(n)	printf("%d\n", n)
 
-class FoxPaintingBalls
+class KnightCircuit
 {
 public:
-	long long theMax(long long R, long long G, long long B, int N);
+	long long maxSize(int w, int h, int a, int b);
 };
 
 
-template<class T> T min(const T &a, const T &b, const T &c)	{	return min(a, min(b, c));	 }
-template<class T> T max(const T &a, const T &b, const T &c)	{	return max(a, max(b, c));	 }
-
-long long FoxPaintingBalls::theMax (long long R, long long G, long long B, int _N) 
+long long KnightCircuit::maxSize (int w, int h, int a, int b) 
 {
-	int64 N = _N;
-	if(N%3==0 || N%3==2)
-		return min(R, min(B, G))/((_N*(_N+1)/6));
-
+	long long ret;
+	
+	return ret;
 }
 
 // BEGIN KAWIGIEDIT TESTING
@@ -81,14 +77,14 @@ long long FoxPaintingBalls::theMax (long long R, long long G, long long B, int _
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, long long p0, long long p1, long long p2, int p3, bool hasAnswer, long long p4) {
+bool KawigiEdit_RunTest(int testNum, int p0, int p1, int p2, int p3, bool hasAnswer, long long p4) {
 	cout << "Test " << testNum << ": [" << p0 << "," << p1 << "," << p2 << "," << p3;
 	cout << "]" << endl;
-	FoxPaintingBalls *obj;
+	KnightCircuit *obj;
 	long long answer;
-	obj = new FoxPaintingBalls();
+	obj = new KnightCircuit();
 	clock_t startTime = clock();
-	answer = obj->theMax(p0, p1, p2, p3);
+	answer = obj->maxSize(p0, p1, p2, p3);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -120,18 +116,18 @@ int main() {
 	bool all_right;
 	all_right = true;
 	
-	long long p0;
-	long long p1;
-	long long p2;
+	int p0;
+	int p1;
+	int p2;
 	int p3;
 	long long p4;
 	
 	{
 	// ----- test 0 -----
-	p0 = 2ll;
-	p1 = 2ll;
-	p2 = 2ll;
-	p3 = 3;
+	p0 = 1;
+	p1 = 1;
+	p2 = 2;
+	p3 = 1;
 	p4 = 1ll;
 	all_right = KawigiEdit_RunTest(0, p0, p1, p2, p3, true, p4) && all_right;
 	// ------------------
@@ -139,67 +135,56 @@ int main() {
 	
 	{
 	// ----- test 1 -----
-	p0 = 1ll;
-	p1 = 2ll;
-	p2 = 3ll;
+	p0 = 3;
+	p1 = 20;
+	p2 = 1;
 	p3 = 3;
-	p4 = 0ll;
+	p4 = 11ll;
 	all_right = KawigiEdit_RunTest(1, p0, p1, p2, p3, true, p4) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	p0 = 8ll;
-	p1 = 6ll;
-	p2 = 6ll;
-	p3 = 4;
-	p4 = 2ll;
+	p0 = 100000;
+	p1 = 100000;
+	p2 = 1;
+	p3 = 2;
+	p4 = 10000000000ll;
 	all_right = KawigiEdit_RunTest(2, p0, p1, p2, p3, true, p4) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	p0 = 7ll;
-	p1 = 6ll;
-	p2 = 7ll;
-	p3 = 4;
-	p4 = 2ll;
+	p0 = 3;
+	p1 = 3;
+	p2 = 1;
+	p3 = 2;
+	p4 = 8ll;
 	all_right = KawigiEdit_RunTest(3, p0, p1, p2, p3, true, p4) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 4 -----
-	p0 = 100ll;
-	p1 = 100ll;
-	p2 = 100ll;
+	p0 = 30;
+	p1 = 30;
+	p2 = 8;
 	p3 = 4;
-	p4 = 30ll;
+	p4 = 64ll;
 	all_right = KawigiEdit_RunTest(4, p0, p1, p2, p3, true, p4) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 5 -----
-	p0 = 19330428391852493ll;
-	p1 = 48815737582834113ll;
-	p2 = 11451481019198930ll;
-	p3 = 3456;
-	p4 = 5750952686ll;
+	p0 = 32;
+	p1 = 34;
+	p2 = 6;
+	p3 = 2;
+	p4 = 136ll;
 	all_right = KawigiEdit_RunTest(5, p0, p1, p2, p3, true, p4) && all_right;
-	// ------------------
-	}
-	
-	{
-	// ----- test 6 -----
-	p0 = 1ll;
-	p1 = 1ll;
-	p2 = 1ll;
-	p3 = 1;
-	p4 = 3ll;
-	all_right = KawigiEdit_RunTest(6, p0, p1, p2, p3, true, p4) && all_right;
 	// ------------------
 	}
 	
@@ -211,113 +196,92 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// A Ball Triangle is a set of identical balls placed in a triangular shape. A Ball Triangle has N rows, numbered 1 to N from top to bottom. For all i, 1 <= i <= N, the i-th row contains i balls. For example, the following image shows a Ball Triangle with N=3.
+// The (a,b)-knight is a chess piece that moves by jumping, just as a regular knight, but the jump is a cells in one direction, b in the other. Formally, an (a,b)-knight standing on the cell (x,y) can move to any of the following eight cells:
+// (x+a,y+b), (x+a,y-b), (x-a,y+b), (x-a,y-b), (x+b,y+a), (x+b,y-a), (x-b,y+a), and (x-b,y-a).
+// Of course, if the (a,b)-knight is close to the edge of the board, some of these cells might not be on the board.
+// It is not allowed to jump to a cell that is not on the board.
 // 
+// A knight circuit is a sequence of cells on a chess board that starts and ends with the same cell.
+// Each consecutive pair of cells in the knight circuit must correspond to a single jump of the (a,b)-knight.
+// The knight circuit may visit each cell arbitrarily many times.
+// The size of a knight circuit is the number of different cells visited by the circuit.
 // 
+// You are given the ints w and h: the width (in columns) and the height (in rows) of a rectangular chessboard. You are also given the ints a and b: the parameters of your knight. Return the maximum knight circuit size that can be obtained on the given board. You are free to choose any cell as the start of your circuit.
 // 
-// 
-// Fox Jiro has infinitely many Ball Triangles. He can paint a Ball Triangle according to the following conditions:
-// 
-// Each of the balls has to be painted either red, green, or blue.
-// No two adjacent balls may share the same color.
-// 
-// The following image shows one valid coloring of a Ball Triangle for N=3.
-// 
-// 
-// 
-// 
-// Jiro wants to paint as many Ball Triangles as he can.
-// As long as he follows the rules above, he may color the Ball Triangles in any way he likes.
-// Some of the colored Ball Triangles may look exactly the same, but they don't have to.
-// The only other constraint is the total amount of paint available to Jiro:
-// In all the triangles together, he can paint at most R balls red, G balls green, and B balls blue.
-// 
-// You are given the long longs R, G, and B.
-// You are also given the int N.
-// Return the maximum possible number of Ball Triangles Jiro can paint.
 // 
 // DEFINITION
-// Class:FoxPaintingBalls
-// Method:theMax
-// Parameters:long long, long long, long long, int
+// Class:KnightCircuit
+// Method:maxSize
+// Parameters:int, int, int, int
 // Returns:long long
-// Method signature:long long theMax(long long R, long long G, long long B, int N)
+// Method signature:long long maxSize(int w, int h, int a, int b)
 // 
 // 
 // CONSTRAINTS
-// -R, G and B will each be between 0 and 1,000,000,000,000,000,000 (10^18), inclusive.
-// -N will be between 1 and 1,000,000,000, inclusive.
+// -w, h will each be between 1 and 100000, inclusive.
+// -a and b will each be between 1 and 10, inclusive.
+// -a and b will not be equal.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
+// 1
+// 1
 // 2
-// 2
-// 2
-// 3
+// 1
 // 
 // Returns: 1
 // 
-// Jiro can paint one Ball Triangle in the same way as in the image in the statement.
+// This is a 1x1 board. Note that a sequence that consists of a single cell is considered to be a valid knight circuit.
 // 
 // 1)
+// 3
+// 20
 // 1
-// 2
-// 3
 // 3
 // 
-// Returns: 0
+// Returns: 11
 // 
-// This time Jiro can paint no Ball Triangles.
+// 
 // 
 // 2)
-// 8
-// 6
-// 6
-// 4
+// 100000
+// 100000
+// 1
+// 2
 // 
-// Returns: 2
+// Returns: 10000000000
 // 
-// 
+// It is possible to make a circuit that contains every cell on the board.
 // 
 // 3)
-// 7
-// 6
-// 7
-// 4
+// 3
+// 3
+// 1
+// 2
 // 
-// Returns: 2
+// Returns: 8
 // 
 // 
 // 
 // 4)
-// 100
-// 100
-// 100
+// 30
+// 30
+// 8
 // 4
 // 
-// Returns: 30
+// Returns: 64
 // 
 // 
 // 
 // 5)
-// 19330428391852493
-// 48815737582834113
-// 11451481019198930
-// 3456
+// 32
+// 34
+// 6
+// 2
 // 
-// Returns: 5750952686
-// 
-// 
-// 
-// 6)
-// 1
-// 1
-// 1
-// 1
-// 
-// Returns: 3
+// Returns: 136
 // 
 // 
 // 
