@@ -20,6 +20,8 @@
 #include <cassert>
 #include <climits>
 #include <cstring>
+#include <iterator>
+#include <fstream>
 using namespace std;
 
 typedef long long  int64;

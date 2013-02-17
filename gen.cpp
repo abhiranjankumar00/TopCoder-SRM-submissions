@@ -74,39 +74,20 @@ typedef vector<string> 		vs;
 #define DEBUG
 */
 
-int W = 50, H = 50;
-bool vis[55][55] ;
-bool valid(int x, int y) {
-	return x >=0 && x < W && y >= 0 && y < H;
-}
-
-int X[] = {1, 0, -1, 0};
-int Y[] = {0, 1, 0, -1};
-
 int main()
 {
-	int x = 0, y = 0;
-	vis[x][y] = true;
-	vi ans;
-
-	for(int i = 0; i < 50; i++) {
-		int xadd = X[i%4];
-		int yadd = Y[i%4];
-		ans.pb(0);
-		while(valid(x+xadd, y+yadd) && vis[x+xadd][y+yadd] == false) {
-			x += xadd;
-			y += yadd;
-			vis[x][y] = true;
-			ans.back()++;
-		}
-		if(ans.back()==0) {
-			ans.pop_back();
-			break;
-		}
-
+	int N = 1e9-1;
+	cout << N << endl;
+	int test = 50;
+	int base = 1e7 - 100;
+	forn(i, test) {
+		int tmp = base + rand()%100;
+		while(tmp%4)
+			tmp++;
+		printf("%d",tmp);
+		if(i != test-1)
+			printf(", ");
 	}
-	tr(it, ans)
-		cout << *it << ", ";
 
 	return 0;
 }
