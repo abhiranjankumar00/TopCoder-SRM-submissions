@@ -62,12 +62,17 @@ public:
 	int countRoutes(int X, int Y, int minT, int maxT);
 };
 
+const int64 p = 1e9 + 7;
 
 int PatrolRoute::countRoutes (int X, int Y, int minT, int maxT) 
 {
-	int ret;
+	int64 ret = 0;
+	forab(x, 2, X-1)	forab(y, 2, Y-1)	if(2*x + 2*y >= minT && 2*x + 2*y <= maxT) {
+		ret += ( X - x*1ll) * (x-1ll) * (Y - y*1ll) * (y-1ll);
+		ret %= p;
+	}
 	
-	return ret;
+	return (ret*6)%p;
 }
 
 // BEGIN KAWIGIEDIT TESTING
@@ -265,4 +270,4 @@ int main() {
 // END KAWIGIEDIT TESTING
 
 
-//Powered by KawigiEdit 2.1.8 (beta) modified by pivanof!
+//Powered by KawigiEdit 2.1.8 (beta) modified by pivanof!3**/6
