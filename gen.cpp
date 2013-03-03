@@ -74,20 +74,52 @@ typedef vector<string> 		vs;
 #define DEBUG
 */
 
+const int sz = 50;
+const int mod = 1e5;
+
+char G[sz][sz+1];
+int power[sz];
+
 int main()
 {
-	int N = 1e9-1;
-	cout << N << endl;
-	int test = 50;
-	int base = 1e7 - 100;
-	forn(i, test) {
-		int tmp = base + rand()%100;
-		while(tmp%4)
-			tmp++;
-		printf("%d",tmp);
-		if(i != test-1)
-			printf(", ");
+	srand(19090);
+	assert(sz >= 1 && sz <= 50);
+
+	forn(i, sz)
+		forn(j, sz)
+			G[i][j] = 'N';
+
+	forn(i, sz)
+		power[i] = rand() % mod + 1;
+
+	forn(i, sz) {
+		if(i > 0)
+			Pf(", ");
+		write(power[i]);
+		assert(power[i] >= 1 && power[i] <= mod);
 	}
+	cout << endl << endl;
+
+	forn(i, 25) {
+		forab(j, i+1, i+25)
+			G[i][j] = G[j][i] = 'Y';
+	}
+	forn(i, sz)
+		assert(strlen(G[i]) == sz);
+
+	forn(i, sz) {
+		forn(j, sz) {
+			if(i == j)
+				assert(G[i][j] == 'N');
+			assert(G[i][j] == G[j][i]);
+		}
+	}
+	forn(i, sz) {
+		if(i > 0)
+			cout << ", ";
+		cout << G[i]  ;
+	}
+
 
 	return 0;
 }

@@ -69,21 +69,22 @@ typedef vector<string> 		vs;
 	#define DEBUG(x)	cout << #x << " = " << x << "\n"
 #endif
 
-class TheNumbersWithLuckyLastDigit
+class EllysPairs
 {
 public:
-	int find(int n);
+	int getDifference(vector <int> knowledge);
 };
 
-int TheNumbersWithLuckyLastDigit::find (int n) 
+int EllysPairs::getDifference (vector <int> knowledge) 
 {
-	int ret = 1e9;
-	forn(n4, 100) {
-		forn(n7, 100)
-			if((n4*4 + n7*7 <= n) && (n4 || n7) && (n4*4 + n7*7) % 10 == n%10)
-				ret = min(ret, n4+n7);
+	int best = 0, worst = 1e9;
+	sort(all(knowledge));
+
+	for(int i = 0, e = knowledge.size()-1; i <= e; i++, e--) {
+		best = max(best, knowledge[i] + knowledge[e]);
+		worst = min(worst, knowledge[i] + knowledge[e]);
 	}
-	return ret == 1e9 ? -1 : ret;
+	return best - worst;
 }
 
 // BEGIN KAWIGIEDIT TESTING
@@ -92,14 +93,21 @@ int TheNumbersWithLuckyLastDigit::find (int n)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, int p0, bool hasAnswer, int p1) {
-	cout << "Test " << testNum << ": [" << p0;
+bool KawigiEdit_RunTest(int testNum, vector <int> p0, bool hasAnswer, int p1) {
+	cout << "Test " << testNum << ": [" << "{";
+	for (int i = 0; int(p0.size()) > i; ++i) {
+		if (i > 0) {
+			cout << ",";
+		}
+		cout << p0[i];
+	}
+	cout << "}";
 	cout << "]" << endl;
-	TheNumbersWithLuckyLastDigit *obj;
+	EllysPairs *obj;
 	int answer;
-	obj = new TheNumbersWithLuckyLastDigit();
+	obj = new EllysPairs();
 	clock_t startTime = clock();
-	answer = obj->find(p0);
+	answer = obj->getDifference(p0);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -131,45 +139,42 @@ int main() {
 	bool all_right;
 	all_right = true;
 	
-	int p0;
+	vector <int> p0;
 	int p1;
 	
 	{
 	// ----- test 0 -----
-	p0 = 99;
-	p1 = 4;
+	int t0[] = {2,6,4,3};
+			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
+	p1 = 1;
 	all_right = KawigiEdit_RunTest(0, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	p0 = 11;
-	p1 = 2;
+	int t0[] = {1,1,1,1,1,1};
+			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
+	p1 = 0;
 	all_right = KawigiEdit_RunTest(1, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	p0 = 13;
-	p1 = -1;
+	int t0[] = {4,2,4,2,1,3,3,7};
+			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
+	p1 = 2;
 	all_right = KawigiEdit_RunTest(2, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	p0 = 1234567;
-	p1 = 1;
+	int t0[] = {5,1,8,8,13,7,6,2,1,9,5,11,3,4};
+			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
+	p1 = 3;
 	all_right = KawigiEdit_RunTest(3, p0, true, p1) && all_right;
-	// ------------------
-	}
-	
-	{
-	// ----- test 4 -----
-	p0 = 100000000;
-	all_right = KawigiEdit_RunTest(4, p0, false, p1) && all_right;
 	// ------------------
 	}
 	
@@ -181,54 +186,60 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
+// In one of her subjects at the university, Elly and her classmates have to prepare projects. The professor wants the students to work in pairs (groups of two). Each student must belong to exactly one pair and each pair should produce one project. You may assume that the number of people in the class is even.
 // 
-// John believes that the digits 4 and 7 are lucky, and all other digits are unlucky.
-// A positive integer is called a lucky number if its last digit is lucky.
-// For example, 4, 14 and 207 are lucky numbers, while 40, 741 and 3 are not lucky numbers.
-// John would like to represent the int n as a sum of only lucky numbers, and he would like to do this using the minimal possible number of summands.
-// Return the number of summands in the representation, or -1 if it is impossible to achieve the goal.
+// You are given a vector <int> knowledge. Each element of knowledge is the amount of knowledge of one of the students. The quality of a project is the total knowledge of the students that work on it. That is, if students i and j form one of the pairs, the quality of their project will be knowledge[i] + knowledge[j].
 // 
+// This creates some problems. If there is a really strong group, their project will be of really high quality. The professor will then compare the other projects to it and will be disappointed by them, giving low grades to the other pairs. Thus, the students want to form the groups in such way that the difference between the quality of the best project and the quality of the worst project is as small as possible.
 // 
+// Return that minimal difference in the quality between the best and the worst project if the students split into pairs in the best possible way.
 // 
 // DEFINITION
-// Class:TheNumbersWithLuckyLastDigit
-// Method:find
-// Parameters:int
+// Class:EllysPairs
+// Method:getDifference
+// Parameters:vector <int>
 // Returns:int
-// Method signature:int find(int n)
+// Method signature:int getDifference(vector <int> knowledge)
 // 
 // 
 // CONSTRAINTS
-// -n will be between 1 and 1,000,000,000, inclusive.
+// -knowledge will contain between 2 and 50 elements, inclusive.
+// -The number of elements of knowledge will be even.
+// -Each element of knowledge will be between 1 and 1000, inclusive.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// 99
+// {2, 6, 4, 3}
 // 
-// Returns: 4
+// Returns: 1
 // 
-// One of the possible representations is 99=14+24+27+34.
+// Here obviously grouping the two best people in the class (with knowledge 6 and 4) doesn't make sense.
+// If 6 pairs with 3 and 4 pairs with 2 they will get qualities of 9 and 6, respectively, leading to difference 3.
+// However, there is an even better grouping: 2 with 6 and 4 with 3 for qualities of 8 and 7, respectively. The difference then would be only 1.
+// 
 // 
 // 1)
-// 11
+// {1, 1, 1, 1, 1, 1}
+// 
+// Returns: 0
+// 
+// Some or even all students can have the same knowledge.
+// 
+// 2)
+// {4, 2, 4, 2, 1, 3, 3, 7}
 // 
 // Returns: 2
 // 
-// 11=4+7.
 // 
-// 2)
-// 13
-// 
-// Returns: -1
-// 
-// It is impossible to achieve the goal.
 // 
 // 3)
-// 1234567
+// {5, 1, 8, 8, 13, 7, 6, 2, 1, 9, 5, 11, 3, 4}
 // 
-// Returns: 1
+// Returns: 3
+// 
+// 
 // 
 // END KAWIGIEDIT TESTING
 
