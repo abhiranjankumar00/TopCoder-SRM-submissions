@@ -64,42 +64,61 @@ typedef vector<string> 		vs;
 #define writeln(n)	printf("%d\n", n)
 
 #if (0 or defined ONLINE_JUDGE)
-	#define debug 
+	#define DEBUG
 #else 
-	#define debug(x)	cout << #x << " = " << x << "\n"
+	#define DEBUG(x)	cout << #x << " = " << x << "\n"
 #endif
 
-class CarolsSinging
+class TeamContest
 {
 public:
-	int choose(vector <string> lyrics);
+	int worstRank(vector <int> strength);
 };
 
-int countBit(int n) {
-	int ret = 0;
-	while(n > 0) {
-		ret += n & 1;
-		n >>= 1;
-	}
-	return ret;
-}
-
-int CarolsSinging::choose (vector <string> lyrics) 
+int TeamContest::worstRank (vector <int> strength) 
 {
-	int N = lyrics.size(), M = lyrics.back().size();
-	int ret = M;
+	vi tmp;
+	forn(i, 3)
+		tmp.pb(strength[i]);
+	sort(all(tmp));
+	int myPower = tmp.front() + tmp.back();
 
-	forab(mask, 1, (1 << M) - 1)  {
-		vector <bool> good(N, false);
-		forn(j, M)	if((mask & (1<<j)) != 0) {
-			forn(i, N)
-				if(lyrics[i][j] == 'Y')
-					good[i] = true;
+	DEBUG(myPower);
+
+
+	tmp.clear();
+	forab(i, 3, strength.size()-1)
+		tmp.pb(strength[i]);
+	sort(all(tmp));
+
+	vector<bool> used(tmp.size(), false);
+	int ret = 1;
+/*
+	forn(i, tmp.size())
+		Pf("(%d: %d) ", i, tmp[i]);
+	cout << endl;
+*/
+
+	forn(i, tmp.size())	if(used[i] == false) {
+		bool flag = false;
+		int lst  = -1;
+
+		forab(j, i+1, tmp.size()-1)	if(used[j] == false) {
+			if(lst == -1) {
+				lst = j;
+				continue;
+			}
+			if(lst != -1 && tmp[i] + tmp[j] > myPower){
+				used[i] = used[lst] = used[j] = true;
+//				Pf("%d %d %d: %d %d %d\n", i, lst, j, tmp[i], tmp[lst], tmp[j]);
+
+				ret++;
+				break;
+			}
+
 		}
-		if(find(all(good), false) == good.end())
-			ret = min(ret, countBit(mask));
 	}
-	
+
 	return ret;
 }
 
@@ -109,21 +128,21 @@ int CarolsSinging::choose (vector <string> lyrics)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, vector <string> p0, bool hasAnswer, int p1) {
+bool KawigiEdit_RunTest(int testNum, vector <int> p0, bool hasAnswer, int p1) {
 	cout << "Test " << testNum << ": [" << "{";
 	for (int i = 0; int(p0.size()) > i; ++i) {
 		if (i > 0) {
 			cout << ",";
 		}
-		cout << "\"" << p0[i] << "\"";
+		cout << p0[i];
 	}
 	cout << "}";
 	cout << "]" << endl;
-	CarolsSinging *obj;
+	TeamContest *obj;
 	int answer;
-	obj = new CarolsSinging();
+	obj = new TeamContest();
 	clock_t startTime = clock();
-	answer = obj->choose(p0);
+	answer = obj->worstRank(p0);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -155,12 +174,12 @@ int main() {
 	bool all_right;
 	all_right = true;
 	
-	vector <string> p0;
+	vector <int> p0;
 	int p1;
 	
 	{
 	// ----- test 0 -----
-	string t0[] = {"YN","NY"};
+	int t0[] = {5,7,3,5,7,3,5,7,3};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
 	p1 = 2;
 	all_right = KawigiEdit_RunTest(0, p0, true, p1) && all_right;
@@ -169,7 +188,7 @@ int main() {
 	
 	{
 	// ----- test 1 -----
-	string t0[] = {"YN","YY","YN"};
+	int t0[] = {5,7,3};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
 	p1 = 1;
 	all_right = KawigiEdit_RunTest(1, p0, true, p1) && all_right;
@@ -178,19 +197,37 @@ int main() {
 	
 	{
 	// ----- test 2 -----
-	string t0[] = {"YNN","YNY","YNY","NYY","NYY","NYN"};
+	int t0[] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 2;
+	p1 = 1;
 	all_right = KawigiEdit_RunTest(2, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	string t0[] = {"YNNYYY","YYNYYY","YNNYYN","NYYNNN","YYYNNN","YYYNNY","NYYYYY","NYNYYY","NNNNYY","YYYYYY","YNNNNN","YYYYNY","YYNNNN","NNYYYN","NNNNYY","YYYNNN","NYNNYN","YNNYYN","YYNNNY","NYYNNY","NNYYYN","YNYYYN","NNNYNY","YYYYNN","YYNYNN","NYYNYY","YYNYYN"};
+	int t0[] = {3,9,4,6,2,6,1,6,9,1,4,1,3,8,5};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 4;
+	p1 = 3;
 	all_right = KawigiEdit_RunTest(3, p0, true, p1) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 4 -----
+	int t0[] = {53,47,88,79,99,75,28,54,65,14,22,13,11,31,43};
+			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
+	p1 = 3;
+	all_right = KawigiEdit_RunTest(4, p0, true, p1) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 5 -----
+	int t0[] = {6,3,4,4,3,4,4,3,5,6,6,3};
+			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
+	p1 = 3;
+	all_right = KawigiEdit_RunTest(5, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
@@ -202,56 +239,68 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// When the Christmas dinner is over, it's time to sing carols.  Unfortunately, not all the family members know the lyrics to the same carols.  Everybody knows at least one, though.
+// Your university is holding a programming competition and your team is going to compete.
 // 
-// You are given a vector <string> lyrics.  The j-th character of the i-th element of lyrics is 'Y' if the i-th person knows the j-th carol, and 'N' if he doesn't.  Return the minimal number of carols that must be sung to allow everyone to sing at least once.
+// There are 3*N students in the university. They are numbered from 0 to 3*N-1. Each student has a certain strength which is a positive integer that characterizes his/her programming skills. You are given a vector <int> strength. The strength of student i is equal to strength[i].
 // 
+// Your team will consist of students 0, 1 and 2. Other 3*N-3 students will form N-1 more teams so that each team has exactly 3 members. The exact composition of other teams is not known yet. Each team has a strength that is calculated as follows: if it consists of members with strengths X, Y and Z, then the team's strength is equal to max{X, Y, Z} + min{X, Y, Z}.
+// 
+// You are interested how your team will rank by strength among the other teams. Formally, the rank of your team is defined as 1 + (the number of other teams that have a strictly greater strength than the strength of your team).
+// 
+// Return the maximum possible rank that your team may have after all students split into teams.
 // 
 // DEFINITION
-// Class:CarolsSinging
-// Method:choose
-// Parameters:vector <string>
+// Class:TeamContest
+// Method:worstRank
+// Parameters:vector <int>
 // Returns:int
-// Method signature:int choose(vector <string> lyrics)
+// Method signature:int worstRank(vector <int> strength)
 // 
 // 
 // CONSTRAINTS
-// -lyrics will contain between 1 and 30 elements, inclusive.
-// -Each element of lyrics will contain between 1 and 10 characters, inclusive.
-// -Each element of lyrics will contain the same number of characters.
-// -Each element of lyrics will contain only 'Y' and 'N' characters.
-// -Each element of lyrics will contain at least one 'Y' character.
+// -strength will contain between 3 and 48 elements, inclusive.
+// -The number of elements in strength will be divisible by 3.
+// -Each element of strength will be between 1 and 1,000,000, inclusive.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// {"YN","NY"}
+// {5, 7, 3, 5, 7, 3, 5, 7, 3}
 // 
 // Returns: 2
 // 
-// Both carols need to be sung.
+// The strength of your team is max{5, 7, 3} + min{5, 7, 3} = 10. It is possible that one of the other teams will be stronger than your team. For example, if it consists of students with strengths 5, 7 and 7, then its strength will be 12. However, it is not possible that both other teams will be stronger than your team.
+// 
 // 
 // 1)
-// {"YN","YY","YN"}
+// {5, 7, 3}
+// 
 // 
 // Returns: 1
 // 
-// Everybody knows the first carol, so singing just that one is enough.
+// Just your team. No rivals.
 // 
 // 2)
-// {"YNN","YNY","YNY","NYY","NYY","NYN"}
+// {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 // 
-// Returns: 2
+// Returns: 1
 // 
-// Singing the best known carol is not always the optimal strategy. Here, the optimal way is to pick the first two carols even though four people know the third one.
+// All teams (including yours) will have the same strength: 2.
 // 
 // 3)
-// {"YNNYYY","YYNYYY","YNNYYN","NYYNNN","YYYNNN","YYYNNY","NYYYYY","NYNYYY","NNNNYY",
-//  "YYYYYY","YNNNNN","YYYYNY","YYNNNN","NNYYYN","NNNNYY","YYYNNN","NYNNYN","YNNYYN",
-//  "YYNNNY","NYYNNY","NNYYYN","YNYYYN","NNNYNY","YYYYNN","YYNYNN","NYYNYY","YYNYYN"}
+// {3,9,4,6,2,6,1,6,9,1,4,1,3,8,5}
 // 
-// Returns: 4
+// 
+// Returns: 3
+// 
+// 
+// 
+// 4)
+// {53,47,88,79,99,75,28,54,65,14,22,13,11,31,43}
+// 
+// 
+// Returns: 3
 // 
 // 
 // 

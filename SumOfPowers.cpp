@@ -63,42 +63,22 @@ typedef vector<string> 		vs;
 #define write(n)	printf("%d ", n)
 #define writeln(n)	printf("%d\n", n)
 
-#if (1 or defined ONLINE_JUDGE)
-	#define debug 
+#if (0 or defined ONLINE_JUDGE)
+	#define DEBUG
 #else 
-	#define debug(x)	cout << #x << " = " << x << "\n"
+	#define DEBUG(x)	cout << #x << " = " << x << "\n"
 #endif
 
-class ListeningIn
+class SumOfPowers
 {
 public:
-	string probableMatch(string typed, string phrase);
+	int value(int n, int k);
 };
 
-string ret;
-void match(string typed, string phrase) {
-	if(typed.empty()) {
-		ret += phrase;
-		return;
-	}
-	if(phrase.empty()) {
-		ret = "UNMATCHED";
-		return;
-	}
-	if(typed.at(0) == phrase.at(0))
-		match(typed.substr(1), phrase.substr(1));
-	else {
-		ret += phrase.at(0);
-		match(typed, phrase.substr(1));
-	}
-}
-string ListeningIn::probableMatch (string typed, string phrase) 
+int SumOfPowers::value (int n, int k) 
 {
-	debug(__GNUC__);
-	debug(__GNUC_MINOR__);
-	debug(__GNUC_PATCHLEVEL__);
-	ret.clear();
-	match(typed, phrase);
+	int ret;
+	
 	return ret;
 }
 
@@ -108,14 +88,14 @@ string ListeningIn::probableMatch (string typed, string phrase)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, string p0, string p1, bool hasAnswer, string p2) {
-	cout << "Test " << testNum << ": [" << "\"" << p0 << "\"" << "," << "\"" << p1 << "\"";
+bool KawigiEdit_RunTest(int testNum, int p0, int p1, bool hasAnswer, int p2) {
+	cout << "Test " << testNum << ": [" << p0 << "," << p1;
 	cout << "]" << endl;
-	ListeningIn *obj;
-	string answer;
-	obj = new ListeningIn();
+	SumOfPowers *obj;
+	int answer;
+	obj = new SumOfPowers();
 	clock_t startTime = clock();
-	answer = obj->probableMatch(p0, p1);
+	answer = obj->value(p0, p1);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -123,10 +103,10 @@ bool KawigiEdit_RunTest(int testNum, string p0, string p1, bool hasAnswer, strin
 	cout << "Time: " << double(endTime - startTime) / CLOCKS_PER_SEC << " seconds" << endl;
 	if (hasAnswer) {
 		cout << "Desired answer:" << endl;
-		cout << "\t" << "\"" << p2 << "\"" << endl;
+		cout << "\t" << p2 << endl;
 	}
 	cout << "Your answer:" << endl;
-	cout << "\t" << "\"" << answer << "\"" << endl;
+	cout << "\t" << answer << endl;
 	if (hasAnswer) {
 		res = answer == p2;
 	}
@@ -147,34 +127,43 @@ int main() {
 	bool all_right;
 	all_right = true;
 	
-	string p0;
-	string p1;
-	string p2;
+	int p0;
+	int p1;
+	int p2;
 	
 	{
 	// ----- test 0 -----
-	p0 = "cptr";
-	p1 = "capture";
-	p2 = "aue";
+	p0 = 5;
+	p1 = 1;
+	p2 = 15;
 	all_right = KawigiEdit_RunTest(0, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	p0 = "port to me";
-	p1 = "teleport to me";
-	p2 = "tele";
+	p0 = 4;
+	p1 = 2;
+	p2 = 30;
 	all_right = KawigiEdit_RunTest(1, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	p0 = "back  to base";
-	p1 = "back to base";
-	p2 = "UNMATCHED";
+	p0 = 13;
+	p1 = 5;
+	p2 = 1002001;
 	all_right = KawigiEdit_RunTest(2, p0, p1, true, p2) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 3 -----
+	p0 = 123456789;
+	p1 = 1;
+	p2 = 383478132;
+	all_right = KawigiEdit_RunTest(3, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
@@ -186,47 +175,55 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// You are creating an online multiplayer cooperative game. Players on a team may chat with each other during the game, and you intend to take advantage of this when building the AI to handle opponents. Part of the AI includes determining whether a given phrase is part of a player's chat. Of course, many variations of a given phrase are possible, and you want to detect as many as you can. Shorthand is the most common example: instead of typing 'capture', a player might type 'cptr', or 'port to me' instead of 'teleport to me'. You will be provided with a string typed typed by a player and a phrase that you wish to check against. Return the characters removed from phrase to obtain typed in the order they appear in phrase or "UNMATCHED" if there is no way to obtain typed from phrase by simply removing characters. The constraints ensure that the return is unique (there is only one option for which string is returned).
+// NOTE: This problem statement contains superscripts that may not display properly if viewed outside of the applet.
+// You are given ints n and k. Return the value of the sum 1k + 2k + 3k + ... + nk modulo 1000000007.
 // 
 // DEFINITION
-// Class:ListeningIn
-// Method:probableMatch
-// Parameters:string, string
-// Returns:string
-// Method signature:string probableMatch(string typed, string phrase)
+// Class:SumOfPowers
+// Method:value
+// Parameters:int, int
+// Returns:int
+// Method signature:int value(int n, int k)
 // 
 // 
 // CONSTRAINTS
-// -typed and phrase will contain only lowercase letters ('a'-'z') and spaces
-// -typed and phrase will be between 1 and 50 characters long, inclusive.
-// -All valid groups of characters that could be removed to turn phrase into typed will give the same output.
+// -n will be between 1 and 109, inclusive.
+// -k will be between 1 and 50, inclusive.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// "cptr"
-// "capture"
+// 5
+// 1
 // 
-// Returns: "aue"
+// Returns: 15
 // 
-// The example given in the problem statement.
+// Here, we have arithmethic progression: 1 + 2 + 3 + 4 + 5 = 15.
 // 
 // 1)
-// "port to me"
-// "teleport to me"
+// 4
+// 2
 // 
-// Returns: "tele"
+// Returns: 30
 // 
-// The other example from the statement.
+// Just a little bit more complicated example here: 12 + 22 + 32 + 42 = 1 + 4 + 9 + 16 = 30.
 // 
 // 2)
-// "back  to base"
-// "back to base"
+// 13
+// 5
 // 
-// Returns: "UNMATCHED"
+// Returns: 1002001
 // 
-// An extra space has been added; we do not account for additions, only deletions.
+// This one would be harder to check by hand.
+// 
+// 3)
+// 123456789
+// 1
+// 
+// Returns: 383478132
+// 
+// 
 // 
 // END KAWIGIEDIT TESTING
 

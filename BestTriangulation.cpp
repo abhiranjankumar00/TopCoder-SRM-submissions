@@ -69,35 +69,28 @@ typedef vector<string> 		vs;
 	#define debug(x)	cout << #x << " = " << x << "\n"
 #endif
 
-class CarolsSinging
+class BestTriangulation
 {
 public:
-	int choose(vector <string> lyrics);
+	double maxArea(vector <string> vertices);
 };
 
-int countBit(int n) {
-	int ret = 0;
-	while(n > 0) {
-		ret += n & 1;
-		n >>= 1;
-	}
-	return ret;
-}
-
-int CarolsSinging::choose (vector <string> lyrics) 
+// SRM 278 Div1 Easy
+double BestTriangulation::maxArea (vector <string> vertices) 
 {
-	int N = lyrics.size(), M = lyrics.back().size();
-	int ret = M;
+	double ret = -1;
 
-	forab(mask, 1, (1 << M) - 1)  {
-		vector <bool> good(N, false);
-		forn(j, M)	if((mask & (1<<j)) != 0) {
-			forn(i, N)
-				if(lyrics[i][j] == 'Y')
-					good[i] = true;
-		}
-		if(find(all(good), false) == good.end())
-			ret = min(ret, countBit(mask));
+	forn(i, vertices.size()) forn(j, vertices.size()) forn(k, vertices.size()) {
+		if(i == j || i == k || j == k)
+			continue;
+		SS ss1(vertices[i]), ss2(vertices[j]), ss3(vertices[k]);
+		int x1, y1, x2, y2, x3, y3;
+		ss1 >> x1 >> y1;
+		ss2 >> x2 >> y2;
+		ss3 >> x3 >> y3;
+
+		ret = max(ret, abs(x1*y2 + y1*x3 + x2*y3 - y2*x3 - y1*x2 - y3*x1)/2.0);
+//		Pf("(%d, %d) (%d, %d) (%d, %d)\n", x1, y1, x2, y2, x3, y3);
 	}
 	
 	return ret;
@@ -109,7 +102,7 @@ int CarolsSinging::choose (vector <string> lyrics)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, vector <string> p0, bool hasAnswer, int p1) {
+bool KawigiEdit_RunTest(int testNum, vector <string> p0, bool hasAnswer, double p1) {
 	cout << "Test " << testNum << ": [" << "{";
 	for (int i = 0; int(p0.size()) > i; ++i) {
 		if (i > 0) {
@@ -119,11 +112,11 @@ bool KawigiEdit_RunTest(int testNum, vector <string> p0, bool hasAnswer, int p1)
 	}
 	cout << "}";
 	cout << "]" << endl;
-	CarolsSinging *obj;
-	int answer;
-	obj = new CarolsSinging();
+	BestTriangulation *obj;
+	double answer;
+	obj = new BestTriangulation();
 	clock_t startTime = clock();
-	answer = obj->choose(p0);
+	answer = obj->maxArea(p0);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -136,7 +129,7 @@ bool KawigiEdit_RunTest(int testNum, vector <string> p0, bool hasAnswer, int p1)
 	cout << "Your answer:" << endl;
 	cout << "\t" << answer << endl;
 	if (hasAnswer) {
-		res = answer == p1;
+		res = answer == answer && fabs(p1 - answer) <= 1e-9 * max(1.0, fabs(p1));
 	}
 	if (!res) {
 		cout << "DOESN'T MATCH!!!!" << endl;
@@ -156,41 +149,50 @@ int main() {
 	all_right = true;
 	
 	vector <string> p0;
-	int p1;
+	double p1;
 	
 	{
 	// ----- test 0 -----
-	string t0[] = {"YN","NY"};
+	string t0[] = {"1 1","2 3","3 2"};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 2;
+	p1 = 1.5;
 	all_right = KawigiEdit_RunTest(0, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	string t0[] = {"YN","YY","YN"};
+	string t0[] = {"1 1","1 2","3 3","2 1"};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 1;
+	p1 = 1.5;
 	all_right = KawigiEdit_RunTest(1, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	string t0[] = {"YNN","YNY","YNY","NYY","NYY","NYN"};
+	string t0[] = {"1 2","1 3","2 4","3 4","4 3","4 2","3 1","2 1"};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 2;
+	p1 = 3.0;
 	all_right = KawigiEdit_RunTest(2, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	string t0[] = {"YNNYYY","YYNYYY","YNNYYN","NYYNNN","YYYNNN","YYYNNY","NYYYYY","NYNYYY","NNNNYY","YYYYYY","YNNNNN","YYYYNY","YYNNNN","NNYYYN","NNNNYY","YYYNNN","NYNNYN","YNNYYN","YYNNNY","NYYNNY","NNYYYN","YNYYYN","NNNYNY","YYYYNN","YYNYNN","NYYNYY","YYNYYN"};
+	string t0[] = {"6 2","2 1","1 2","1 4","2 6","5 6","6 5"};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 4;
+	p1 = 10.0;
 	all_right = KawigiEdit_RunTest(3, p0, true, p1) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 4 -----
+	string t0[] = {"10000 3469","9963 712","9957 634","9834 271","9700 165","9516 46","8836 4","1332 57","229 628","171 749","52 1269","30 1412","7 4937","35 8676","121 9917","2247 9960","3581 9986","6759 9995","9486 9998","9888 9890","9914 9318","9957 8206","9998 6402"};
+			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
+	p1 = 4.8292483E7;
+	all_right = KawigiEdit_RunTest(4, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
@@ -202,58 +204,68 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// When the Christmas dinner is over, it's time to sing carols.  Unfortunately, not all the family members know the lyrics to the same carols.  Everybody knows at least one, though.
-// 
-// You are given a vector <string> lyrics.  The j-th character of the i-th element of lyrics is 'Y' if the i-th person knows the j-th carol, and 'N' if he doesn't.  Return the minimal number of carols that must be sung to allow everyone to sing at least once.
-// 
+// You have a convex polygon. You select three consecutive vertices and create a triangle with them.  Remove this triangle from the polygon (if you had a polygon with N vertices, the resulting polygon would have N-1 vertices). Repeat this process until the remaining polygon is a triangle.
+// You are given a vector <string> vertices, representing the vertices of the polygon in clockwise order. Each element will be formatted as "X Y", where X and Y are the coordinates of a vertex. Return a double representing the area of the largest possible triangle that can remain at the end.
 // 
 // DEFINITION
-// Class:CarolsSinging
-// Method:choose
+// Class:BestTriangulation
+// Method:maxArea
 // Parameters:vector <string>
-// Returns:int
-// Method signature:int choose(vector <string> lyrics)
+// Returns:double
+// Method signature:double maxArea(vector <string> vertices)
+// 
+// 
+// NOTES
+// -The returned value must be accurate to 1e-9 relative or absolute.
 // 
 // 
 // CONSTRAINTS
-// -lyrics will contain between 1 and 30 elements, inclusive.
-// -Each element of lyrics will contain between 1 and 10 characters, inclusive.
-// -Each element of lyrics will contain the same number of characters.
-// -Each element of lyrics will contain only 'Y' and 'N' characters.
-// -Each element of lyrics will contain at least one 'Y' character.
+// -vertices will contain between 3 and 35 elements, inclusive.
+// -Each element of vertices will be formatted as "X Y", where X and Y are integers without leading zeroes.
+// -Each X and Y will be between 1 and 10000, inclusive.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// {"YN","NY"}
+// {"1 1", "2 3", "3 2"}
 // 
-// Returns: 2
+// Returns: 1.5
 // 
-// Both carols need to be sung.
+// The polygon is already a triangle, so you cannot perform any cuts.
 // 
 // 1)
-// {"YN","YY","YN"}
+// {"1 1", "1 2", "3 3", "2 1"}
 // 
-// Returns: 1
+// Returns: 1.5
 // 
-// Everybody knows the first carol, so singing just that one is enough.
+// Here you must perform one cut.
+// If you cut vertices (3, 0, 1), a triangle of area 1.5 will remain.
+// If you cut vertices (0, 1, 2), a triangle of area 1 will remain.
+// If you cut vertices (1, 2, 3), a triangle of area 0.5 will remain.
+// If you cut vertices (2, 3, 0), a triangle of area 1 will remain.
+// Your best option is to cut (3, 0, 1).
 // 
 // 2)
-// {"YNN","YNY","YNY","NYY","NYY","NYN"}
+// {"1 2", "1 3", "2 4", "3 4", "4 3", "4 2", "3 1", "2 1"}
 // 
-// Returns: 2
+// Returns: 3.0
 // 
-// Singing the best known carol is not always the optimal strategy. Here, the optimal way is to pick the first two carols even though four people know the third one.
+// In such an 8-gon, you must cut the following triangles in order: (7, 0, 1), (7, 1, 2), (2, 3, 4), (4, 5, 6), (4, 6, 7). Finally, a triangle with vertices (2, 4, 7) is left, and its area is 3.
 // 
 // 3)
-// {"YNNYYY","YYNYYY","YNNYYN","NYYNNN","YYYNNN","YYYNNY","NYYYYY","NYNYYY","NNNNYY",
-//  "YYYYYY","YNNNNN","YYYYNY","YYNNNN","NNYYYN","NNNNYY","YYYNNN","NYNNYN","YNNYYN",
-//  "YYNNNY","NYYNNY","NNYYYN","YNYYYN","NNNYNY","YYYYNN","YYNYNN","NYYNYY","YYNYYN"}
+// {"6 2", "2 1", "1 2", "1 4", "2 6", "5 6", "6 5"}
 // 
-// Returns: 4
+// Returns: 10.0
 // 
+// 4)
+// {"10000 3469", "9963 712", "9957 634", "9834 271", "9700 165",
+//  "9516 46", "8836 4", "1332 57", "229 628", "171 749",
+//  "52 1269", "30 1412", "7 4937", "35 8676", "121 9917",
+//  "2247 9960", "3581 9986", "6759 9995", "9486 9998", "9888 9890",
+//  "9914 9318", "9957 8206", "9998 6402"} 
 // 
+// Returns: 4.8292483E7
 // 
 // END KAWIGIEDIT TESTING
 

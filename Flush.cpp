@@ -77,7 +77,7 @@ public:
 			double p = C(s[0], i) * C(s[1], j) * C(s[2], k) * C(s[3], l) / C(s[0] + s[1] + s[2] + s[3], num);
 
 			p *= max( max(i, j), max(k, l) );
-			ret += p;
+			ret += p; 
 		}
 		
 		return ret;

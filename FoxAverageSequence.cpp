@@ -64,41 +64,20 @@ typedef vector<string> 		vs;
 #define writeln(n)	printf("%d\n", n)
 
 #if (0 or defined ONLINE_JUDGE)
-	#define debug 
+	#define DEBUG
 #else 
-	#define debug(x)	cout << #x << " = " << x << "\n"
+	#define DEBUG(x)	cout << #x << " = " << x << "\n"
 #endif
 
-class CarolsSinging
+class FoxAverageSequence
 {
 public:
-	int choose(vector <string> lyrics);
+	int theCount(vector <int> seq);
 };
 
-int countBit(int n) {
-	int ret = 0;
-	while(n > 0) {
-		ret += n & 1;
-		n >>= 1;
-	}
-	return ret;
-}
-
-int CarolsSinging::choose (vector <string> lyrics) 
+int FoxAverageSequence::theCount (vector <int> seq) 
 {
-	int N = lyrics.size(), M = lyrics.back().size();
-	int ret = M;
-
-	forab(mask, 1, (1 << M) - 1)  {
-		vector <bool> good(N, false);
-		forn(j, M)	if((mask & (1<<j)) != 0) {
-			forn(i, N)
-				if(lyrics[i][j] == 'Y')
-					good[i] = true;
-		}
-		if(find(all(good), false) == good.end())
-			ret = min(ret, countBit(mask));
-	}
+	int ret;
 	
 	return ret;
 }
@@ -109,21 +88,21 @@ int CarolsSinging::choose (vector <string> lyrics)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, vector <string> p0, bool hasAnswer, int p1) {
+bool KawigiEdit_RunTest(int testNum, vector <int> p0, bool hasAnswer, int p1) {
 	cout << "Test " << testNum << ": [" << "{";
 	for (int i = 0; int(p0.size()) > i; ++i) {
 		if (i > 0) {
 			cout << ",";
 		}
-		cout << "\"" << p0[i] << "\"";
+		cout << p0[i];
 	}
 	cout << "}";
 	cout << "]" << endl;
-	CarolsSinging *obj;
+	FoxAverageSequence *obj;
 	int answer;
-	obj = new CarolsSinging();
+	obj = new FoxAverageSequence();
 	clock_t startTime = clock();
-	answer = obj->choose(p0);
+	answer = obj->theCount(p0);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -155,42 +134,51 @@ int main() {
 	bool all_right;
 	all_right = true;
 	
-	vector <string> p0;
+	vector <int> p0;
 	int p1;
 	
 	{
 	// ----- test 0 -----
-	string t0[] = {"YN","NY"};
+	int t0[] = {3,-1};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 2;
+	p1 = 4;
 	all_right = KawigiEdit_RunTest(0, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	string t0[] = {"YN","YY","YN"};
+	int t0[] = {5,3,-1};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 1;
+	p1 = 2;
 	all_right = KawigiEdit_RunTest(1, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	string t0[] = {"YNN","YNY","YNY","NYY","NYY","NYN"};
+	int t0[] = {-1,0,40};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 2;
+	p1 = 0;
 	all_right = KawigiEdit_RunTest(2, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	string t0[] = {"YNNYYY","YYNYYY","YNNYYN","NYYNNN","YYYNNN","YYYNNY","NYYYYY","NYNYYY","NNNNYY","YYYYYY","YNNNNN","YYYYNY","YYNNNN","NNYYYN","NNNNYY","YYYNNN","NYNNYN","YNNYYN","YYNNNY","NYYNNY","NNYYYN","YNYYYN","NNNYNY","YYYYNN","YYNYNN","NYYNYY","YYNYYN"};
+	int t0[] = {-1,40,-1,-1,-1,10,-1,-1,-1,21,-1};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 4;
+	p1 = 579347890;
 	all_right = KawigiEdit_RunTest(3, p0, true, p1) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 4 -----
+	int t0[] = {-1,12,25,0,18,-1};
+			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
+	p1 = 58;
+	all_right = KawigiEdit_RunTest(4, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
@@ -202,56 +190,68 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// When the Christmas dinner is over, it's time to sing carols.  Unfortunately, not all the family members know the lyrics to the same carols.  Everybody knows at least one, though.
+// Fox Ciel likes sequences of integers. She especially likes sequences which she considers to be beautiful. A sequence (A[0], A[1], ..., A[N-1]), N >= 1, is beautiful if and only if it satisfies the following conditions:
 // 
-// You are given a vector <string> lyrics.  The j-th character of the i-th element of lyrics is 'Y' if the i-th person knows the j-th carol, and 'N' if he doesn't.  Return the minimal number of carols that must be sung to allow everyone to sing at least once.
+// Each element of the sequence is an integer between 0 and 40, inclusive.
+// Each element of the sequence is less than or equal to the arithmetic mean of the previous elements. That is, for each i, 1 <= i < N, we have A[i] <= (A[0] + A[1] + ... + A[i-1]) / i.
+// There are no three consecutive elements in the sequence that follow in strictly decreasing order. In other words, there must be no index i, 0 <= i < N-2, such that A[i] > A[i+1] > A[i+2].
+// 
+// You are given a vector <int> seq that describes some sequences. Each element in seq is between -1 and 40, inclusive. You can change each occurrence of -1 in seq into an arbitrary integer between 0 and 40, inclusive. Different occurrences can be changed into different integers.
+// 
+// Return the number of different beautiful sequences that can be obtained in this way, modulo 1,000,000,007.
 // 
 // 
 // DEFINITION
-// Class:CarolsSinging
-// Method:choose
-// Parameters:vector <string>
+// Class:FoxAverageSequence
+// Method:theCount
+// Parameters:vector <int>
 // Returns:int
-// Method signature:int choose(vector <string> lyrics)
+// Method signature:int theCount(vector <int> seq)
+// 
+// 
+// NOTES
+// -Two sequences of the same length are different if there is at least one position at which their elements are different.
 // 
 // 
 // CONSTRAINTS
-// -lyrics will contain between 1 and 30 elements, inclusive.
-// -Each element of lyrics will contain between 1 and 10 characters, inclusive.
-// -Each element of lyrics will contain the same number of characters.
-// -Each element of lyrics will contain only 'Y' and 'N' characters.
-// -Each element of lyrics will contain at least one 'Y' character.
+// -seq will contain between 1 and 40 elements, inclusive.
+// -Each element of seq seq will be between -1 and 40, inclusive.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// {"YN","NY"}
-// 
-// Returns: 2
-// 
-// Both carols need to be sung.
-// 
-// 1)
-// {"YN","YY","YN"}
-// 
-// Returns: 1
-// 
-// Everybody knows the first carol, so singing just that one is enough.
-// 
-// 2)
-// {"YNN","YNY","YNY","NYY","NYY","NYN"}
-// 
-// Returns: 2
-// 
-// Singing the best known carol is not always the optimal strategy. Here, the optimal way is to pick the first two carols even though four people know the third one.
-// 
-// 3)
-// {"YNNYYY","YYNYYY","YNNYYN","NYYNNN","YYYNNN","YYYNNY","NYYYYY","NYNYYY","NNNNYY",
-//  "YYYYYY","YNNNNN","YYYYNY","YYNNNN","NNYYYN","NNNNYY","YYYNNN","NYNNYN","YNNYYN",
-//  "YYNNNY","NYYNNY","NNYYYN","YNYYYN","NNNYNY","YYYYNN","YYNYNN","NYYNYY","YYNYYN"}
+// {3, -1}
 // 
 // Returns: 4
+// 
+// {3, 0}, {3, 1}, {3, 2} and {3, 3} are valid sequences.
+// 
+// 1)
+// {5, 3, -1}
+// 
+// Returns: 2
+// 
+// {5, 3, 3} and {5, 3, 4} are valid sequences.
+// 
+// 2)
+// {-1, 0, 40}
+// 
+// Returns: 0
+// 
+// There are no valid sequences.
+// 
+// 3)
+// {-1, 40, -1, -1, -1, 10, -1, -1, -1, 21, -1}
+// 
+// Returns: 579347890
+// 
+// 
+// 
+// 4)
+// {-1, 12, 25, 0, 18, -1}
+// 
+// Returns: 58
 // 
 // 
 // 

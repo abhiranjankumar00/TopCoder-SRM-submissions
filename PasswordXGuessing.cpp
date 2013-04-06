@@ -64,40 +64,38 @@ typedef vector<string> 		vs;
 #define writeln(n)	printf("%d\n", n)
 
 #if (0 or defined ONLINE_JUDGE)
-	#define debug 
+	#define DEBUG
 #else 
-	#define debug(x)	cout << #x << " = " << x << "\n"
+	#define DEBUG(x)	cout << #x << " = " << x << "\n"
 #endif
 
-class CarolsSinging
+class PasswordXGuessing
 {
 public:
-	int choose(vector <string> lyrics);
+	long long howMany(vector <string> guesses);
 };
 
-int countBit(int n) {
-	int ret = 0;
-	while(n > 0) {
-		ret += n & 1;
-		n >>= 1;
-	}
-	return ret;
-}
-
-int CarolsSinging::choose (vector <string> lyrics) 
+long long PasswordXGuessing::howMany (vector <string> guess) 
 {
-	int N = lyrics.size(), M = lyrics.back().size();
-	int ret = M;
+	long long ret = 0;
 
-	forab(mask, 1, (1 << M) - 1)  {
-		vector <bool> good(N, false);
-		forn(j, M)	if((mask & (1<<j)) != 0) {
-			forn(i, N)
-				if(lyrics[i][j] == 'Y')
-					good[i] = true;
+	forn(i, guess[0].size()) {
+		forn(j, 10)	if(guess[0][i] != j + '0') {
+			string cur = guess[0];
+			cur[i] = j + '0';
+
+			bool flag = true;
+			forab(k, 1, guess.size()-1) {
+				int diff = 0;
+				forn(l, cur.size())
+					if(cur[l] != guess[k][l])
+						diff++;
+				if(diff != 1)
+					flag = false;
+			}
+			if(flag)
+				ret++;
 		}
-		if(find(all(good), false) == good.end())
-			ret = min(ret, countBit(mask));
 	}
 	
 	return ret;
@@ -109,7 +107,7 @@ int CarolsSinging::choose (vector <string> lyrics)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, vector <string> p0, bool hasAnswer, int p1) {
+bool KawigiEdit_RunTest(int testNum, vector <string> p0, bool hasAnswer, long long p1) {
 	cout << "Test " << testNum << ": [" << "{";
 	for (int i = 0; int(p0.size()) > i; ++i) {
 		if (i > 0) {
@@ -119,11 +117,11 @@ bool KawigiEdit_RunTest(int testNum, vector <string> p0, bool hasAnswer, int p1)
 	}
 	cout << "}";
 	cout << "]" << endl;
-	CarolsSinging *obj;
-	int answer;
-	obj = new CarolsSinging();
+	PasswordXGuessing *obj;
+	long long answer;
+	obj = new PasswordXGuessing();
 	clock_t startTime = clock();
-	answer = obj->choose(p0);
+	answer = obj->howMany(p0);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -156,41 +154,50 @@ int main() {
 	all_right = true;
 	
 	vector <string> p0;
-	int p1;
+	long long p1;
 	
 	{
 	// ----- test 0 -----
-	string t0[] = {"YN","NY"};
+	string t0[] = {"58","47"};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 2;
+	p1 = 2ll;
 	all_right = KawigiEdit_RunTest(0, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	string t0[] = {"YN","YY","YN"};
+	string t0[] = {"539","540","541"};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 1;
+	p1 = 1ll;
 	all_right = KawigiEdit_RunTest(1, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	string t0[] = {"YNN","YNY","YNY","NYY","NYY","NYN"};
+	string t0[] = {"12","34","56","78"};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 2;
+	p1 = 0ll;
 	all_right = KawigiEdit_RunTest(2, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	string t0[] = {"YNNYYY","YYNYYY","YNNYYN","NYYNNN","YYYNNN","YYYNNY","NYYYYY","NYNYYY","NNNNYY","YYYYYY","YNNNNN","YYYYNY","YYNNNN","NNYYYN","NNNNYY","YYYNNN","NYNNYN","YNNYYN","YYNNNY","NYYNNY","NNYYYN","YNYYYN","NNNYNY","YYYYNN","YYNYNN","NYYNYY","YYNYYN"};
+	string t0[] = {"2","3","5"};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 4;
+	p1 = 7ll;
 	all_right = KawigiEdit_RunTest(3, p0, true, p1) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 4 -----
+	string t0[] = {"4747","4747","4747","4747"};
+			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
+	p1 = 36ll;
+	all_right = KawigiEdit_RunTest(4, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
@@ -202,56 +209,65 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// When the Christmas dinner is over, it's time to sing carols.  Unfortunately, not all the family members know the lyrics to the same carols.  Everybody knows at least one, though.
+// Ms. Ciel loves rabbits. She has a large special cage for her rabbits. The special cage is protected by a secret password consisting of exactly X digits. Each digit of her password is one of '0'-'9'. (It is possible that the password starts with a '0'.)
 // 
-// You are given a vector <string> lyrics.  The j-th character of the i-th element of lyrics is 'Y' if the i-th person knows the j-th carol, and 'N' if he doesn't.  Return the minimal number of carols that must be sung to allow everyone to sing at least once.
+// There are N friends who want to guess the password. Each friend make a guess consisting of exactly X digits. This is given in vector <string> guesses that contains N elements, where guesses[i] is the guess of the i-th friend. The friends are so lucky that after they make their guesses, Ms. Ciel tells them that each person guessed the password correctly, except for exactly one digit.
 // 
+// You are given the vector <string> guesses. Return the number of different passwords that have the above property (i.e., differ from each element of guesses in exactly one digit). Note that it is possible that no such password exists. In such case, return 0.
 // 
 // DEFINITION
-// Class:CarolsSinging
-// Method:choose
+// Class:PasswordXGuessing
+// Method:howMany
 // Parameters:vector <string>
-// Returns:int
-// Method signature:int choose(vector <string> lyrics)
+// Returns:long long
+// Method signature:long long howMany(vector <string> guesses)
+// 
+// 
+// NOTES
+// -The result is guaranteed to fit in a 64-bit signed integer data type.
 // 
 // 
 // CONSTRAINTS
-// -lyrics will contain between 1 and 30 elements, inclusive.
-// -Each element of lyrics will contain between 1 and 10 characters, inclusive.
-// -Each element of lyrics will contain the same number of characters.
-// -Each element of lyrics will contain only 'Y' and 'N' characters.
-// -Each element of lyrics will contain at least one 'Y' character.
+// -guesses will contain between 1 and 50 elements, inclusive.
+// -Each element of guesses will contain between 1 and 50 characters, inclusive.
+// -All elements of guesses will contain the same number of characters.
+// -Each character of each element of guesses will be one of '0'-'9'.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// {"YN","NY"}
+// {"58", "47"}
 // 
 // Returns: 2
 // 
-// Both carols need to be sung.
+// The two possible passwords are "57" and "48".
 // 
 // 1)
-// {"YN","YY","YN"}
+// {"539", "540", "541"}
 // 
 // Returns: 1
 // 
-// Everybody knows the first carol, so singing just that one is enough.
+// The only possible password is "549".
 // 
 // 2)
-// {"YNN","YNY","YNY","NYY","NYY","NYN"}
+// {"12", "34", "56", "78"}
 // 
-// Returns: 2
+// Returns: 0
 // 
-// Singing the best known carol is not always the optimal strategy. Here, the optimal way is to pick the first two carols even though four people know the third one.
+// There is no possible password. Ms. Ciel must have forgotten her own password.
 // 
 // 3)
-// {"YNNYYY","YYNYYY","YNNYYN","NYYNNN","YYYNNN","YYYNNY","NYYYYY","NYNYYY","NNNNYY",
-//  "YYYYYY","YNNNNN","YYYYNY","YYNNNN","NNYYYN","NNNNYY","YYYNNN","NYNNYN","YNNYYN",
-//  "YYNNNY","NYYNNY","NNYYYN","YNYYYN","NNNYNY","YYYYNN","YYNYNN","NYYNYY","YYNYYN"}
+// {"2", "3", "5"}
 // 
-// Returns: 4
+// Returns: 7
+// 
+// 
+// 
+// 4)
+// {"4747", "4747", "4747", "4747"}
+// 
+// Returns: 36
 // 
 // 
 // 

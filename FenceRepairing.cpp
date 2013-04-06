@@ -64,43 +64,71 @@ typedef vector<string> 		vs;
 #define writeln(n)	printf("%d\n", n)
 
 #if (0 or defined ONLINE_JUDGE)
-	#define debug 
+	#define DEBUG
 #else 
-	#define debug(x)	cout << #x << " = " << x << "\n"
+	#define DEBUG(x)	cout << #x << " = " << x << "\n"
 #endif
 
-class CarolsSinging
+class FenceRepairing
 {
 public:
-	int choose(vector <string> lyrics);
+	double calculateCost(vector <string> boards);
 };
 
-int countBit(int n) {
-	int ret = 0;
-	while(n > 0) {
-		ret += n & 1;
-		n >>= 1;
+string board;
+double ans[55*55];
+
+int nextIdx[55*55], prevIdx[55*55];
+
+void preprocess() {
+	int idx = -1;
+
+	forn(i, board.size()) {
+		if(board[i] == 'X')
+			idx = i;
+		prevIdx[i] = idx;
 	}
+
+	idx = -1;
+	rep(i, board.size()-1, 0) {
+		if(board[i] == 'X')
+			idx = i;
+		nextIdx[i] = idx;
+	}
+/*
+	forn(i, board.size())
+		Pf("%d: next = %d, prev = %d\n", i, nextIdx[i], prevIdx[i]);
+	cout << endl;
+*/
+}
+
+int len(int l, int r) {
+	int ret;
+	if(nextIdx[l] == -1 || nextIdx[l] > r)
+		ret = 0;
+	else
+		ret = prevIdx[r] - nextIdx[l] + 1;
+	//Pf("[%d, %d] : %d  |  ", l, r, ret);
 	return ret;
 }
 
-int CarolsSinging::choose (vector <string> lyrics) 
+double FenceRepairing::calculateCost (vector <string> boards) 
 {
-	int N = lyrics.size(), M = lyrics.back().size();
-	int ret = M;
+	board.clear();
+	tr(it, boards)
+		board += *it;
+	DEBUG(board);
+	preprocess();
+//	CL(_len, -1);
 
-	forab(mask, 1, (1 << M) - 1)  {
-		vector <bool> good(N, false);
-		forn(j, M)	if((mask & (1<<j)) != 0) {
-			forn(i, N)
-				if(lyrics[i][j] == 'Y')
-					good[i] = true;
-		}
-		if(find(all(good), false) == good.end())
-			ret = min(ret, countBit(mask));
+	forn(i, board.size()) {
+		ans[i] = sqrt(len(0, i));
+
+		forab(j, 0, i-1)
+			ans[i] = min(ans[i], ans[j] + sqrt(len(j+1, i)));
 	}
-	
-	return ret;
+
+	return ans[board.size()-1];
 }
 
 // BEGIN KAWIGIEDIT TESTING
@@ -109,7 +137,7 @@ int CarolsSinging::choose (vector <string> lyrics)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, vector <string> p0, bool hasAnswer, int p1) {
+bool KawigiEdit_RunTest(int testNum, vector <string> p0, bool hasAnswer, double p1) {
 	cout << "Test " << testNum << ": [" << "{";
 	for (int i = 0; int(p0.size()) > i; ++i) {
 		if (i > 0) {
@@ -119,11 +147,11 @@ bool KawigiEdit_RunTest(int testNum, vector <string> p0, bool hasAnswer, int p1)
 	}
 	cout << "}";
 	cout << "]" << endl;
-	CarolsSinging *obj;
-	int answer;
-	obj = new CarolsSinging();
+	FenceRepairing *obj;
+	double answer;
+	obj = new FenceRepairing();
 	clock_t startTime = clock();
-	answer = obj->choose(p0);
+	answer = obj->calculateCost(p0);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -136,7 +164,7 @@ bool KawigiEdit_RunTest(int testNum, vector <string> p0, bool hasAnswer, int p1)
 	cout << "Your answer:" << endl;
 	cout << "\t" << answer << endl;
 	if (hasAnswer) {
-		res = answer == p1;
+		res = answer == answer && fabs(p1 - answer) <= 1e-9 * max(1.0, fabs(p1));
 	}
 	if (!res) {
 		cout << "DOESN'T MATCH!!!!" << endl;
@@ -156,40 +184,40 @@ int main() {
 	all_right = true;
 	
 	vector <string> p0;
-	int p1;
+	double p1;
 	
 	{
 	// ----- test 0 -----
-	string t0[] = {"YN","NY"};
+	string t0[] = {"X.X...X.X"};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 2;
+	p1 = 3.0;
 	all_right = KawigiEdit_RunTest(0, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	string t0[] = {"YN","YY","YN"};
+	string t0[] = {"X.X.....X"};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 1;
+	p1 = 2.732050807568877;
 	all_right = KawigiEdit_RunTest(1, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	string t0[] = {"YNN","YNY","YNY","NYY","NYY","NYN"};
+	string t0[] = {"X.......","......XX",".X......",".X...X.."};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 2;
+	p1 = 5.0;
 	all_right = KawigiEdit_RunTest(2, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	string t0[] = {"YNNYYY","YYNYYY","YNNYYN","NYYNNN","YYYNNN","YYYNNY","NYYYYY","NYNYYY","NNNNYY","YYYYYY","YNNNNN","YYYYNY","YYNNNN","NNYYYN","NNNNYY","YYYNNN","NYNNYN","YNNYYN","YYNNNY","NYYNNY","NNYYYN","YNYYYN","NNNYNY","YYYYNN","YYNYNN","NYYNYY","YYNYYN"};
+	string t0[] = {".X.......X","..........","...X......","...X..X...","..........","..........","..X....XX.",".........X","XXX",".XXX.....X"};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 4;
+	p1 = 9.591663046625438;
 	all_right = KawigiEdit_RunTest(3, p0, true, p1) && all_right;
 	// ------------------
 	}
@@ -202,56 +230,57 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// When the Christmas dinner is over, it's time to sing carols.  Unfortunately, not all the family members know the lyrics to the same carols.  Everybody knows at least one, though.
-// 
-// You are given a vector <string> lyrics.  The j-th character of the i-th element of lyrics is 'Y' if the i-th person knows the j-th carol, and 'N' if he doesn't.  Return the minimal number of carols that must be sung to allow everyone to sing at least once.
+// You are going to repair an old fence.  The fence consists of several consecutive boards, some of which are broken and some of which are fine.  The boards are numbered from left to right in increasing order.  To repair all the boards between i and j, inclusive, where j is greater than or equal to i, a woodworker charges sqrt(j-i+1), where sqrt is the square root function.  Due to the woodworker's pricing scheme, it is often necessary to repair boards even if they are not broken in order to get the best price (see examples).
+// You will be given a vector <string> boards. Concatenate the elements of boards to create a single string representing the fence from left to right. Broken boards are represented by 'X' characters and good boards are represented by '.' characters. Return the minimal cost required to repair all broken boards.
 // 
 // 
 // DEFINITION
-// Class:CarolsSinging
-// Method:choose
+// Class:FenceRepairing
+// Method:calculateCost
 // Parameters:vector <string>
-// Returns:int
-// Method signature:int choose(vector <string> lyrics)
+// Returns:double
+// Method signature:double calculateCost(vector <string> boards)
+// 
+// 
+// NOTES
+// -Your return value must have an absolute or relative error less than 1e-9.
 // 
 // 
 // CONSTRAINTS
-// -lyrics will contain between 1 and 30 elements, inclusive.
-// -Each element of lyrics will contain between 1 and 10 characters, inclusive.
-// -Each element of lyrics will contain the same number of characters.
-// -Each element of lyrics will contain only 'Y' and 'N' characters.
-// -Each element of lyrics will contain at least one 'Y' character.
+// -boards will contain between 1 and 50 elements, inclusive.
+// -Each element of boards will contain between 1 and 50 characters, inclusive.
+// -Each element of boards will contain only '.' and uppercase 'X' characters.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// {"YN","NY"}
+// {"X.X...X.X"}
 // 
-// Returns: 2
+// Returns: 3.0
 // 
-// Both carols need to be sung.
+// The best choice is to repair the entire fence at once.  This will cost sqrt(8-0+1) = 3.
+// 
 // 
 // 1)
-// {"YN","YY","YN"}
+// {"X.X.....X"}
 // 
-// Returns: 1
+// Returns: 2.732050807568877
 // 
-// Everybody knows the first carol, so singing just that one is enough.
+// The best choice is to perform two repairs.  First, repair the three leftmost boards.  Then, repair the rightmost board.  The total cost is sqrt(2-0+1) + sqrt(8-8+1) = 2.73.
 // 
 // 2)
-// {"YNN","YNY","YNY","NYY","NYY","NYN"}
+// {"X.......", "......XX", ".X......", ".X...X.."}
 // 
-// Returns: 2
+// Returns: 5.0
 // 
-// Singing the best known carol is not always the optimal strategy. Here, the optimal way is to pick the first two carols even though four people know the third one.
+// 
 // 
 // 3)
-// {"YNNYYY","YYNYYY","YNNYYN","NYYNNN","YYYNNN","YYYNNY","NYYYYY","NYNYYY","NNNNYY",
-//  "YYYYYY","YNNNNN","YYYYNY","YYNNNN","NNYYYN","NNNNYY","YYYNNN","NYNNYN","YNNYYN",
-//  "YYNNNY","NYYNNY","NNYYYN","YNYYYN","NNNYNY","YYYYNN","YYNYNN","NYYNYY","YYNYYN"}
+// {".X.......X", "..........", "...X......", "...X..X...", "..........",
+//  "..........", "..X....XX.", ".........X", "XXX", ".XXX.....X"}
 // 
-// Returns: 4
+// Returns: 9.591663046625438
 // 
 // 
 // 

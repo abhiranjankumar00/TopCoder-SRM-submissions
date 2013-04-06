@@ -52,7 +52,7 @@ typedef vector<string> 		vs;
 #define rep(i, a, b)	for(int i = a, lets_stop_here = (int)b; i >= lets_stop_here; i--)
 
 #define	all(c)		(c).begin(), (c).end()
-#define	CL(a, b)	memset(a, b, sizeof(a))
+#define	cl(a, b)	memset(a, b, sizeof(a))
 #define mp		make_pair
 #define pb		push_back
 
@@ -63,10 +63,10 @@ typedef vector<string> 		vs;
 #define write(n)	printf("%d ", n)
 #define writeln(n)	printf("%d\n", n)
 
-#if (1 or defined ONLINE_JUDGE)
-	#define DEBUG
+#if (0)
+	#define debug 
 #else 
-	#define DEBUG(x)	cout << #x << " = " << x << "\n"
+	#define debug(x)	cout << #x << " = " << x << "\n"
 #endif
 
 class <%:class-name%>

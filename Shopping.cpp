@@ -63,43 +63,55 @@ typedef vector<string> 		vs;
 #define write(n)	printf("%d ", n)
 #define writeln(n)	printf("%d\n", n)
 
-#if (1 or defined ONLINE_JUDGE)
+#if (0 or defined ONLINE_JUDGE)
 	#define debug 
 #else 
 	#define debug(x)	cout << #x << " = " << x << "\n"
 #endif
 
-class ListeningIn
+class Shopping
 {
 public:
-	string probableMatch(string typed, string phrase);
+	int minNumber(int X, vector <int> values);
 };
 
-string ret;
-void match(string typed, string phrase) {
-	if(typed.empty()) {
-		ret += phrase;
-		return;
-	}
-	if(phrase.empty()) {
-		ret = "UNMATCHED";
-		return;
-	}
-	if(typed.at(0) == phrase.at(0))
-		match(typed.substr(1), phrase.substr(1));
-	else {
-		ret += phrase.at(0);
-		match(typed, phrase.substr(1));
-	}
+vi val;
+int N;
+int possible[1111];
+int cnt = 0;
+
+int find(int X) {
+	rep(i, val.size()-1, 0)
+		if(X - val[i] >= 0)
+			return val[i];
+	debug(X);
+	assert(0);
 }
-string ListeningIn::probableMatch (string typed, string phrase) 
+
+int Shopping::minNumber (int X, vector <int> values) 
 {
-	debug(__GNUC__);
-	debug(__GNUC_MINOR__);
-	debug(__GNUC_PATCHLEVEL__);
-	ret.clear();
-	match(typed, phrase);
-	return ret;
+	sort(all(values));
+	if(values[0] != 1)
+		return -1;
+
+	val = values;
+	CL(possible, 0);
+	possible[0] = 1;
+	N = values.size();
+	cnt = 0;
+
+	forab(c, 1, X) if(!possible[c]){
+		cnt++;
+		int cur = find(c);
+//		Pf("c = %-3d, cur = %-3d \t {", c, cur);
+		rep(i, X, 0)	if(i - cur >= 0 && possible[i-cur] == true) {
+//			Pf("%d ", i);
+			possible[i] = true;
+		}
+//		Pf("}\n");
+	}
+
+	return cnt;
 }
 
 // BEGIN KAWIGIEDIT TESTING
@@ -108,14 +120,21 @@ string ListeningIn::probableMatch (string typed, string phrase)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, string p0, string p1, bool hasAnswer, string p2) {
-	cout << "Test " << testNum << ": [" << "\"" << p0 << "\"" << "," << "\"" << p1 << "\"";
+bool KawigiEdit_RunTest(int testNum, int p0, vector <int> p1, bool hasAnswer, int p2) {
+	cout << "Test " << testNum << ": [" << p0 << "," << "{";
+	for (int i = 0; int(p1.size()) > i; ++i) {
+		if (i > 0) {
+			cout << ",";
+		}
+		cout << p1[i];
+	}
+	cout << "}";
 	cout << "]" << endl;
-	ListeningIn *obj;
-	string answer;
-	obj = new ListeningIn();
+	Shopping *obj;
+	int answer;
+	obj = new Shopping();
 	clock_t startTime = clock();
-	answer = obj->probableMatch(p0, p1);
+	answer = obj->minNumber(p0, p1);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -123,10 +142,10 @@ bool KawigiEdit_RunTest(int testNum, string p0, string p1, bool hasAnswer, strin
 	cout << "Time: " << double(endTime - startTime) / CLOCKS_PER_SEC << " seconds" << endl;
 	if (hasAnswer) {
 		cout << "Desired answer:" << endl;
-		cout << "\t" << "\"" << p2 << "\"" << endl;
+		cout << "\t" << p2 << endl;
 	}
 	cout << "Your answer:" << endl;
-	cout << "\t" << "\"" << answer << "\"" << endl;
+	cout << "\t" << answer << endl;
 	if (hasAnswer) {
 		res = answer == p2;
 	}
@@ -147,34 +166,47 @@ int main() {
 	bool all_right;
 	all_right = true;
 	
-	string p0;
-	string p1;
-	string p2;
+	int p0;
+	vector <int> p1;
+	int p2;
 	
 	{
 	// ----- test 0 -----
-	p0 = "cptr";
-	p1 = "capture";
-	p2 = "aue";
+	p0 = 20;
+	int t1[] = {1,2,5,10};
+			p1.assign(t1, t1 + sizeof(t1) / sizeof(t1[0]));
+	p2 = 5;
 	all_right = KawigiEdit_RunTest(0, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	p0 = "port to me";
-	p1 = "teleport to me";
-	p2 = "tele";
+	p0 = 7;
+	int t1[] = {2,4,1,7};
+			p1.assign(t1, t1 + sizeof(t1) / sizeof(t1[0]));
+	p2 = 3;
 	all_right = KawigiEdit_RunTest(1, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	p0 = "back  to base";
-	p1 = "back to base";
-	p2 = "UNMATCHED";
+	p0 = 20;
+	int t1[] = {2,4,6,8};
+			p1.assign(t1, t1 + sizeof(t1) / sizeof(t1[0]));
+	p2 = -1;
 	all_right = KawigiEdit_RunTest(2, p0, p1, true, p2) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 3 -----
+	p0 = 600;
+	int t1[] = {1,2,3,10,11,30};
+			p1.assign(t1, t1 + sizeof(t1) / sizeof(t1[0]));
+	p2 = 25;
+	all_right = KawigiEdit_RunTest(3, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
@@ -186,47 +218,61 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// You are creating an online multiplayer cooperative game. Players on a team may chat with each other during the game, and you intend to take advantage of this when building the AI to handle opponents. Part of the AI includes determining whether a given phrase is part of a player's chat. Of course, many variations of a given phrase are possible, and you want to detect as many as you can. Shorthand is the most common example: instead of typing 'capture', a player might type 'cptr', or 'port to me' instead of 'teleport to me'. You will be provided with a string typed typed by a player and a phrase that you wish to check against. Return the characters removed from phrase to obtain typed in the order they appear in phrase or "UNMATCHED" if there is no way to obtain typed from phrase by simply removing characters. The constraints ensure that the return is unique (there is only one option for which string is returned).
+// 
+// Christmas is coming soon and you still have so many things to buy.  You are going to the store and don't expect to spend more than X dollars.  You want to be able to pay any integer amount not exceeding X dollars, and you want to take as few coins as possible to achieve this. 
+// 
+// 
+// You are given a vector <int> values, each element of which describes the dollar value of a kind of coin.  You have an unlimited supply of each kind of coin.  Return the minimal number of coins you need to take, or -1 if it is impossible to achieve your goal.
+// 
 // 
 // DEFINITION
-// Class:ListeningIn
-// Method:probableMatch
-// Parameters:string, string
-// Returns:string
-// Method signature:string probableMatch(string typed, string phrase)
+// Class:Shopping
+// Method:minNumber
+// Parameters:int, vector <int>
+// Returns:int
+// Method signature:int minNumber(int X, vector <int> values)
 // 
 // 
 // CONSTRAINTS
-// -typed and phrase will contain only lowercase letters ('a'-'z') and spaces
-// -typed and phrase will be between 1 and 50 characters long, inclusive.
-// -All valid groups of characters that could be removed to turn phrase into typed will give the same output.
+// -X will be between 1 and 1000, inclusive.
+// -values will contain between 1 and 10 elements, inclusive.
+// -Each element of values will be between 1 and 1000, inclusive.
+// -The elements in values will be distinct.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// "cptr"
-// "capture"
+// 20
+// {1, 2, 5, 10}
 // 
-// Returns: "aue"
+// Returns: 5
 // 
-// The example given in the problem statement.
+// Taking 5 coins with values {1,2,2,5,10} allows you to pay any integer amount between 1 and 20, inclusive.
 // 
 // 1)
-// "port to me"
-// "teleport to me"
+// 7
+// {2, 4, 1, 7}
 // 
-// Returns: "tele"
+// Returns: 3
 // 
-// The other example from the statement.
+// Here, taking {2,4,1} is enough.
 // 
 // 2)
-// "back  to base"
-// "back to base"
+// 20
+// {2,4,6,8}
 // 
-// Returns: "UNMATCHED"
+// Returns: -1
 // 
-// An extra space has been added; we do not account for additions, only deletions.
+// These nominals allow you to pay only even amounts.
+// 
+// 3)
+// 600
+// {1,2,3,10,11,30}
+// 
+// Returns: 25
+// 
+// 
 // 
 // END KAWIGIEDIT TESTING
 

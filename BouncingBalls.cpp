@@ -63,44 +63,59 @@ typedef vector<string> 		vs;
 #define write(n)	printf("%d ", n)
 #define writeln(n)	printf("%d\n", n)
 
-#if (0 or defined ONLINE_JUDGE)
+#if (0)
 	#define debug 
 #else 
 	#define debug(x)	cout << #x << " = " << x << "\n"
 #endif
 
-class CarolsSinging
+class BouncingBalls
 {
 public:
-	int choose(vector <string> lyrics);
+	double expectedBounces(vector <int> x, int T);
 };
 
-int countBit(int n) {
-	int ret = 0;
-	while(n > 0) {
-		ret += n & 1;
-		n >>= 1;
+int N, T;
+int cnt = 0;
+vi x;
+int dir[15];
+
+void get(int id = 0) {
+	if(id == N) {
+/*
+		forn(i, N)
+			Pf("%+d ", dir[i]);
+		cout << endl;
+*/
+		forn(i, N)	if(dir[i] == 1) {
+			forab(j, i+1, N-1) 	if(dir[j] == -1){
+				if(x[j] - x[i] <= 2*T)
+					cnt++;
+			}
+		}
+		return;
 	}
-	return ret;
+	for(int i = -1; i <= 1; i+=2) {
+		dir[id] = i;
+		get(id+1);
+	}
 }
 
-int CarolsSinging::choose (vector <string> lyrics) 
+double BouncingBalls::expectedBounces (vector <int> _x, int _T) 
 {
-	int N = lyrics.size(), M = lyrics.back().size();
-	int ret = M;
+	x = _x;
+	T = _T;
+	N = x.size();
+	sort(all(x));
+	cnt = 0;
 
-	forab(mask, 1, (1 << M) - 1)  {
-		vector <bool> good(N, false);
-		forn(j, M)	if((mask & (1<<j)) != 0) {
-			forn(i, N)
-				if(lyrics[i][j] == 'Y')
-					good[i] = true;
-		}
-		if(find(all(good), false) == good.end())
-			ret = min(ret, countBit(mask));
-	}
-	
-	return ret;
+//	cout << endl;
+	get();
+//	cout << endl;
+
+	debug(cnt);
+
+	return 1.0*cnt/(1<<N);
 }
 
 // BEGIN KAWIGIEDIT TESTING
@@ -109,21 +124,21 @@ int CarolsSinging::choose (vector <string> lyrics)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, vector <string> p0, bool hasAnswer, int p1) {
+bool KawigiEdit_RunTest(int testNum, vector <int> p0, int p1, bool hasAnswer, double p2) {
 	cout << "Test " << testNum << ": [" << "{";
 	for (int i = 0; int(p0.size()) > i; ++i) {
 		if (i > 0) {
 			cout << ",";
 		}
-		cout << "\"" << p0[i] << "\"";
+		cout << p0[i];
 	}
-	cout << "}";
+	cout << "}" << "," << p1;
 	cout << "]" << endl;
-	CarolsSinging *obj;
-	int answer;
-	obj = new CarolsSinging();
+	BouncingBalls *obj;
+	double answer;
+	obj = new BouncingBalls();
 	clock_t startTime = clock();
-	answer = obj->choose(p0);
+	answer = obj->expectedBounces(p0, p1);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -131,12 +146,12 @@ bool KawigiEdit_RunTest(int testNum, vector <string> p0, bool hasAnswer, int p1)
 	cout << "Time: " << double(endTime - startTime) / CLOCKS_PER_SEC << " seconds" << endl;
 	if (hasAnswer) {
 		cout << "Desired answer:" << endl;
-		cout << "\t" << p1 << endl;
+		cout << "\t" << p2 << endl;
 	}
 	cout << "Your answer:" << endl;
 	cout << "\t" << answer << endl;
 	if (hasAnswer) {
-		res = answer == p1;
+		res = answer == answer && fabs(p2 - answer) <= 1e-9 * max(1.0, fabs(p2));
 	}
 	if (!res) {
 		cout << "DOESN'T MATCH!!!!" << endl;
@@ -155,42 +170,57 @@ int main() {
 	bool all_right;
 	all_right = true;
 	
-	vector <string> p0;
+	vector <int> p0;
 	int p1;
+	double p2;
 	
 	{
 	// ----- test 0 -----
-	string t0[] = {"YN","NY"};
+	int t0[] = {5,8};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
 	p1 = 2;
-	all_right = KawigiEdit_RunTest(0, p0, true, p1) && all_right;
+	p2 = 0.25;
+	all_right = KawigiEdit_RunTest(0, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	string t0[] = {"YN","YY","YN"};
+	int t0[] = {5,8};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
 	p1 = 1;
-	all_right = KawigiEdit_RunTest(1, p0, true, p1) && all_right;
+	p2 = 0.0;
+	all_right = KawigiEdit_RunTest(1, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	string t0[] = {"YNN","YNY","YNY","NYY","NYY","NYN"};
+	int t0[] = {91,857,692,54,8679,83,792,86,9537,913,64,592};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 2;
-	all_right = KawigiEdit_RunTest(2, p0, true, p1) && all_right;
+	p1 = 458;
+	p2 = 11.5;
+	all_right = KawigiEdit_RunTest(2, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	string t0[] = {"YNNYYY","YYNYYY","YNNYYN","NYYNNN","YYYNNN","YYYNNY","NYYYYY","NYNYYY","NNNNYY","YYYYYY","YNNNNN","YYYYNY","YYNNNN","NNYYYN","NNNNYY","YYYNNN","NYNNYN","YNNYYN","YYNNNY","NYYNNY","NNYYYN","YNYYYN","NNNYNY","YYYYNN","YYNYNN","NYYNYY","YYNYYN"};
+	int t0[] = {75432};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 4;
-	all_right = KawigiEdit_RunTest(3, p0, true, p1) && all_right;
+	p1 = 386;
+	p2 = 0.0;
+	all_right = KawigiEdit_RunTest(3, p0, p1, true, p2) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 4 -----
+	int t0[] = {1,2,3,4,5,6,7,8,9,10,11,12};
+			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
+	p1 = 3;
+	p2 = 12.75;
+	all_right = KawigiEdit_RunTest(4, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
@@ -202,56 +232,70 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// When the Christmas dinner is over, it's time to sing carols.  Unfortunately, not all the family members know the lyrics to the same carols.  Everybody knows at least one, though.
+// John is playing with balls. All of the balls are identical in weight and considered to have a zero radius. All balls are located on the same straight line and can move only along this line. If a ball rolling to the right and a ball rolling to the left at the same speed collide, they do not change speed, but they change direction.
 // 
-// You are given a vector <string> lyrics.  The j-th character of the i-th element of lyrics is 'Y' if the i-th person knows the j-th carol, and 'N' if he doesn't.  Return the minimal number of carols that must be sung to allow everyone to sing at least once.
 // 
+// You are given vector <int> x. x[i] is the initial position of the i-th ball. John decides the direction for each ball (right or left) with equal probability. At time 0, he rolls the balls in the chosen directions simultaneously at a speed of one unit per second. Return the expected number of bounces between all balls during T seconds (including those collisions that happen exactly at T seconds).
 // 
 // DEFINITION
-// Class:CarolsSinging
-// Method:choose
-// Parameters:vector <string>
-// Returns:int
-// Method signature:int choose(vector <string> lyrics)
+// Class:BouncingBalls
+// Method:expectedBounces
+// Parameters:vector <int>, int
+// Returns:double
+// Method signature:double expectedBounces(vector <int> x, int T)
+// 
+// 
+// NOTES
+// -There is no friction. Each ball continues rolling at the same speed forever.
+// -Your return value must have an absolute or relative error less than 1e-9.
 // 
 // 
 // CONSTRAINTS
-// -lyrics will contain between 1 and 30 elements, inclusive.
-// -Each element of lyrics will contain between 1 and 10 characters, inclusive.
-// -Each element of lyrics will contain the same number of characters.
-// -Each element of lyrics will contain only 'Y' and 'N' characters.
-// -Each element of lyrics will contain at least one 'Y' character.
+// -x will contain between 1 and 12 elements, inclusive.
+// -Each element of x will be between 0 and 100,000,000, inclusive.
+// -All elements of x will be distinct.
+// -T will be between 1 and 100,000,000, inclusive.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// {"YN","NY"}
+// {5, 8}
+// 2
 // 
-// Returns: 2
+// Returns: 0.25
 // 
-// Both carols need to be sung.
+// If he rolls the left ball to the right and right ball to the left, they collide at time 1.5. Otherwise, they don't collide.
 // 
 // 1)
-// {"YN","YY","YN"}
+// {5, 8}
+// 1
 // 
-// Returns: 1
+// Returns: 0.0
 // 
-// Everybody knows the first carol, so singing just that one is enough.
+// x is the same as in example 0, but T is too small.
 // 
 // 2)
-// {"YNN","YNY","YNY","NYY","NYY","NYN"}
+// {91, 857, 692, 54, 8679, 83, 792, 86, 9537, 913, 64, 592}
+// 458
 // 
-// Returns: 2
+// Returns: 11.5
 // 
-// Singing the best known carol is not always the optimal strategy. Here, the optimal way is to pick the first two carols even though four people know the third one.
+// 
 // 
 // 3)
-// {"YNNYYY","YYNYYY","YNNYYN","NYYNNN","YYYNNN","YYYNNY","NYYYYY","NYNYYY","NNNNYY",
-//  "YYYYYY","YNNNNN","YYYYNY","YYNNNN","NNYYYN","NNNNYY","YYYNNN","NYNNYN","YNNYYN",
-//  "YYNNNY","NYYNNY","NNYYYN","YNYYYN","NNNYNY","YYYYNN","YYNYNN","NYYNYY","YYNYYN"}
+// {75432}
+// 386
 // 
-// Returns: 4
+// Returns: 0.0
+// 
+// 
+// 
+// 4)
+// {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
+// 3
+// 
+// Returns: 12.75
 // 
 // 
 // 

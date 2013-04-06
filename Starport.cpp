@@ -63,42 +63,47 @@ typedef vector<string> 		vs;
 #define write(n)	printf("%d ", n)
 #define writeln(n)	printf("%d\n", n)
 
-#if (1 or defined ONLINE_JUDGE)
-	#define debug 
+#if (0 or defined ONLINE_JUDGE)
+	#define DEBUG
 #else 
-	#define debug(x)	cout << #x << " = " << x << "\n"
+	#define DEBUG(x)	cout << #x << " = " << x << "\n"
 #endif
 
-class ListeningIn
+class Starport
 {
 public:
-	string probableMatch(string typed, string phrase);
+	double getExpectedTime(int N, int M);
 };
+int64 N, M;
 
-string ret;
-void match(string typed, string phrase) {
-	if(typed.empty()) {
-		ret += phrase;
-		return;
-	}
-	if(phrase.empty()) {
-		ret = "UNMATCHED";
-		return;
-	}
-	if(typed.at(0) == phrase.at(0))
-		match(typed.substr(1), phrase.substr(1));
-	else {
-		ret += phrase.at(0);
-		match(typed, phrase.substr(1));
-	}
+int64 lcm(int64 a, int64 b) {
+	return a / __gcd(a, b)*b;
 }
-string ListeningIn::probableMatch (string typed, string phrase) 
+
+double Starport::getExpectedTime (int _N, int _M) 
 {
-	debug(__GNUC__);
-	debug(__GNUC_MINOR__);
-	debug(__GNUC_PATCHLEVEL__);
-	ret.clear();
-	match(typed, phrase);
+	N = _N;
+	M = _M;
+	int64 l = lcm(N, M);
+
+	int64 n = 0, m = 0;
+	int64 cnt = 0, wait = 0;
+	M = 0;
+
+	do {
+		cnt++;
+		wait += ((m % _N) + _N)%_N;
+		m = (m + _M) % _N;
+		m = (m + _N) % _N;
+
+//		Pf("M = %lld, curWait = %lld, wait = %lld, cnt = %lld\n", M, m % N, wait, cnt);
+		M += _M;
+	}while(m != 0);
+
+	return wait*1.0/cnt;
+
+	double ret;
+	
 	return ret;
 }
 
@@ -108,14 +113,14 @@ string ListeningIn::probableMatch (string typed, string phrase)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, string p0, string p1, bool hasAnswer, string p2) {
-	cout << "Test " << testNum << ": [" << "\"" << p0 << "\"" << "," << "\"" << p1 << "\"";
+bool KawigiEdit_RunTest(int testNum, int p0, int p1, bool hasAnswer, double p2) {
+	cout << "Test " << testNum << ": [" << p0 << "," << p1;
 	cout << "]" << endl;
-	ListeningIn *obj;
-	string answer;
-	obj = new ListeningIn();
+	Starport *obj;
+	double answer;
+	obj = new Starport();
 	clock_t startTime = clock();
-	answer = obj->probableMatch(p0, p1);
+	answer = obj->getExpectedTime(p0, p1);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -123,12 +128,12 @@ bool KawigiEdit_RunTest(int testNum, string p0, string p1, bool hasAnswer, strin
 	cout << "Time: " << double(endTime - startTime) / CLOCKS_PER_SEC << " seconds" << endl;
 	if (hasAnswer) {
 		cout << "Desired answer:" << endl;
-		cout << "\t" << "\"" << p2 << "\"" << endl;
+		cout << "\t" << p2 << endl;
 	}
 	cout << "Your answer:" << endl;
-	cout << "\t" << "\"" << answer << "\"" << endl;
+	cout << "\t" << answer << endl;
 	if (hasAnswer) {
-		res = answer == p2;
+		res = answer == answer && fabs(p2 - answer) <= 1e-9 * max(1.0, fabs(p2));
 	}
 	if (!res) {
 		cout << "DOESN'T MATCH!!!!" << endl;
@@ -147,34 +152,43 @@ int main() {
 	bool all_right;
 	all_right = true;
 	
-	string p0;
-	string p1;
-	string p2;
+	int p0;
+	int p1;
+	double p2;
 	
 	{
 	// ----- test 0 -----
-	p0 = "cptr";
-	p1 = "capture";
-	p2 = "aue";
+	p0 = 4;
+	p1 = 2;
+	p2 = 1.0;
 	all_right = KawigiEdit_RunTest(0, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	p0 = "port to me";
-	p1 = "teleport to me";
-	p2 = "tele";
+	p0 = 5;
+	p1 = 3;
+	p2 = 2.0;
 	all_right = KawigiEdit_RunTest(1, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	p0 = "back  to base";
-	p1 = "back to base";
-	p2 = "UNMATCHED";
+	p0 = 6;
+	p1 = 1;
+	p2 = 2.5;
 	all_right = KawigiEdit_RunTest(2, p0, p1, true, p2) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 3 -----
+	p0 = 12345;
+	p1 = 2345;
+	p2 = 6170.0;
+	all_right = KawigiEdit_RunTest(3, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
@@ -186,47 +200,63 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// You are creating an online multiplayer cooperative game. Players on a team may chat with each other during the game, and you intend to take advantage of this when building the AI to handle opponents. Part of the AI includes determining whether a given phrase is part of a player's chat. Of course, many variations of a given phrase are possible, and you want to detect as many as you can. Shorthand is the most common example: instead of typing 'capture', a player might type 'cptr', or 'port to me' instead of 'teleport to me'. You will be provided with a string typed typed by a player and a phrase that you wish to check against. Return the characters removed from phrase to obtain typed in the order they appear in phrase or "UNMATCHED" if there is no way to obtain typed from phrase by simply removing characters. The constraints ensure that the return is unique (there is only one option for which string is returned).
+// A new starport has just started working. Starting from some moment of time (call it minute 0), a new spaceship arrives at the starport every M minutes. In other words, spaceships arrive at the starport at minutes 0, M, 2*M, 3*M and so on. 
+// 
+// Similarly, starting from minute 0 and repeating each N minutes, all arrived spaceships that are still placed at the port are teleported to the shed. If a spaceship arrives at the exact same minute when such a teleportation happens, it will be teleported immediately. Otherwise it will need to wait until the next teleportation happens.
+// 
+// Let the waiting time of a spaceship be the time between its arrival and its teleportation to the shed. Return the average waiting time of a spaceship in minutes. See notes for an exact definition.
+// 
 // 
 // DEFINITION
-// Class:ListeningIn
-// Method:probableMatch
-// Parameters:string, string
-// Returns:string
-// Method signature:string probableMatch(string typed, string phrase)
+// Class:Starport
+// Method:getExpectedTime
+// Parameters:int, int
+// Returns:double
+// Method signature:double getExpectedTime(int N, int M)
+// 
+// 
+// NOTES
+// -Let W(i) be the waiting time for the spaceship that arrives at minute M * i. The average waiting time can be defined as the limit of (W(0) + W(1) + ... + W(P - 1)) / P when P tends to positive infinity. This limit will always exist.
+// -The returned value must have an absolute or relative error less than 1e-9.
 // 
 // 
 // CONSTRAINTS
-// -typed and phrase will contain only lowercase letters ('a'-'z') and spaces
-// -typed and phrase will be between 1 and 50 characters long, inclusive.
-// -All valid groups of characters that could be removed to turn phrase into typed will give the same output.
+// -N and M will each be between 1 and 1,000,000,000, inclusive.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// "cptr"
-// "capture"
+// 4
+// 2
 // 
-// Returns: "aue"
+// Returns: 1.0
 // 
-// The example given in the problem statement.
+// Spaceships arrive at the starport at minutes 0, 2, 4, 6, 8, and so on. Teleportations are done at minutes 0, 4, 8, and so on. The waiting times for the spaceships are, correspondingly, 0, 2, 0, 2, 0, and so on, so the expected waiting time is 1.
 // 
 // 1)
-// "port to me"
-// "teleport to me"
+// 5
+// 3
 // 
-// Returns: "tele"
+// Returns: 2.0
 // 
-// The other example from the statement.
+// 
 // 
 // 2)
-// "back  to base"
-// "back to base"
+// 6
+// 1
 // 
-// Returns: "UNMATCHED"
+// Returns: 2.5
 // 
-// An extra space has been added; we do not account for additions, only deletions.
+// 
+// 
+// 3)
+// 12345
+// 2345
+// 
+// Returns: 6170.0
+// 
+// 
 // 
 // END KAWIGIEDIT TESTING
 

@@ -64,41 +64,32 @@ typedef vector<string> 		vs;
 #define writeln(n)	printf("%d\n", n)
 
 #if (0 or defined ONLINE_JUDGE)
-	#define debug 
+	#define DEBUG
 #else 
-	#define debug(x)	cout << #x << " = " << x << "\n"
+	#define DEBUG(x)	cout << #x << " = " << x << "\n"
 #endif
 
-class CarolsSinging
+class OrderedNim
 {
 public:
-	int choose(vector <string> lyrics);
+	string winner(vector <int> layout);
 };
 
-int countBit(int n) {
-	int ret = 0;
-	while(n > 0) {
-		ret += n & 1;
-		n >>= 1;
-	}
-	return ret;
-}
-
-int CarolsSinging::choose (vector <string> lyrics) 
+string OrderedNim::winner (vector <int> layout) 
 {
-	int N = lyrics.size(), M = lyrics.back().size();
-	int ret = M;
+	string alice = "Alice", bob = "Bob";
+	if(count(all(layout), 1) == layout.size())
+		return layout.size() % 2 == 1 ? alice : bob;
 
-	forab(mask, 1, (1 << M) - 1)  {
-		vector <bool> good(N, false);
-		forn(j, M)	if((mask & (1<<j)) != 0) {
-			forn(i, N)
-				if(lyrics[i][j] == 'Y')
-					good[i] = true;
-		}
-		if(find(all(good), false) == good.end())
-			ret = min(ret, countBit(mask));
+	int len = 0;
+	forn(i, layout.size())	{
+		if(layout[i] == 1)
+			len++;
+		else
+			break;
 	}
+	return len % 2 == 1 ? bob : alice;
+	string ret;
 	
 	return ret;
 }
@@ -109,21 +100,21 @@ int CarolsSinging::choose (vector <string> lyrics)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, vector <string> p0, bool hasAnswer, int p1) {
+bool KawigiEdit_RunTest(int testNum, vector <int> p0, bool hasAnswer, string p1) {
 	cout << "Test " << testNum << ": [" << "{";
 	for (int i = 0; int(p0.size()) > i; ++i) {
 		if (i > 0) {
 			cout << ",";
 		}
-		cout << "\"" << p0[i] << "\"";
+		cout << p0[i];
 	}
 	cout << "}";
 	cout << "]" << endl;
-	CarolsSinging *obj;
-	int answer;
-	obj = new CarolsSinging();
+	OrderedNim *obj;
+	string answer;
+	obj = new OrderedNim();
 	clock_t startTime = clock();
-	answer = obj->choose(p0);
+	answer = obj->winner(p0);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -131,10 +122,10 @@ bool KawigiEdit_RunTest(int testNum, vector <string> p0, bool hasAnswer, int p1)
 	cout << "Time: " << double(endTime - startTime) / CLOCKS_PER_SEC << " seconds" << endl;
 	if (hasAnswer) {
 		cout << "Desired answer:" << endl;
-		cout << "\t" << p1 << endl;
+		cout << "\t" << "\"" << p1 << "\"" << endl;
 	}
 	cout << "Your answer:" << endl;
-	cout << "\t" << answer << endl;
+	cout << "\t" << "\"" << answer << "\"" << endl;
 	if (hasAnswer) {
 		res = answer == p1;
 	}
@@ -155,42 +146,51 @@ int main() {
 	bool all_right;
 	all_right = true;
 	
-	vector <string> p0;
-	int p1;
+	vector <int> p0;
+	string p1;
 	
 	{
 	// ----- test 0 -----
-	string t0[] = {"YN","NY"};
+	int t0[] = {5};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 2;
+	p1 = "Alice";
 	all_right = KawigiEdit_RunTest(0, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	string t0[] = {"YN","YY","YN"};
+	int t0[] = {1,2};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 1;
+	p1 = "Bob";
 	all_right = KawigiEdit_RunTest(1, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	string t0[] = {"YNN","YNY","YNY","NYY","NYY","NYN"};
+	int t0[] = {2,1};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 2;
+	p1 = "Alice";
 	all_right = KawigiEdit_RunTest(2, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	string t0[] = {"YNNYYY","YYNYYY","YNNYYN","NYYNNN","YYYNNN","YYYNNY","NYYYYY","NYNYYY","NNNNYY","YYYYYY","YNNNNN","YYYYNY","YYNNNN","NNYYYN","NNNNYY","YYYNNN","NYNNYN","YNNYYN","YYNNNY","NYYNNY","NNYYYN","YNYYYN","NNNYNY","YYYYNN","YYNYNN","NYYNYY","YYNYYN"};
+	int t0[] = {10,9,8,7,6,5,4,3,2,1};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 4;
+	p1 = "Alice";
 	all_right = KawigiEdit_RunTest(3, p0, true, p1) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 4 -----
+	int t0[] = {1,1,1,1};
+			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
+	p1 = "Bob";
+	all_right = KawigiEdit_RunTest(4, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
@@ -202,58 +202,59 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// When the Christmas dinner is over, it's time to sing carols.  Unfortunately, not all the family members know the lyrics to the same carols.  Everybody knows at least one, though.
+// Nim is a game in which two players take turns removing stones from heaps.  On each turn, a player must choose a single heap and remove one or more stones from that heap.  The player who takes the last stone wins.
 // 
-// You are given a vector <string> lyrics.  The j-th character of the i-th element of lyrics is 'Y' if the i-th person knows the j-th carol, and 'N' if he doesn't.  Return the minimal number of carols that must be sung to allow everyone to sing at least once.
+// Alice and Bob are bored with playing Nim over and over again, so they've decided to create a new variation called Ordered Nim.  Ordered Nim differs from regular Nim in the following way.  The heaps are numbered 0 through n-1 (where n is the number of heaps), and a player can only remove stones from a heap if all the lower-numbered heaps are empty.
 // 
+// You are given a vector <int> layout, where the i-th element (0-indexed) is the number of stones in heap i at the beginning of the game.  Alice will take the first turn.  Determine who will win the game, assuming both players play optimally.  Return "Alice" if Alice will win, or "Bob" if Bob will win (all quotes for clarity).
 // 
 // DEFINITION
-// Class:CarolsSinging
-// Method:choose
-// Parameters:vector <string>
-// Returns:int
-// Method signature:int choose(vector <string> lyrics)
+// Class:OrderedNim
+// Method:winner
+// Parameters:vector <int>
+// Returns:string
+// Method signature:string winner(vector <int> layout)
 // 
 // 
 // CONSTRAINTS
-// -lyrics will contain between 1 and 30 elements, inclusive.
-// -Each element of lyrics will contain between 1 and 10 characters, inclusive.
-// -Each element of lyrics will contain the same number of characters.
-// -Each element of lyrics will contain only 'Y' and 'N' characters.
-// -Each element of lyrics will contain at least one 'Y' character.
+// -layout will contain between 1 and 50 elements, inclusive.
+// -Each element of layout will be between 1 and 1000000000, inclusive.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// {"YN","NY"}
+// {5}
 // 
-// Returns: 2
+// Returns: "Alice"
 // 
-// Both carols need to be sung.
+// Alice takes all 5 stones and wins.
 // 
 // 1)
-// {"YN","YY","YN"}
+// {1,2}
 // 
-// Returns: 1
+// Returns: "Bob"
 // 
-// Everybody knows the first carol, so singing just that one is enough.
+// According to the rules of the game, Alice is not allowed to take stones from heap 1 because heap 0 is not empty.  Her only option is to take the one stone from heap 0.  Heap 0 will then be empty, so Bob can take both stones from heap 1 to win the game.
 // 
 // 2)
-// {"YNN","YNY","YNY","NYY","NYY","NYN"}
+// {2,1}
 // 
-// Returns: 2
+// Returns: "Alice"
 // 
-// Singing the best known carol is not always the optimal strategy. Here, the optimal way is to pick the first two carols even though four people know the third one.
+// 
 // 
 // 3)
-// {"YNNYYY","YYNYYY","YNNYYN","NYYNNN","YYYNNN","YYYNNY","NYYYYY","NYNYYY","NNNNYY",
-//  "YYYYYY","YNNNNN","YYYYNY","YYNNNN","NNYYYN","NNNNYY","YYYNNN","NYNNYN","YNNYYN",
-//  "YYNNNY","NYYNNY","NNYYYN","YNYYYN","NNNYNY","YYYYNN","YYNYNN","NYYNYY","YYNYYN"}
+// {10,9,8,7,6,5,4,3,2,1}
 // 
-// Returns: 4
+// Returns: "Alice"
 // 
 // 
+// 
+// 4)
+// {1,1,1,1}
+// 
+// Returns: "Bob"
 // 
 // END KAWIGIEDIT TESTING
 

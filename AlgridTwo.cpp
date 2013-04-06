@@ -64,41 +64,20 @@ typedef vector<string> 		vs;
 #define writeln(n)	printf("%d\n", n)
 
 #if (0 or defined ONLINE_JUDGE)
-	#define debug 
+	#define DEBUG
 #else 
-	#define debug(x)	cout << #x << " = " << x << "\n"
+	#define DEBUG(x)	cout << #x << " = " << x << "\n"
 #endif
 
-class CarolsSinging
+class AlgridTwo
 {
 public:
-	int choose(vector <string> lyrics);
+	int makeProgram(vector <string> output);
 };
 
-int countBit(int n) {
-	int ret = 0;
-	while(n > 0) {
-		ret += n & 1;
-		n >>= 1;
-	}
-	return ret;
-}
-
-int CarolsSinging::choose (vector <string> lyrics) 
+int AlgridTwo::makeProgram (vector <string> output) 
 {
-	int N = lyrics.size(), M = lyrics.back().size();
-	int ret = M;
-
-	forab(mask, 1, (1 << M) - 1)  {
-		vector <bool> good(N, false);
-		forn(j, M)	if((mask & (1<<j)) != 0) {
-			forn(i, N)
-				if(lyrics[i][j] == 'Y')
-					good[i] = true;
-		}
-		if(find(all(good), false) == good.end())
-			ret = min(ret, countBit(mask));
-	}
+	int ret;
 	
 	return ret;
 }
@@ -119,11 +98,11 @@ bool KawigiEdit_RunTest(int testNum, vector <string> p0, bool hasAnswer, int p1)
 	}
 	cout << "}";
 	cout << "]" << endl;
-	CarolsSinging *obj;
+	AlgridTwo *obj;
 	int answer;
-	obj = new CarolsSinging();
+	obj = new AlgridTwo();
 	clock_t startTime = clock();
-	answer = obj->choose(p0);
+	answer = obj->makeProgram(p0);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -160,36 +139,36 @@ int main() {
 	
 	{
 	// ----- test 0 -----
-	string t0[] = {"YN","NY"};
+	string t0[] = {"BB","WB"};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 2;
+	p1 = 1;
 	all_right = KawigiEdit_RunTest(0, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	string t0[] = {"YN","YY","YN"};
+	string t0[] = {"BBWBBB","WBWBBW"};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 1;
+	p1 = 8;
 	all_right = KawigiEdit_RunTest(1, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	string t0[] = {"YNN","YNY","YNY","NYY","NYY","NYN"};
+	string t0[] = {"BWBWBW","WWWWWW","WBBWBW"};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 2;
+	p1 = 0;
 	all_right = KawigiEdit_RunTest(2, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	string t0[] = {"YNNYYY","YYNYYY","YNNYYN","NYYNNN","YYYNNN","YYYNNY","NYYYYY","NYNYYY","NNNNYY","YYYYYY","YNNNNN","YYYYNY","YYNNNN","NNYYYN","NNNNYY","YYYNNN","NYNNYN","YNNYYN","YYNNNY","NYYNNY","NNYYYN","YNYYYN","NNNYNY","YYYYNN","YYNYNN","NYYNYY","YYNYYN"};
+	string t0[] = {"WWBWBWBWBWBWBWBW","BWBWBWBWBWBWBWBB","BWBWBWBWBWBWBWBW"};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 4;
+	p1 = 73741817;
 	all_right = KawigiEdit_RunTest(3, p0, true, p1) && all_right;
 	// ------------------
 	}
@@ -202,56 +181,92 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// When the Christmas dinner is over, it's time to sing carols.  Unfortunately, not all the family members know the lyrics to the same carols.  Everybody knows at least one, though.
+// Algrid2 is a program that uses a single grid with cells colored white or black as input and returns a new one as output. The grid has H rows and W columns. The topmost row is row 0, the bottommost row is row H-1, the leftmost column is column 0 and the rightmost column is column W-1. The cell at row i, column j can be denoted as (i,j). The program works by evaluating pairs of contiguous cells and making decisions depending on their contents. The following pseudo-code describes how the program works:
 // 
-// You are given a vector <string> lyrics.  The j-th character of the i-th element of lyrics is 'Y' if the i-th person knows the j-th carol, and 'N' if he doesn't.  Return the minimal number of carols that must be sung to allow everyone to sing at least once.
 // 
+// For i = 0 to H-2:
+//     For j = 0 to W-2:
+//         //Get the current colors of cells (i,j) and (i,j+1)
+//         A = Color(i,j) , B = Color(i,j+1)
+// 
+//         If (A,B) == (White, White) Then:
+//              Do nothing.
+//         EndIf
+//         If (A,B) == (Black, White) Then: 
+//              Repaint cells (i+1,j) and (i+1,j+1) Black.
+//         EndIf
+//         If (A,B) == (White, Black) Then:
+//              Repaint cells (i+1,j) and (i+1,j+1) White.
+//         EndIf
+//         if (A,B) == (Black, Black) Then:
+//              Swap the colors in cells (i+1,j) and (i+1,j+1).
+//         EndIf
+//     EndFor
+// EndFor
+// 
+// 
+// You will be given a possible output for the program as a vector <string> output. The j-th character in the i-th element of output represents the color of cell (i,j) where 'W' represents white and 'B' represents black. Count the total number of input grids that can generate this output. Two input grids are different if there is at least one cell in which the colors are different. Since the result may be very large, return it modulo 1000000007.
 // 
 // DEFINITION
-// Class:CarolsSinging
-// Method:choose
+// Class:AlgridTwo
+// Method:makeProgram
 // Parameters:vector <string>
 // Returns:int
-// Method signature:int choose(vector <string> lyrics)
+// Method signature:int makeProgram(vector <string> output)
 // 
 // 
 // CONSTRAINTS
-// -lyrics will contain between 1 and 30 elements, inclusive.
-// -Each element of lyrics will contain between 1 and 10 characters, inclusive.
-// -Each element of lyrics will contain the same number of characters.
-// -Each element of lyrics will contain only 'Y' and 'N' characters.
-// -Each element of lyrics will contain at least one 'Y' character.
+// -output will contain between 2 and 50 elements, inclusive.
+// -Each element of output will contain between 2 and 50 characters, inclusive.
+// -All elements of output will have the same length.
+// -Each element of output will only contain 'W' or 'B' characters.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// {"YN","NY"}
-// 
-// Returns: 2
-// 
-// Both carols need to be sung.
-// 
-// 1)
-// {"YN","YY","YN"}
+// {"BB",
+//  "WB"}
 // 
 // Returns: 1
 // 
-// Everybody knows the first carol, so singing just that one is enough.
+// The only way to generate that output following the rules described is:
+// 
+// BB
+// BW
+// 
+// 
+// 1)
+// {"BBWBBB",
+//  "WBWBBW"}
+// 
+// Returns: 8
+// 
+// There are 8 ways in total:
+// 
+// BBWBBB BBWBBB BBWBBB BBWBBB
+// BWWWBB WWWBBB BWBBBB WWWWBB
+// 
+// BBWBBB BBWBBB BBWBBB BBWBBB
+// WWBBBB BWBWBB WWBWBB BWWBBB
+// 
+// 
 // 
 // 2)
-// {"YNN","YNY","YNY","NYY","NYY","NYN"}
+// {"BWBWBW",
+//  "WWWWWW",
+//  "WBBWBW"}
 // 
-// Returns: 2
+// Returns: 0
 // 
-// Singing the best known carol is not always the optimal strategy. Here, the optimal way is to pick the first two carols even though four people know the third one.
+// 
 // 
 // 3)
-// {"YNNYYY","YYNYYY","YNNYYN","NYYNNN","YYYNNN","YYYNNY","NYYYYY","NYNYYY","NNNNYY",
-//  "YYYYYY","YNNNNN","YYYYNY","YYNNNN","NNYYYN","NNNNYY","YYYNNN","NYNNYN","YNNYYN",
-//  "YYNNNY","NYYNNY","NNYYYN","YNYYYN","NNNYNY","YYYYNN","YYNYNN","NYYNYY","YYNYYN"}
+// {"WWBWBWBWBWBWBWBW",
+//  "BWBWBWBWBWBWBWBB",
+//  "BWBWBWBWBWBWBWBW"}
 // 
-// Returns: 4
+// Returns: 73741817
 // 
 // 
 // 

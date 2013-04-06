@@ -63,42 +63,56 @@ typedef vector<string> 		vs;
 #define write(n)	printf("%d ", n)
 #define writeln(n)	printf("%d\n", n)
 
-#if (1 or defined ONLINE_JUDGE)
+#if (0)
 	#define debug 
 #else 
 	#define debug(x)	cout << #x << " = " << x << "\n"
 #endif
 
-class ListeningIn
+class TheLargestString
 {
 public:
-	string probableMatch(string typed, string phrase);
+	string find(string s, string t);
 };
 
-string ret;
-void match(string typed, string phrase) {
-	if(typed.empty()) {
-		ret += phrase;
-		return;
-	}
-	if(phrase.empty()) {
-		ret = "UNMATCHED";
-		return;
-	}
-	if(typed.at(0) == phrase.at(0))
-		match(typed.substr(1), phrase.substr(1));
-	else {
-		ret += phrase.at(0);
-		match(typed, phrase.substr(1));
-	}
+string concat(char s, char t) {
+	string ret = "";
+	ret += s;
+	ret += t;
+	return ret;
 }
-string ListeningIn::probableMatch (string typed, string phrase) 
+
+string TheLargestString::find (string s, string t) 
 {
-	debug(__GNUC__);
-	debug(__GNUC_MINOR__);
-	debug(__GNUC_PATCHLEVEL__);
-	ret.clear();
-	match(typed, phrase);
+/*
+	cout << endl;
+	cout << s.size() << ": " << s << endl;
+	cout << t.size() << ": " << t << endl;
+	cout << endl;
+*/
+	int N = s.size();
+	string ret = concat(s[N-1], t[N-1]);
+//	debug(ret);
+
+	rep(i, N-2, 0) {
+		string orig_ret = ret;
+		string tmp1 = concat(s[i], t[i]);
+
+		string tmp = "";
+		int M = ret.size()/2;
+		string a = (tmp + s[i]) + ret.substr(0, M);
+		string b = (tmp + t[i]) + ret.substr(M);
+		string tmp2  = a + b;
+
+		ret = max(ret, tmp1);
+		ret = max(ret, tmp2);
+
+//		debug(a);
+//		debug(b);
+//		Pf("i = %d, orig_ret = %s, tmp1 = %s, tmp2 = %s, ret = %s\n", i, orig_ret.c_str(), tmp1.c_str(), tmp2.c_str(), ret.c_str());
+	}
+
+	debug(ret);
 	return ret;
 }
 
@@ -111,11 +125,11 @@ using namespace std;
 bool KawigiEdit_RunTest(int testNum, string p0, string p1, bool hasAnswer, string p2) {
 	cout << "Test " << testNum << ": [" << "\"" << p0 << "\"" << "," << "\"" << p1 << "\"";
 	cout << "]" << endl;
-	ListeningIn *obj;
+	TheLargestString *obj;
 	string answer;
-	obj = new ListeningIn();
+	obj = new TheLargestString();
 	clock_t startTime = clock();
-	answer = obj->probableMatch(p0, p1);
+	answer = obj->find(p0, p1);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -153,28 +167,54 @@ int main() {
 	
 	{
 	// ----- test 0 -----
-	p0 = "cptr";
-	p1 = "capture";
-	p2 = "aue";
+	p0 = "ab";
+	p1 = "zy";
+	p2 = "by";
 	all_right = KawigiEdit_RunTest(0, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	p0 = "port to me";
-	p1 = "teleport to me";
-	p2 = "tele";
+	p0 = "abacaba";
+	p1 = "zzzaaaa";
+	p2 = "cbaaaa";
 	all_right = KawigiEdit_RunTest(1, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	p0 = "back  to base";
-	p1 = "back to base";
-	p2 = "UNMATCHED";
+	p0 = "x";
+	p1 = "x";
+	p2 = "xx";
 	all_right = KawigiEdit_RunTest(2, p0, p1, true, p2) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 3 -----
+	p0 = "abbabbabbababaaaabbababab";
+	p1 = "bababbaabbbababbbbababaab";
+	p2 = "bbbbbbbbbbbbbbbbbbaaab";
+	all_right = KawigiEdit_RunTest(3, p0, p1, true, p2) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 4 -----
+	p0 = "abcdefg";
+	p1 = "fdceafe";
+	all_right = KawigiEdit_RunTest(4, p0, p1, false, p2) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 5 -----
+	p0 = "abaababbcacbccbbaabaacabbcbbbcacbbcbbbaabcbbaba";
+	p1 = "cacacccaacacccaacaccbbcbacbccbccabcbbbabbbcbbba";
+	p2 = "cccccccccccb";
+	all_right = KawigiEdit_RunTest(5, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
@@ -186,47 +226,74 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// You are creating an online multiplayer cooperative game. Players on a team may chat with each other during the game, and you intend to take advantage of this when building the AI to handle opponents. Part of the AI includes determining whether a given phrase is part of a player's chat. Of course, many variations of a given phrase are possible, and you want to detect as many as you can. Shorthand is the most common example: instead of typing 'capture', a player might type 'cptr', or 'port to me' instead of 'teleport to me'. You will be provided with a string typed typed by a player and a phrase that you wish to check against. Return the characters removed from phrase to obtain typed in the order they appear in phrase or "UNMATCHED" if there is no way to obtain typed from phrase by simply removing characters. The constraints ensure that the return is unique (there is only one option for which string is returned).
+// John has two strings s and t of equal length.
+// He can choose a set of positions (possibly empty) and erase characters at these positions in both s and t.
+// Then he writes down the concatenation of what remained of the strings: first the letters we kept from s, in their original order, then the letters we kept from t, again in their original order.
+// 
+// 
+// Return the lexicographically largest string John can get at the end.
+// 
 // 
 // DEFINITION
-// Class:ListeningIn
-// Method:probableMatch
+// Class:TheLargestString
+// Method:find
 // Parameters:string, string
 // Returns:string
-// Method signature:string probableMatch(string typed, string phrase)
+// Method signature:string find(string s, string t)
+// 
+// 
+// NOTES
+// -String A is lexicographically smaller than string B if either A is a proper prefix of B, or if there is an integer i such that the first i characters of A match the first i characters of B, and character i+1 of A is smaller than character i+1 of B.
 // 
 // 
 // CONSTRAINTS
-// -typed and phrase will contain only lowercase letters ('a'-'z') and spaces
-// -typed and phrase will be between 1 and 50 characters long, inclusive.
-// -All valid groups of characters that could be removed to turn phrase into typed will give the same output.
+// -s will contain between 1 and 47 characters, inclusive.
+// -s and t will contain the same number of characters.
+// -s will contain only lowercase English characters ('a'-'z').
+// -t will contain only lowercase English characters ('a'-'z').
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// "cptr"
-// "capture"
+// "ab"
+// "zy"
 // 
-// Returns: "aue"
+// Returns: "by"
 // 
-// The example given in the problem statement.
+// There are four options here:
+// 
+// Do not erase anything. The resulting string would be "abzy".
+// Erase both first characters. The resulting string would be "by".
+// Erase both last characters. The resulting string would be "az".
+// Erase all characters. The resulting string would be empty.
+// 
+// Among all possible results "by" is the lexicographically largest one.
+// 
 // 
 // 1)
-// "port to me"
-// "teleport to me"
+// "abacaba"
+// "zzzaaaa"
 // 
-// Returns: "tele"
+// Returns: "cbaaaa"
 // 
-// The other example from the statement.
+// 
 // 
 // 2)
-// "back  to base"
-// "back to base"
+// "x"
+// "x"
 // 
-// Returns: "UNMATCHED"
+// Returns: "xx"
 // 
-// An extra space has been added; we do not account for additions, only deletions.
+// 
+// 
+// 3)
+// "abbabbabbababaaaabbababab"
+// "bababbaabbbababbbbababaab"
+// 
+// Returns: "bbbbbbbbbbbbbbbbbbaaab"
+// 
+// 
 // 
 // END KAWIGIEDIT TESTING
 

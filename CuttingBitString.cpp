@@ -64,6 +64,9 @@ public:
 };
 
 bool isDivisible(ST s) {
+	if(st.size() == 0)
+		return false;
+
 	if(s[0] == '0')
 		return false;
 
@@ -79,11 +82,19 @@ bool isDivisible(ST s) {
 		return false;
 	while(val > 1 && val % 5 == 0)
 		val /= 5;
-	return val == 1;
+
+	return val == 1 ? true : false;
 }
+
+int Ans[55];
+
+
+
 
 int CuttingBitString::getmin (string S) 
 {
+	CL(Ans, -1);
+/*
 	int dp[S.size()];
 	CL(dp, -1);
 
@@ -104,6 +115,7 @@ int CuttingBitString::getmin (string S)
 	cout << endl;
 
 	return dp[S.size() -1];
+*/
 }
 
 // BEGIN KAWIGIEDIT TESTING

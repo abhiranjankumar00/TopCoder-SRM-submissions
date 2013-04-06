@@ -69,34 +69,67 @@ typedef vector<string> 		vs;
 	#define DEBUG(x)	cout << #x << " = " << x << "\n"
 #endif
 
-class ConcatenateNumber
+class NewArenaPassword
 {
 public:
-	int getSmallest(int number, int k);
+	int minChange(string oldPassword, int K);
 };
 
-const int sz = 1e5 + 111;
-bool vis[sz];
+int par[55];
 
-int ConcatenateNumber::getSmallest (int number, int k) 
+int findSet(int u) {
+	return par[u] = u == par[u] ? u : findSet(par[u]);
+}
+
+void mergeSet(int u, int v) {
+	int pu = findSet(u), pv = findSet(v);
+	par[pu] = pv;
+}
+
+int NewArenaPassword::minChange (string s, int K) 
 {
-	CL(vis, 0);
+	forn(i, 55)
+		par[i] = i;
 
-	int64 ten = 1, num = number;
-	while(num) {
-		ten*= 10;
-		num/=10;
-	}
-	DEBUG(ten);
+	for(int i  = 0, j = s.size() - K; i < K; i++, j++)
+		mergeSet(i, j);
 
-	num = number % k;
-	forab(i, 1, sz) {
-		if(num == 0)
-			return i;
-		num = (num*ten + number ) % k;
+//	map <int vi > m;
+	forn(i, s.size()) {
+		Pf("(%d: %d) , ", i, findSet(i));
 	}
 
-	return -1;
+	int ret = 0;
+	forn(i, 55) {
+		map <char, int> cnt;
+		int tmp = 0;
+		forn(j, s.size())	if(findSet(j) == i) {
+			cnt[s[j]]++;
+			tmp++;
+		}
+		int mx = 0;
+		tr(it, cnt)
+			mx = max(mx, it->second);
+		ret += tmp - mx;
+	}
+
+	return ret;
+
+	/*
+	s = _s;
+	K = _K;
+	int ret = 0;
+
+	if(s.size() >= 2*K){
+		for(int i = 0, j = s.size() - K; i < K; i++, j++) {
+			if(s[i] != s[j])
+				ret++;
+		}
+		return ret;
+	}
+	
+	return ret = -1;
+*/
 }
 
 // BEGIN KAWIGIEDIT TESTING
@@ -105,14 +138,14 @@ int ConcatenateNumber::getSmallest (int number, int k)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, int p0, int p1, bool hasAnswer, int p2) {
-	cout << "Test " << testNum << ": [" << p0 << "," << p1;
+bool KawigiEdit_RunTest(int testNum, string p0, int p1, bool hasAnswer, int p2) {
+	cout << "Test " << testNum << ": [" << "\"" << p0 << "\"" << "," << p1;
 	cout << "]" << endl;
-	ConcatenateNumber *obj;
+	NewArenaPassword *obj;
 	int answer;
-	obj = new ConcatenateNumber();
+	obj = new NewArenaPassword();
 	clock_t startTime = clock();
-	answer = obj->getSmallest(p0, p1);
+	answer = obj->minChange(p0, p1);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -144,52 +177,60 @@ int main() {
 	bool all_right;
 	all_right = true;
 	
-	int p0;
+	string p0;
 	int p1;
 	int p2;
 	
 	{
 	// ----- test 0 -----
-	p0 = 2;
-	p1 = 9;
-	p2 = 9;
+	p0 = "topcoderopen";
+	p1 = 5;
+	p2 = 3;
 	all_right = KawigiEdit_RunTest(0, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	p0 = 121;
-	p1 = 11;
-	p2 = 1;
+	p0 = "puyopuyo";
+	p1 = 4;
+	p2 = 0;
 	all_right = KawigiEdit_RunTest(1, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	p0 = 1;
-	p1 = 2;
-	p2 = -1;
+	p0 = "loool";
+	p1 = 3;
+	p2 = 1;
 	all_right = KawigiEdit_RunTest(2, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	p0 = 35;
-	p1 = 98765;
-	p2 = 9876;
+	p0 = "arena";
+	p1 = 5;
+	p2 = 0;
 	all_right = KawigiEdit_RunTest(3, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 4 -----
-	p0 = 1000000000;
-	p1 = 3;
-	p2 = 3;
+	p0 = "amavckdkz";
+	p1 = 7;
+	p2 = 5;
 	all_right = KawigiEdit_RunTest(4, p0, p1, true, p2) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 5 -----
+	p0 = "abcdefghijklmnoabcdeflkdjfsoiermnfsdljkldjlkjalkdd ";
+	p1 = 48;
+	all_right = KawigiEdit_RunTest(5, p0, p1, false, p2) && all_right;
 	// ------------------
 	}
 	
@@ -201,60 +242,65 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// Given a positive integer number, concatenate one or more copies of number to create an integer that is divisible by k.  Do not add any leading zeroes.  Return the least number of copies needed, or -1 if it is impossible.
+// You are a huge fan of an online programming contest called SRM (Special Round Match). To participate in an SRM contest, you must first download an applet called Arena, log in to the Arena by entering your username and password, and start competing.
+// 
+// Recently, to avoid hackers' attacks on the Arena, SRM imposes a new rule for the users' passwords. From now on, the first K characters of each user's password must match its last K characters. In this way, if someone enters a password with different first and last K characters repeatedly, it can be considered an attack from hackers.
+// 
+// However, you love your old password and do not want to change many characters from it. You are given a string oldPassword representing your old password, and an int K. Return the minimum number of characters of oldPassword that must be changed so that the string containing the first K characters of oldPassword is equal to the string containing the last K characters of oldPassword.
 // 
 // DEFINITION
-// Class:ConcatenateNumber
-// Method:getSmallest
-// Parameters:int, int
+// Class:NewArenaPassword
+// Method:minChange
+// Parameters:string, int
 // Returns:int
-// Method signature:int getSmallest(int number, int k)
+// Method signature:int minChange(string oldPassword, int K)
 // 
 // 
 // CONSTRAINTS
-// -number will be between 1 and 1,000,000,000, inclusive.
-// -k will be between 1 and 100,000, inclusive.
+// -oldPassword will contain between 1 and 50 characters, inclusive.
+// -Each character of oldPassword will be a lowercase letter 'a' - 'z'.
+// -K will be between 1 and the number of characters of oldPassword, inclusive.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// 2
-// 9
+// "topcoderopen"
+// 5
 // 
-// Returns: 9
+// Returns: 3
 // 
-// At least 9 copies are needed, since 222222222 is divisible by 9.
+// A possible solution is changing your password into "topcndetopcn". To do this, you must change the 4th, 7th, and 10th characters (0-based) of "topcoderopen".
 // 
 // 1)
-// 121
-// 11
+// "puyopuyo"
+// 4
+// 
+// Returns: 0
+// 
+// Your old password already satisfies the new rule.
+// 
+// 2)
+// "loool"
+// 3
 // 
 // Returns: 1
 // 
-// 121 is divisible by 11.
-// 
-// 2)
-// 1
-// 2
-// 
-// Returns: -1
-// 
-// You can never get an even number by concatenating only 1's.
+// The first and the last K characters can overlap. In this case, the only optimal solution is to change your password into "lolol".
 // 
 // 3)
-// 35
-// 98765
+// "arena"
+// 5
 // 
-// Returns: 9876
+// Returns: 0
 // 
-// The resulting integer could be really big.
+// 
 // 
 // 4)
-// 1000000000
-// 3
+// "amavckdkz"
+// 7
 // 
-// Returns: 3
+// Returns: 5
 // 
 // 
 // 

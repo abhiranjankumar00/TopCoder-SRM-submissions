@@ -63,29 +63,22 @@ typedef vector<string> 		vs;
 #define write(n)	printf("%d ", n)
 #define writeln(n)	printf("%d\n", n)
 
-#if (0 or defined ONLINE_JUDGE)
-	#define DEBUG
+#if (0)
+	#define debug 
 #else 
-	#define DEBUG(x)	cout << #x << " = " << x << "\n"
+	#define debug(x)	cout << #x << " = " << x << "\n"
 #endif
 
-class FoxPlayingGame
+class FlightScheduler
 {
 public:
-	double theMax(int nA, int nB, int paramA, int paramB);
+	double minimizeFuel(int distance, int K, int emptyMass, int takeoffFuel);
 };
 
-double FoxPlayingGame::theMax (int nA, int nB, int paramA, int paramB) 
+double FlightScheduler::minimizeFuel (int distance, int K, int emptyMass, int takeoffFuel) 
 {
-	double ret = nA*paramA/1000.0* pow(paramB/1000.0, nB);
-	DEBUG(ret);
-	ret = max(ret, nA*paramA/1000.0);
-
-	if(nB > 0) {
-		ret = max(ret, nA*paramA/1000.0 * pow(paramB/1000.0, nB-1));
-		ret = max(ret, nA*paramA/1000.0 * paramB/1000.0);
-	}
-
+	double ret;
+	
 	return ret;
 }
 
@@ -98,11 +91,11 @@ using namespace std;
 bool KawigiEdit_RunTest(int testNum, int p0, int p1, int p2, int p3, bool hasAnswer, double p4) {
 	cout << "Test " << testNum << ": [" << p0 << "," << p1 << "," << p2 << "," << p3;
 	cout << "]" << endl;
-	FoxPlayingGame *obj;
+	FlightScheduler *obj;
 	double answer;
-	obj = new FoxPlayingGame();
+	obj = new FlightScheduler();
 	clock_t startTime = clock();
-	answer = obj->theMax(p0, p1, p2, p3);
+	answer = obj->minimizeFuel(p0, p1, p2, p3);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -142,78 +135,56 @@ int main() {
 	
 	{
 	// ----- test 0 -----
-	p0 = 5;
-	p1 = 4;
-	p2 = 3000;
-	p3 = 2000;
-	p4 = 240.0;
+	p0 = 40000;
+	p1 = 100000;
+	p2 = 150000;
+	p3 = 5000;
+	p4 = 76420.82744805096;
 	all_right = KawigiEdit_RunTest(0, p0, p1, p2, p3, true, p4) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	p0 = 3;
-	p1 = 3;
-	p2 = 2000;
-	p3 = 100;
-	p4 = 6.0;
+	p0 = 40000;
+	p1 = 55000;
+	p2 = 150000;
+	p3 = 5000;
+	p4 = 138450.61724934017;
 	all_right = KawigiEdit_RunTest(1, p0, p1, p2, p3, true, p4) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	p0 = 4;
-	p1 = 3;
-	p2 = -2000;
-	p3 = 2000;
-	p4 = -8.0;
+	p0 = 1000;
+	p1 = 500;
+	p2 = 1000;
+	p3 = 50;
+	p4 = 2664.9853821314487;
 	all_right = KawigiEdit_RunTest(2, p0, p1, p2, p3, true, p4) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	p0 = 5;
-	p1 = 5;
-	p2 = 2000;
-	p3 = -2000;
-	p4 = 160.0;
+	p0 = 10000;
+	p1 = 100;
+	p2 = 200;
+	p3 = 5;
+	p4 = 24635.869665316768;
 	all_right = KawigiEdit_RunTest(3, p0, p1, p2, p3, true, p4) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 4 -----
-	p0 = 50;
-	p1 = 50;
+	p0 = 140000;
+	p1 = 4;
 	p2 = 10000;
-	p3 = 2000;
-	p4 = 5.62949953421312E17;
+	p3 = 10;
+	p4 = 3.6576871282155204E8;
 	all_right = KawigiEdit_RunTest(4, p0, p1, p2, p3, true, p4) && all_right;
-	// ------------------
-	}
-	
-	{
-	// ----- test 5 -----
-	p0 = 41;
-	p1 = 34;
-	p2 = 9876;
-	p3 = -1234;
-	p4 = 515323.9982341775;
-	all_right = KawigiEdit_RunTest(5, p0, p1, p2, p3, true, p4) && all_right;
-	// ------------------
-	}
-	
-	{
-	// ----- test 6 -----
-	p0 = 1;
-	p1 = 0;
-	p2 = -5153;
-	p3 = 31;
-	p4 = -5.153;
-	all_right = KawigiEdit_RunTest(6, p0, p1, p2, p3, true, p4) && all_right;
 	// ------------------
 	}
 	
@@ -225,108 +196,81 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// Fox Ciel was very bored, so she invented a single player game. The rules of the game are:
+// The Breguet range equation tells us how far an aircraft can fly if it has a given mass of fuel on board. It states that the maximum range of an aircraft R is given by:
+// R = K * ln(take-off mass / empty mass)
+// where K is a constant for the aircraft and the take-off mass is equal to the empty mass + the mass of fuel on board the aircraft. In addition, taking off and gaining altitude takes a certain, constant amount of fuel.
+// An airline wishes to minimize the amount of fuel consumed on a given journey by allowing the aircraft to stop at intermediate cities along the way to refuel. Assume that the aircraft can stop an unlimited number of times and can stop at any point of its journey. Also assume that it can carry an unlimited amount of fuel.
 // 
-// You start with 0 points.
-// You make exactly nA+nB moves.
-// You have two types of moves available. These are called move A and move B.
-// Exactly nA times you will make move A. Exactly nB times you will make move B. The moves can be in any order.
-// The moves affect your score in the following ways:
-// 
-// Each time you make move A, you add scoreA to your score.
-// Each time you make move B, you multiply your score by scoreB.
-// 
-// 
-// You are given int nA, int nB, int paramA and int paramB.  Calculate scoreA and scoreB as follows ("/" denotes exact division, without any rounding):
-// scoreA = paramA/1000.0
-// scoreB = paramB/1000.0
-// Return the maximum possible score after nA+nB moves.
+// You will be given an int distance, the total distance of the journey, the int value K for the aircraft, an int emptyMass containing the empty mass of the aircraft and an int takeoffFuel containing the additional mass of fuel required each time the aircraft takes off. You should return a double containing the minimum amount of fuel required to complete the journey.
 // 
 // DEFINITION
-// Class:FoxPlayingGame
-// Method:theMax
+// Class:FlightScheduler
+// Method:minimizeFuel
 // Parameters:int, int, int, int
 // Returns:double
-// Method signature:double theMax(int nA, int nB, int paramA, int paramB)
+// Method signature:double minimizeFuel(int distance, int K, int emptyMass, int takeoffFuel)
 // 
 // 
 // NOTES
-// -The returned value must have an absolute or relative error less than 1e-9.
+// -The return value must be accurate to within an absolute or relative tolerance of 1e-9.
 // 
 // 
 // CONSTRAINTS
-// -nA will be between 0 and 50, inclusive.
-// -nB will be between 0 and 50, inclusive.
-// -paramA will be between -10000 and 10000, inclusive.
-// -paramB will be between -2000 and 2000, inclusive.
+// -distance will be between 1 and 200,000, inclusive.
+// -K will be between 1 and 200,000, inclusive.
+// -emptyMass will be between 1 and 200,000, inclusive.
+// -takeoffFuel will be between 1 and 200,000, inclusive.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// 5
-// 4
-// 3000
-// 2000
+// 40000
+// 100000
+// 150000
+// 5000
 // 
-// Returns: 240.0
+// Returns: 76420.82744805096
 // 
-// scoreA = 3000/1000 = 3
-// scoreB = 2000/1000 = 2
-// The optimal order of operations is:
-// (3 + 3 + 3 + 3 + 3) * 2 * 2 * 2 * 2 = 240
+// The optimal schedule here is to make 1 stop right in the middle of the flight.
 // 
 // 1)
-// 3
-// 3
-// 2000
-// 100
+// 40000
+// 55000
+// 150000
+// 5000
 // 
-// Returns: 6.0
+// Returns: 138450.61724934017
 // 
-// scoreA = 2000/1000 = 2
-// scoreB = 100/1000 = 0.1
-// Multiplying the score by scoreB decreases its absolute value, so it's better to do all multiplications before additions. Thus, the optimal order of operations is:
-// 0 * 0.1 * 0.1 * 0.1 + 2 + 2 + 2 = 6
+// K is a measure of the efficiency of the aircraft. With this less efficient aircraft it's best to stop twice.
 // 
 // 2)
-// 4
-// 3
-// -2000
-// 2000
+// 1000
+// 500
+// 1000
+// 50
 // 
-// Returns: -8.0
+// Returns: 2664.9853821314487
 // 
-// Multiplying the score by scoreB increases its absolute value, but given that scoreA is negative, the overall score will be negative as well, so it's better to do multiplications before additions again to keep the absolute value small.
+// 
 // 
 // 3)
+// 10000
+// 100
+// 200
 // 5
-// 5
-// 2000
-// -2000
 // 
-// Returns: 160.0
+// Returns: 24635.869665316768
 // 
-// Multiplication increases the absolute value of the score, but if you do all 5 multiplications after additions, you'll end up with negative score. Thus, the optimal order of operations is:
-// (0 * (-2) + 2 + 2 + 2 + 2 + 2) * (-2) * (-2) * (-2) * (-2) = 160
+// 
 // 
 // 4)
-// 50
-// 50
+// 140000
+// 4
 // 10000
-// 2000
+// 10
 // 
-// Returns: 5.62949953421312E17
-// 
-// 
-// 
-// 5)
-// 41
-// 34
-// 9876
-// -1234
-// 
-// Returns: 515323.9982341775
+// Returns: 3.6576871282155204E8
 // 
 // 
 // 

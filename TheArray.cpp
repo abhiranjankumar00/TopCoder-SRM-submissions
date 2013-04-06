@@ -69,24 +69,52 @@ typedef vector<string> 		vs;
 	#define DEBUG(x)	cout << #x << " = " << x << "\n"
 #endif
 
-class FoxPlayingGame
+class TheArray
 {
 public:
-	double theMax(int nA, int nB, int paramA, int paramB);
+	int find(int n, int d, int first, int last);
 };
 
-double FoxPlayingGame::theMax (int nA, int nB, int paramA, int paramB) 
+int n, d, first, last;
+int lft;
+vi arr;
+
+int find1(int l, int r) {
+	if(l == r)
+		return l;
+	int mid = (l+r+1)/2;
+	if(arr.back() + mid - d*(lft-1) <= last)
+		return find1(mid, r);
+	else
+		return find1(l, mid-1);
+}
+
+int TheArray::find (int _n, int _d, int _first, int _last) 
 {
-	double ret = nA*paramA/1000.0* pow(paramB/1000.0, nB);
-	DEBUG(ret);
-	ret = max(ret, nA*paramA/1000.0);
+	arr.clear();
+	d = abs(_d);
+	n = _n;
+	first = _first;
+	last = _last;
+	if(first > last)
+		swap(first, last);
 
-	if(nB > 0) {
-		ret = max(ret, nA*paramA/1000.0 * pow(paramB/1000.0, nB-1));
-		ret = max(ret, nA*paramA/1000.0 * paramB/1000.0);
+	arr.pb(first);
+
+	while(arr.size() < n){
+		lft = n - arr.size();
+		if(arr.back() + 0 - d*(lft-1) <= last)
+			arr.pb(arr.back() + find1(0, d));
+		else
+			arr.pb(max(arr.back()-d, last));
 	}
+/*
+	tr(it, arr)
+		write(*it);
+	cout << endl;
+*/
 
-	return ret;
+	return *max_element(all(arr));
 }
 
 // BEGIN KAWIGIEDIT TESTING
@@ -95,14 +123,14 @@ double FoxPlayingGame::theMax (int nA, int nB, int paramA, int paramB)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, int p0, int p1, int p2, int p3, bool hasAnswer, double p4) {
+bool KawigiEdit_RunTest(int testNum, int p0, int p1, int p2, int p3, bool hasAnswer, int p4) {
 	cout << "Test " << testNum << ": [" << p0 << "," << p1 << "," << p2 << "," << p3;
 	cout << "]" << endl;
-	FoxPlayingGame *obj;
-	double answer;
-	obj = new FoxPlayingGame();
+	TheArray *obj;
+	int answer;
+	obj = new TheArray();
 	clock_t startTime = clock();
-	answer = obj->theMax(p0, p1, p2, p3);
+	answer = obj->find(p0, p1, p2, p3);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -115,7 +143,7 @@ bool KawigiEdit_RunTest(int testNum, int p0, int p1, int p2, int p3, bool hasAns
 	cout << "Your answer:" << endl;
 	cout << "\t" << answer << endl;
 	if (hasAnswer) {
-		res = answer == answer && fabs(p4 - answer) <= 1e-9 * max(1.0, fabs(p4));
+		res = answer == p4;
 	}
 	if (!res) {
 		cout << "DOESN'T MATCH!!!!" << endl;
@@ -138,82 +166,60 @@ int main() {
 	int p1;
 	int p2;
 	int p3;
-	double p4;
+	int p4;
 	
 	{
 	// ----- test 0 -----
-	p0 = 5;
-	p1 = 4;
-	p2 = 3000;
-	p3 = 2000;
-	p4 = 240.0;
+	p0 = 3;
+	p1 = 5;
+	p2 = 2;
+	p3 = 4;
+	p4 = 7;
 	all_right = KawigiEdit_RunTest(0, p0, p1, p2, p3, true, p4) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	p0 = 3;
-	p1 = 3;
-	p2 = 2000;
+	p0 = 10;
+	p1 = 100;
+	p2 = 999;
 	p3 = 100;
-	p4 = 6.0;
+	p4 = 999;
 	all_right = KawigiEdit_RunTest(1, p0, p1, p2, p3, true, p4) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	p0 = 4;
-	p1 = 3;
-	p2 = -2000;
-	p3 = 2000;
-	p4 = -8.0;
+	p0 = 1000000;
+	p1 = 0;
+	p2 = 474;
+	p3 = 474;
+	p4 = 474;
 	all_right = KawigiEdit_RunTest(2, p0, p1, p2, p3, true, p4) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	p0 = 5;
-	p1 = 5;
-	p2 = 2000;
-	p3 = -2000;
-	p4 = 160.0;
+	p0 = 97;
+	p1 = 53;
+	p2 = -92;
+	p3 = 441;
+	p4 = 2717;
 	all_right = KawigiEdit_RunTest(3, p0, p1, p2, p3, true, p4) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 4 -----
-	p0 = 50;
-	p1 = 50;
-	p2 = 10000;
-	p3 = 2000;
-	p4 = 5.62949953421312E17;
+	p0 = 99;
+	p1 = 3;
+	p2 = -743;
+	p3 = -619;
+	p4 = -535;
 	all_right = KawigiEdit_RunTest(4, p0, p1, p2, p3, true, p4) && all_right;
-	// ------------------
-	}
-	
-	{
-	// ----- test 5 -----
-	p0 = 41;
-	p1 = 34;
-	p2 = 9876;
-	p3 = -1234;
-	p4 = 515323.9982341775;
-	all_right = KawigiEdit_RunTest(5, p0, p1, p2, p3, true, p4) && all_right;
-	// ------------------
-	}
-	
-	{
-	// ----- test 6 -----
-	p0 = 1;
-	p1 = 0;
-	p2 = -5153;
-	p3 = 31;
-	p4 = -5.153;
-	all_right = KawigiEdit_RunTest(6, p0, p1, p2, p3, true, p4) && all_right;
 	// ------------------
 	}
 	
@@ -225,108 +231,92 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// Fox Ciel was very bored, so she invented a single player game. The rules of the game are:
-// 
-// You start with 0 points.
-// You make exactly nA+nB moves.
-// You have two types of moves available. These are called move A and move B.
-// Exactly nA times you will make move A. Exactly nB times you will make move B. The moves can be in any order.
-// The moves affect your score in the following ways:
-// 
-// Each time you make move A, you add scoreA to your score.
-// Each time you make move B, you multiply your score by scoreB.
+// John has an array of n integers.
+// Each pair of neighboring elements differs by at most d.
+// The first and the last elements of the array are equal to first and last, respectively.
 // 
 // 
-// You are given int nA, int nB, int paramA and int paramB.  Calculate scoreA and scoreB as follows ("/" denotes exact division, without any rounding):
-// scoreA = paramA/1000.0
-// scoreB = paramB/1000.0
-// Return the maximum possible score after nA+nB moves.
+// Brus does not know John's array.
+// He only knows n, d, first and last.
+// He wants to compute the maximal possible element John might have in his array.
+// 
+// 
+// You are given ints n, d, first and last.
+// Return the maximal possible element the array might contain.
+// 
 // 
 // DEFINITION
-// Class:FoxPlayingGame
-// Method:theMax
+// Class:TheArray
+// Method:find
 // Parameters:int, int, int, int
-// Returns:double
-// Method signature:double theMax(int nA, int nB, int paramA, int paramB)
+// Returns:int
+// Method signature:int find(int n, int d, int first, int last)
 // 
 // 
 // NOTES
-// -The returned value must have an absolute or relative error less than 1e-9.
+// -The constraints given below guarantee that there will always be at least one array that matches the values Brus knows.
+// -For the constraints given below, the correct answer will always fit into an int.
 // 
 // 
 // CONSTRAINTS
-// -nA will be between 0 and 50, inclusive.
-// -nB will be between 0 and 50, inclusive.
-// -paramA will be between -10000 and 10000, inclusive.
-// -paramB will be between -2000 and 2000, inclusive.
+// -n will be between 2 and 1,000,000, inclusive.
+// -d will be between 0 and 1000, inclusive.
+// -first will be between -1000 and 1000, inclusive.
+// -last will be between -1000 and 1000, inclusive.
+// -|first - last| will be at most (n-1)*d.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
+// 3
 // 5
+// 2
 // 4
-// 3000
-// 2000
 // 
-// Returns: 240.0
+// Returns: 7
 // 
-// scoreA = 3000/1000 = 3
-// scoreB = 2000/1000 = 2
-// The optimal order of operations is:
-// (3 + 3 + 3 + 3 + 3) * 2 * 2 * 2 * 2 = 240
+// Only the second element of the array is unknown.
+// Its maximal valid value is 7.
+// 
 // 
 // 1)
-// 3
-// 3
-// 2000
+// 10
+// 100
+// 999
 // 100
 // 
-// Returns: 6.0
+// Returns: 999
 // 
-// scoreA = 2000/1000 = 2
-// scoreB = 100/1000 = 0.1
-// Multiplying the score by scoreB decreases its absolute value, so it's better to do all multiplications before additions. Thus, the optimal order of operations is:
-// 0 * 0.1 * 0.1 * 0.1 + 2 + 2 + 2 = 6
+// Due to the limitations, the first element is the largest element of the array.
 // 
 // 2)
-// 4
-// 3
-// -2000
-// 2000
+// 1000000
+// 0
+// 474
+// 474
 // 
-// Returns: -8.0
+// Returns: 474
 // 
-// Multiplying the score by scoreB increases its absolute value, but given that scoreA is negative, the overall score will be negative as well, so it's better to do multiplications before additions again to keep the absolute value small.
+// All elements of the array are equal.
 // 
 // 3)
-// 5
-// 5
-// 2000
-// -2000
+// 97
+// 53
+// -92
+// 441
 // 
-// Returns: 160.0
+// Returns: 2717
 // 
-// Multiplication increases the absolute value of the score, but if you do all 5 multiplications after additions, you'll end up with negative score. Thus, the optimal order of operations is:
-// (0 * (-2) + 2 + 2 + 2 + 2 + 2) * (-2) * (-2) * (-2) * (-2) = 160
+// 
 // 
 // 4)
-// 50
-// 50
-// 10000
-// 2000
+// 99
+// 3
+// -743
+// -619
 // 
-// Returns: 5.62949953421312E17
-// 
-// 
-// 
-// 5)
-// 41
-// 34
-// 9876
-// -1234
-// 
-// Returns: 515323.9982341775
+// Returns: -535
 // 
 // 
 // 

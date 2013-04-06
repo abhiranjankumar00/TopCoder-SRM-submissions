@@ -69,34 +69,17 @@ typedef vector<string> 		vs;
 	#define DEBUG(x)	cout << #x << " = " << x << "\n"
 #endif
 
-class ConcatenateNumber
+class PolygonTraversal
 {
 public:
-	int getSmallest(int number, int k);
+	long long count(int N, vector <int> points);
 };
 
-const int sz = 1e5 + 111;
-bool vis[sz];
-
-int ConcatenateNumber::getSmallest (int number, int k) 
+long long PolygonTraversal::count (int N, vector <int> points) 
 {
-	CL(vis, 0);
-
-	int64 ten = 1, num = number;
-	while(num) {
-		ten*= 10;
-		num/=10;
-	}
-	DEBUG(ten);
-
-	num = number % k;
-	forab(i, 1, sz) {
-		if(num == 0)
-			return i;
-		num = (num*ten + number ) % k;
-	}
-
-	return -1;
+	long long ret;
+	
+	return ret;
 }
 
 // BEGIN KAWIGIEDIT TESTING
@@ -105,14 +88,21 @@ int ConcatenateNumber::getSmallest (int number, int k)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, int p0, int p1, bool hasAnswer, int p2) {
-	cout << "Test " << testNum << ": [" << p0 << "," << p1;
+bool KawigiEdit_RunTest(int testNum, int p0, vector <int> p1, bool hasAnswer, long long p2) {
+	cout << "Test " << testNum << ": [" << p0 << "," << "{";
+	for (int i = 0; int(p1.size()) > i; ++i) {
+		if (i > 0) {
+			cout << ",";
+		}
+		cout << p1[i];
+	}
+	cout << "}";
 	cout << "]" << endl;
-	ConcatenateNumber *obj;
-	int answer;
-	obj = new ConcatenateNumber();
+	PolygonTraversal *obj;
+	long long answer;
+	obj = new PolygonTraversal();
 	clock_t startTime = clock();
-	answer = obj->getSmallest(p0, p1);
+	answer = obj->count(p0, p1);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -145,50 +135,55 @@ int main() {
 	all_right = true;
 	
 	int p0;
-	int p1;
-	int p2;
+	vector <int> p1;
+	long long p2;
 	
 	{
 	// ----- test 0 -----
-	p0 = 2;
-	p1 = 9;
-	p2 = 9;
+	p0 = 5;
+	int t1[] = {1,3,5};
+			p1.assign(t1, t1 + sizeof(t1) / sizeof(t1[0]));
+	p2 = 1ll;
 	all_right = KawigiEdit_RunTest(0, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	p0 = 121;
-	p1 = 11;
-	p2 = 1;
+	p0 = 6;
+	int t1[] = {1,4,2};
+			p1.assign(t1, t1 + sizeof(t1) / sizeof(t1[0]));
+	p2 = 1ll;
 	all_right = KawigiEdit_RunTest(1, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	p0 = 1;
-	p1 = 2;
-	p2 = -1;
+	p0 = 7;
+	int t1[] = {2,4,7};
+			p1.assign(t1, t1 + sizeof(t1) / sizeof(t1[0]));
+	p2 = 2ll;
 	all_right = KawigiEdit_RunTest(2, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	p0 = 35;
-	p1 = 98765;
-	p2 = 9876;
+	p0 = 7;
+	int t1[] = {1,2,3,4,6,5};
+			p1.assign(t1, t1 + sizeof(t1) / sizeof(t1[0]));
+	p2 = 0ll;
 	all_right = KawigiEdit_RunTest(3, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 4 -----
-	p0 = 1000000000;
-	p1 = 3;
-	p2 = 3;
+	p0 = 18;
+	int t1[] = {1,7,18};
+			p1.assign(t1, t1 + sizeof(t1) / sizeof(t1[0]));
+	p2 = 4374612736ll;
 	all_right = KawigiEdit_RunTest(4, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
@@ -201,60 +196,75 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// Given a positive integer number, concatenate one or more copies of number to create an integer that is divisible by k.  Do not add any leading zeroes.  Return the least number of copies needed, or -1 if it is impossible.
+// Manao had a sheet of paper. He drew N points on it, which corresponded to vertices of a regular N-gon. He numbered the vertices from 1 to N in clockwise order.
+// 
+// After that, Manao connected several pairs of points with straight line segments. Namely, he connected points points[i] and points[i+1] for each i between 0 and M-2, where M is the number of elements in points. Note that all numbers in points are distinct.
+// 
+// Manao took a look at what he had drawn and decided to continue his traversal by adding every remaining point of the polygon to it and then returning to point points[0]. In other words, Manao is going to connect point points[M-1] with some point tail[0] which is not in points, then connect tail[0] with some point tail[1] which is neither in points nor in tail, and so on. In the end, he will connect point tail[N-M-1] with point points[0], thus completing the traversal.
+// 
+// Manao is really fond of intersections, so he wants to continue the traversal in such a way that every new line segment he draws intersects with at least one of the previously drawn line segments. (Note that the set of previously drawn segments includes not only the original set of segments, but also the new segments drawn before the current one.) Count and return the number of ways in which he can complete the traversal.
 // 
 // DEFINITION
-// Class:ConcatenateNumber
-// Method:getSmallest
-// Parameters:int, int
-// Returns:int
-// Method signature:int getSmallest(int number, int k)
+// Class:PolygonTraversal
+// Method:count
+// Parameters:int, vector <int>
+// Returns:long long
+// Method signature:long long count(int N, vector <int> points)
 // 
 // 
 // CONSTRAINTS
-// -number will be between 1 and 1,000,000,000, inclusive.
-// -k will be between 1 and 100,000, inclusive.
+// -N will be between 4 and 18, inclusive.
+// -points will contain between 2 and N-1 elements, inclusive.
+// -Each element of points will be between 1 and N, inclusive.
+// -The elements of points will be distinct.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// 2
-// 9
-// 
-// Returns: 9
-// 
-// At least 9 copies are needed, since 222222222 is divisible by 9.
-// 
-// 1)
-// 121
-// 11
+// 5
+// {1, 3, 5}
 // 
 // Returns: 1
 // 
-// 121 is divisible by 11.
+// The only way for Manao to complete the traversal is:
+// 
+// 
+// 
+// 1)
+// 6
+// {1, 4, 2}
+// 
+// Returns: 1
+// 
+// The only way to complete the traversal is to visit vertices {6, 3, 5, 1}, in order.
+// Note that the segment 5-1 does not intersect the original two segments (1-4 and 4-2), but it does intersect segments 2-6 and 6-3 which were both added before 5-1.
 // 
 // 2)
-// 1
-// 2
+// 7
+// {2, 4, 7}
 // 
-// Returns: -1
+// Returns: 2
 // 
-// You can never get an even number by concatenating only 1's.
+// The two possible tails are:
+// 
+// 3-5-1-6-2
+// 3-6-1-5-2
+// 
 // 
 // 3)
-// 35
-// 98765
+// 7
+// {1, 2, 3, 4, 6, 5}
 // 
-// Returns: 9876
+// Returns: 0
 // 
-// The resulting integer could be really big.
+// Manao needs to connect points 5 and 7 and then connect points 7 and 1. Obviously, segment 1-7 will not intersect with any other segment.
 // 
 // 4)
-// 1000000000
-// 3
+// 18
+// {1, 7, 18}
 // 
-// Returns: 3
+// Returns: 4374612736
 // 
 // 
 // 

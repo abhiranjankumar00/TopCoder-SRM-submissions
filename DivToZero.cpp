@@ -63,42 +63,30 @@ typedef vector<string> 		vs;
 #define write(n)	printf("%d ", n)
 #define writeln(n)	printf("%d\n", n)
 
-#if (1 or defined ONLINE_JUDGE)
-	#define debug 
+#if (0 or defined ONLINE_JUDGE)
+	#define DEBUG
 #else 
-	#define debug(x)	cout << #x << " = " << x << "\n"
+	#define DEBUG(x)	cout << #x << " = " << x << "\n"
 #endif
 
-class ListeningIn
+class DivToZero
 {
 public:
-	string probableMatch(string typed, string phrase);
+	string lastTwo(int num, int factor);
 };
 
-string ret;
-void match(string typed, string phrase) {
-	if(typed.empty()) {
-		ret += phrase;
-		return;
-	}
-	if(phrase.empty()) {
-		ret = "UNMATCHED";
-		return;
-	}
-	if(typed.at(0) == phrase.at(0))
-		match(typed.substr(1), phrase.substr(1));
-	else {
-		ret += phrase.at(0);
-		match(typed, phrase.substr(1));
-	}
-}
-string ListeningIn::probableMatch (string typed, string phrase) 
+string DivToZero::lastTwo (int num, int factor) 
 {
-	debug(__GNUC__);
-	debug(__GNUC_MINOR__);
-	debug(__GNUC_PATCHLEVEL__);
-	ret.clear();
-	match(typed, phrase);
+	string ret="";
+	
+	forn(i, 100) {
+		if( (num/100 + i ) % factor == 0) {
+			ret += (char)('0' + i/10);
+			ret += (char)('0' + i%10);
+			break;
+		}
+	}
+	
 	return ret;
 }
 
@@ -108,14 +96,14 @@ string ListeningIn::probableMatch (string typed, string phrase)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, string p0, string p1, bool hasAnswer, string p2) {
-	cout << "Test " << testNum << ": [" << "\"" << p0 << "\"" << "," << "\"" << p1 << "\"";
+bool KawigiEdit_RunTest(int testNum, int p0, int p1, bool hasAnswer, string p2) {
+	cout << "Test " << testNum << ": [" << p0 << "," << p1;
 	cout << "]" << endl;
-	ListeningIn *obj;
+	DivToZero *obj;
 	string answer;
-	obj = new ListeningIn();
+	obj = new DivToZero();
 	clock_t startTime = clock();
-	answer = obj->probableMatch(p0, p1);
+	answer = obj->lastTwo(p0, p1);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -147,34 +135,52 @@ int main() {
 	bool all_right;
 	all_right = true;
 	
-	string p0;
-	string p1;
+	int p0;
+	int p1;
 	string p2;
 	
 	{
 	// ----- test 0 -----
-	p0 = "cptr";
-	p1 = "capture";
-	p2 = "aue";
+	p0 = 2000000000;
+	p1 = 100;
+	p2 = "00";
 	all_right = KawigiEdit_RunTest(0, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	p0 = "port to me";
-	p1 = "teleport to me";
-	p2 = "tele";
+	p0 = 1000;
+	p1 = 3;
+	p2 = "02";
 	all_right = KawigiEdit_RunTest(1, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	p0 = "back  to base";
-	p1 = "back to base";
-	p2 = "UNMATCHED";
+	p0 = 23442;
+	p1 = 75;
+	p2 = "00";
 	all_right = KawigiEdit_RunTest(2, p0, p1, true, p2) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 3 -----
+	p0 = 428392;
+	p1 = 17;
+	p2 = "15";
+	all_right = KawigiEdit_RunTest(3, p0, p1, true, p2) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 4 -----
+	p0 = 32442;
+	p1 = 99;
+	p2 = "72";
+	all_right = KawigiEdit_RunTest(4, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
@@ -186,47 +192,56 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// You are creating an online multiplayer cooperative game. Players on a team may chat with each other during the game, and you intend to take advantage of this when building the AI to handle opponents. Part of the AI includes determining whether a given phrase is part of a player's chat. Of course, many variations of a given phrase are possible, and you want to detect as many as you can. Shorthand is the most common example: instead of typing 'capture', a player might type 'cptr', or 'port to me' instead of 'teleport to me'. You will be provided with a string typed typed by a player and a phrase that you wish to check against. Return the characters removed from phrase to obtain typed in the order they appear in phrase or "UNMATCHED" if there is no way to obtain typed from phrase by simply removing characters. The constraints ensure that the return is unique (there is only one option for which string is returned).
+// You are given an integer num from which you should replace the last two digits such that the resulting number is divisible by factor and is also the smallest possible number.  Return the two replacement digits as a string.
+// For instance:
+// if num = 275, and factor = 5, you would return "00" because 200 is divisible by 5.
+// if num = 1021, and factor = 11, you would return "01" because 1001 is divisible by 11.
+// if num = 70000, and factor = 17, you would return "06" because 70006 is divisible by 17.
 // 
 // DEFINITION
-// Class:ListeningIn
-// Method:probableMatch
-// Parameters:string, string
+// Class:DivToZero
+// Method:lastTwo
+// Parameters:int, int
 // Returns:string
-// Method signature:string probableMatch(string typed, string phrase)
+// Method signature:string lastTwo(int num, int factor)
 // 
 // 
 // CONSTRAINTS
-// -typed and phrase will contain only lowercase letters ('a'-'z') and spaces
-// -typed and phrase will be between 1 and 50 characters long, inclusive.
-// -All valid groups of characters that could be removed to turn phrase into typed will give the same output.
+// -factor must be between 1 and 100, inclusive.
+// -num must be between 100 and 2,000,000,000, inclusive.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// "cptr"
-// "capture"
+// 2000000000
+// 100
 // 
-// Returns: "aue"
-// 
-// The example given in the problem statement.
+// Returns: "00"
 // 
 // 1)
-// "port to me"
-// "teleport to me"
+// 1000
+// 3
 // 
-// Returns: "tele"
-// 
-// The other example from the statement.
+// Returns: "02"
 // 
 // 2)
-// "back  to base"
-// "back to base"
+// 23442
+// 75
 // 
-// Returns: "UNMATCHED"
+// Returns: "00"
 // 
-// An extra space has been added; we do not account for additions, only deletions.
+// 3)
+// 428392
+// 17
+// 
+// Returns: "15"
+// 
+// 4)
+// 32442
+// 99
+// 
+// Returns: "72"
 // 
 // END KAWIGIEDIT TESTING
 

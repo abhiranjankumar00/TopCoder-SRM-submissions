@@ -64,41 +64,57 @@ typedef vector<string> 		vs;
 #define writeln(n)	printf("%d\n", n)
 
 #if (0 or defined ONLINE_JUDGE)
-	#define debug 
+	#define DEBUG
 #else 
-	#define debug(x)	cout << #x << " = " << x << "\n"
+	#define DEBUG(x)	cout << #x << " = " << x << "\n"
 #endif
 
-class CarolsSinging
+class MarblesRegroupingEasy
 {
 public:
-	int choose(vector <string> lyrics);
+	int minMoves(vector <string> boxes);
 };
 
-int countBit(int n) {
-	int ret = 0;
-	while(n > 0) {
-		ret += n & 1;
-		n >>= 1;
-	}
-	return ret;
-}
-
-int CarolsSinging::choose (vector <string> lyrics) 
+int MarblesRegroupingEasy::minMoves (vector <string> boxes) 
 {
-	int N = lyrics.size(), M = lyrics.back().size();
-	int ret = M;
+	vs box;
+	int ret = 0;
+	vi cnt;
 
-	forab(mask, 1, (1 << M) - 1)  {
-		vector <bool> good(N, false);
-		forn(j, M)	if((mask & (1<<j)) != 0) {
-			forn(i, N)
-				if(lyrics[i][j] == 'Y')
-					good[i] = true;
-		}
-		if(find(all(good), false) == good.end())
-			ret = min(ret, countBit(mask));
+	tr(it, boxes) {
+		int tmp = 0;
+		tr(jt, *it)
+			if(*jt != '0')
+				tmp++;
+		cnt.pb(tmp);
+		if(tmp == 1)
+			box.pb(*it);
 	}
+	int tmp  = 0;
+	tr(it, cnt) {
+//		write(*it);
+		if(*it >= 2)
+			tmp++;
+	}
+//	cout << endl;
+	if(tmp != 0)
+		ret += tmp-1;
+/*
+	tr(it, box)
+		cout << *it << endl;
+	cout << endl;
+*/
+	if(box.size() > 0)	forn(j, box[0].size()) {
+		int tmp = 0;
+		forn(i, box.size())
+			if(box[i][j] != '0')
+				tmp++;
+		if(tmp>1)
+			ret += tmp-1;
+	}
+	if(tmp == 0)
+		if(ret > 0)
+			ret--;
 	
 	return ret;
 }
@@ -119,11 +135,11 @@ bool KawigiEdit_RunTest(int testNum, vector <string> p0, bool hasAnswer, int p1)
 	}
 	cout << "}";
 	cout << "]" << endl;
-	CarolsSinging *obj;
+	MarblesRegroupingEasy *obj;
 	int answer;
-	obj = new CarolsSinging();
+	obj = new MarblesRegroupingEasy();
 	clock_t startTime = clock();
-	answer = obj->choose(p0);
+	answer = obj->minMoves(p0);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -160,16 +176,16 @@ int main() {
 	
 	{
 	// ----- test 0 -----
-	string t0[] = {"YN","NY"};
+	string t0[] = {"20","11"};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 2;
+	p1 = 0;
 	all_right = KawigiEdit_RunTest(0, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	string t0[] = {"YN","YY","YN"};
+	string t0[] = {"11","11","10"};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
 	p1 = 1;
 	all_right = KawigiEdit_RunTest(1, p0, true, p1) && all_right;
@@ -178,19 +194,28 @@ int main() {
 	
 	{
 	// ----- test 2 -----
-	string t0[] = {"YNN","YNY","YNY","NYY","NYY","NYN"};
+	string t0[] = {"10","10","01","01"};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 2;
+	p1 = 1;
 	all_right = KawigiEdit_RunTest(2, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	string t0[] = {"YNNYYY","YYNYYY","YNNYYN","NYYNNN","YYYNNN","YYYNNY","NYYYYY","NYNYYY","NNNNYY","YYYYYY","YNNNNN","YYYYNY","YYNNNN","NNYYYN","NNNNYY","YYYNNN","NYNNYN","YNNYYN","YYNNNY","NYYNNY","NNYYYN","YNYYYN","NNNYNY","YYYYNN","YYNYNN","NYYNYY","YYNYYN"};
+	string t0[] = {"11","11","11","10","10","01"};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 4;
+	p1 = 3;
 	all_right = KawigiEdit_RunTest(3, p0, true, p1) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 4 -----
+	string t0[] = {"020008000070","000004000000","060000600000","006000000362","000720000000","000040000000","004009003000","000800000000","020030003000","000500200000","000000300000"};
+			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
+	p1 = 6;
+	all_right = KawigiEdit_RunTest(4, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
@@ -202,56 +227,102 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// When the Christmas dinner is over, it's time to sing carols.  Unfortunately, not all the family members know the lyrics to the same carols.  Everybody knows at least one, though.
 // 
-// You are given a vector <string> lyrics.  The j-th character of the i-th element of lyrics is 'Y' if the i-th person knows the j-th carol, and 'N' if he doesn't.  Return the minimal number of carols that must be sung to allow everyone to sing at least once.
+// John is a marble collector. He keeps his marbles in boxes. He also likes to keep things in order.
+// 
+// 
+// 
+// One day, his younger brother was playing with the marbles.  After he was done, he put all the marbles back in boxes, but he did it randomly, so certain boxes might now contain marbles of different colors. John wants him to regroup the marbles so that the grouping satisfies the following restrictions:
+// 
+// 
+// 
+// At most one box, called the joker box, may contain marbles of different colors. We can choose any box as a joker box.
+// Every box except the joker box must either be empty or only contain marbles of the same color.
+// All marbles of the same color, except those in the joker box, must be in the same box. It's possible that all marbles of the same color are in the joker box.
+// 
+// 
+// 
+// You are given a vector <string> boxes, where the j-th digit of the i-th element is the number of marbles of color j in the i-th box. Return the minimal number of moves necessary to regroup the marbles, where each move consists of taking any number of marbles from one box (not necessarily of the same color) and putting them into another.
 // 
 // 
 // DEFINITION
-// Class:CarolsSinging
-// Method:choose
+// Class:MarblesRegroupingEasy
+// Method:minMoves
 // Parameters:vector <string>
 // Returns:int
-// Method signature:int choose(vector <string> lyrics)
+// Method signature:int minMoves(vector <string> boxes)
 // 
 // 
 // CONSTRAINTS
-// -lyrics will contain between 1 and 30 elements, inclusive.
-// -Each element of lyrics will contain between 1 and 10 characters, inclusive.
-// -Each element of lyrics will contain the same number of characters.
-// -Each element of lyrics will contain only 'Y' and 'N' characters.
-// -Each element of lyrics will contain at least one 'Y' character.
+// -boxes will contain between 1 and 50 elements, inclusive.
+// -Each element of boxes will contain between 1 and 50 characters, inclusive.
+// -All elements of boxes will contain the same number of characters.
+// -Each element of boxes will contain only digits ('0'-'9').
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// {"YN","NY"}
+// {"20",
+//  "11"}
 // 
-// Returns: 2
+// Returns: 0
 // 
-// Both carols need to be sung.
+// Let box 1 be the joker box. All marbles of color 0, except those in the joker box, are in box 0. Box 0 contain only marbles of the color 0. So, all restrictions are already satisfied.
+// 
 // 
 // 1)
-// {"YN","YY","YN"}
+// {"11",
+//  "11",
+//  "10"}
 // 
 // Returns: 1
 // 
-// Everybody knows the first carol, so singing just that one is enough.
+// There are several possible solutions:
+// 
+// Move all marbles from box 0 into box 1. Box 1 is the joker box.
+// Move all marbles from box 1 into box 0. Box 0 is the joker box.
+// Move the marble of color 0 from box 0 into box 1 or 2. Box 1 is the joker box.
+// Move the marble of color 0 from box 1 into box 0 or 2. Box 0 is the joker box.
+// 
+// 
 // 
 // 2)
-// {"YNN","YNY","YNY","NYY","NYY","NYN"}
+// {"10",
+//  "10",
+//  "01",
+//  "01"}
 // 
-// Returns: 2
+// Returns: 1
 // 
-// Singing the best known carol is not always the optimal strategy. Here, the optimal way is to pick the first two carols even though four people know the third one.
+// Let box 0 be the joker box. Now we only need to group all marbles of  color 1 into one box.
 // 
 // 3)
-// {"YNNYYY","YYNYYY","YNNYYN","NYYNNN","YYYNNN","YYYNNY","NYYYYY","NYNYYY","NNNNYY",
-//  "YYYYYY","YNNNNN","YYYYNY","YYNNNN","NNYYYN","NNNNYY","YYYNNN","NYNNYN","YNNYYN",
-//  "YYNNNY","NYYNNY","NNYYYN","YNYYYN","NNNYNY","YYYYNN","YYNYNN","NYYNYY","YYNYYN"}
+// {"11",
+//  "11",
+//  "11",
+//  "10",
+//  "10",
+//  "01"}
 // 
-// Returns: 4
+// Returns: 3
+// 
+// 
+// 
+// 4)
+// {"020008000070",
+//  "000004000000",
+//  "060000600000",
+//  "006000000362",
+//  "000720000000",
+//  "000040000000", 
+//  "004009003000",
+//  "000800000000", 
+//  "020030003000",
+//  "000500200000",
+//  "000000300000"}
+// 
+// Returns: 6
 // 
 // 
 // 

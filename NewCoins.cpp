@@ -52,7 +52,7 @@ typedef vector<string> 		vs;
 #define rep(i, a, b)	for(int i = a, lets_stop_here = (int)b; i >= lets_stop_here; i--)
 
 #define	all(c)		(c).begin(), (c).end()
-#define	CL(a, b)	memset(a, b, sizeof(a))
+#define	cl(a, b)	memset(a, b, sizeof(a))
 #define mp		make_pair
 #define pb		push_back
 
@@ -63,43 +63,73 @@ typedef vector<string> 		vs;
 #define write(n)	printf("%d ", n)
 #define writeln(n)	printf("%d\n", n)
 
-#if (0 or defined ONLINE_JUDGE)
+#if (0)
 	#define debug 
 #else 
 	#define debug(x)	cout << #x << " = " << x << "\n"
 #endif
 
-class CarolsSinging
+class NewCoins
 {
 public:
-	int choose(vector <string> lyrics);
+	int minCoins(vector <int> price);
 };
 
-int countBit(int n) {
-	int ret = 0;
-	while(n > 0) {
-		ret += n & 1;
-		n >>= 1;
+
+int lcm(int a, int b) {
+	return a / __gcd(a, b) * b;
+}
+const int mx = 1e5 +11;
+vi coins, price;
+int ways[mx];
+
+void countWays() {
+	cl(ways, -1);
+	ways[0] = 0;
+	int M = coins.size();
+
+	forn(i, mx) {
+		forn(j, M)	if(i - coins[j] >= 0 && ways[i-coins[j]] != -1) {
+			if(ways[i] == -1 || ways[i] > ways[i-coins[j]] + 1)
+				ways[i] = ways[i-coins[j]]+1;
+		}
 	}
-	return ret;
 }
 
-int CarolsSinging::choose (vector <string> lyrics) 
+int NewCoins::minCoins (vector <int> _price) 
 {
-	int N = lyrics.size(), M = lyrics.back().size();
-	int ret = M;
+	price = _price;
+	sort(all(price));
 
-	forab(mask, 1, (1 << M) - 1)  {
-		vector <bool> good(N, false);
-		forn(j, M)	if((mask & (1<<j)) != 0) {
-			forn(i, N)
-				if(lyrics[i][j] == 'Y')
-					good[i] = true;
-		}
-		if(find(all(good), false) == good.end())
-			ret = min(ret, countBit(mask));
+	coins.clear();
+	coins.pb(1);
+	int val = 2, mul = 2;
+	val = mul = 2;
+
+	while(val < mx) {
+		coins.pb(val);
+		val  *= mul;
 	}
-	
+
+	tr(it, coins)
+		write(*it);
+	cout << endl;
+
+	countWays();
+
+	tr(it, price)
+		write(*it);
+	cout << endl;
+
+	tr(it, price)
+		Pf("(%d, %d) ", *it, ways[*it]);
+	cout << endl;
+
+	int ret = 0;
+
+	tr(it, price)
+		ret += ways[*it];
+
 	return ret;
 }
 
@@ -109,21 +139,21 @@ int CarolsSinging::choose (vector <string> lyrics)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, vector <string> p0, bool hasAnswer, int p1) {
+bool KawigiEdit_RunTest(int testNum, vector <int> p0, bool hasAnswer, int p1) {
 	cout << "Test " << testNum << ": [" << "{";
 	for (int i = 0; int(p0.size()) > i; ++i) {
 		if (i > 0) {
 			cout << ",";
 		}
-		cout << "\"" << p0[i] << "\"";
+		cout << p0[i];
 	}
 	cout << "}";
 	cout << "]" << endl;
-	CarolsSinging *obj;
+	NewCoins *obj;
 	int answer;
-	obj = new CarolsSinging();
+	obj = new NewCoins();
 	clock_t startTime = clock();
-	answer = obj->choose(p0);
+	answer = obj->minCoins(p0);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -155,42 +185,15 @@ int main() {
 	bool all_right;
 	all_right = true;
 	
-	vector <string> p0;
+	vector <int> p0;
 	int p1;
 	
 	{
 	// ----- test 0 -----
-	string t0[] = {"YN","NY"};
+	int t0[] = {28,569,587,256,15,87,927,4,589,73,98,87,597,163,6,498};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 2;
+	p1 = 62;
 	all_right = KawigiEdit_RunTest(0, p0, true, p1) && all_right;
-	// ------------------
-	}
-	
-	{
-	// ----- test 1 -----
-	string t0[] = {"YN","YY","YN"};
-			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 1;
-	all_right = KawigiEdit_RunTest(1, p0, true, p1) && all_right;
-	// ------------------
-	}
-	
-	{
-	// ----- test 2 -----
-	string t0[] = {"YNN","YNY","YNY","NYY","NYY","NYN"};
-			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 2;
-	all_right = KawigiEdit_RunTest(2, p0, true, p1) && all_right;
-	// ------------------
-	}
-	
-	{
-	// ----- test 3 -----
-	string t0[] = {"YNNYYY","YYNYYY","YNNYYN","NYYNNN","YYYNNN","YYYNNY","NYYYYY","NYNYYY","NNNNYY","YYYYYY","YNNNNN","YYYYNY","YYNNNN","NNYYYN","NNNNYY","YYYNNN","NYNNYN","YNNYYN","YYNNNY","NYYNNY","NNYYYN","YNYYYN","NNNYNY","YYYYNN","YYNYNN","NYYNYY","YYNYYN"};
-			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 4;
-	all_right = KawigiEdit_RunTest(3, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
@@ -202,56 +205,61 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// When the Christmas dinner is over, it's time to sing carols.  Unfortunately, not all the family members know the lyrics to the same carols.  Everybody knows at least one, though.
+// As a finance minister, Bob decided to make new denominations of coins. If the values of the coins are x1, x2, x3, ... in ascending order then x1 must be 1 and xb must be an integer multiple of xa for all b > a.
 // 
-// You are given a vector <string> lyrics.  The j-th character of the i-th element of lyrics is 'Y' if the i-th person knows the j-th carol, and 'N' if he doesn't.  Return the minimal number of carols that must be sung to allow everyone to sing at least once.
 // 
+// He has a list of products sold in his country. The price of the i-th product is price[i]. He wants to minimize the number of coins required to buy each product exactly once. Each product must be purchased separately using coins that total to exactly the value of the product. Using multiple coins of the same denomination is allowed. See example 0 for further clarification.
+// 
+// 
+// Return the minimal number of coins required to buy each product exactly once.
 // 
 // DEFINITION
-// Class:CarolsSinging
-// Method:choose
-// Parameters:vector <string>
+// Class:NewCoins
+// Method:minCoins
+// Parameters:vector <int>
 // Returns:int
-// Method signature:int choose(vector <string> lyrics)
+// Method signature:int minCoins(vector <int> price)
 // 
 // 
 // CONSTRAINTS
-// -lyrics will contain between 1 and 30 elements, inclusive.
-// -Each element of lyrics will contain between 1 and 10 characters, inclusive.
-// -Each element of lyrics will contain the same number of characters.
-// -Each element of lyrics will contain only 'Y' and 'N' characters.
-// -Each element of lyrics will contain at least one 'Y' character.
+// -price will contain between 1 and 50 elements, inclusive.
+// -Each element in price will be between 1 and 100,000, inclusive.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// {"YN","NY"}
+// {25, 102}
 // 
-// Returns: 2
+// Returns: 4
 // 
-// Both carols need to be sung.
+// Bob can use {1, 25, 100} as the new set of coins. Then, a single coin of value 25 can be used to buy the first product. To buy the second product, one coin of value 100 and two coins of value 1 is sufficient. So, in total, 4 coins can be used to buy all products using the new set of coins.
 // 
 // 1)
-// {"YN","YY","YN"}
+// {58}
 // 
 // Returns: 1
 // 
-// Everybody knows the first carol, so singing just that one is enough.
+// One possible set of coins is {1, 58}.
 // 
 // 2)
-// {"YNN","YNY","YNY","NYY","NYY","NYN"}
+// {1, 4, 5, 9, 16}
 // 
-// Returns: 2
+// Returns: 7
 // 
-// Singing the best known carol is not always the optimal strategy. Here, the optimal way is to pick the first two carols even though four people know the third one.
+// One possible set of coins is {1, 2, 4, 8, 16}.
 // 
 // 3)
-// {"YNNYYY","YYNYYY","YNNYYN","NYYNNN","YYYNNN","YYYNNY","NYYYYY","NYNYYY","NNNNYY",
-//  "YYYYYY","YNNNNN","YYYYNY","YYNNNN","NNYYYN","NNNNYY","YYYNNN","NYNNYN","YNNYYN",
-//  "YYNNNY","NYYNNY","NNYYYN","YNYYYN","NNNYNY","YYYYNN","YYNYNN","NYYNYY","YYNYYN"}
+// {1, 1, 1, 1, 1}
 // 
-// Returns: 4
+// Returns: 5
+// 
+// Different products may have the same price.
+// 
+// 4)
+// {28, 569, 587, 256, 15, 87, 927, 4, 589, 73, 98, 87, 597, 163, 6, 498}
+// 
+// Returns: 62
 // 
 // 
 // 

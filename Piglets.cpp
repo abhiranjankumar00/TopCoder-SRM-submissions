@@ -63,44 +63,46 @@ typedef vector<string> 		vs;
 #define write(n)	printf("%d ", n)
 #define writeln(n)	printf("%d\n", n)
 
-#if (0 or defined ONLINE_JUDGE)
+#if (0)
 	#define debug 
 #else 
 	#define debug(x)	cout << #x << " = " << x << "\n"
 #endif
 
-class CarolsSinging
+class Piglets
 {
 public:
-	int choose(vector <string> lyrics);
+	int choose(string trough);
 };
 
-int countBit(int n) {
-	int ret = 0;
-	while(n > 0) {
-		ret += n & 1;
-		n >>= 1;
-	}
-	return ret;
-}
-
-int CarolsSinging::choose (vector <string> lyrics) 
+int Piglets::choose (string trough) 
 {
-	int N = lyrics.size(), M = lyrics.back().size();
-	int ret = M;
+	int N = trough.size();
+	if(trough[0] == '-')
+		return 0;
+	if(trough.at(N-1) == '-')
+		return N-1;
+	if(count(all(trough), 'p') == N)
+		return -1;
 
-	forab(mask, 1, (1 << M) - 1)  {
-		vector <bool> good(N, false);
-		forn(j, M)	if((mask & (1<<j)) != 0) {
-			forn(i, N)
-				if(lyrics[i][j] == 'Y')
-					good[i] = true;
+	int id = 0;
+	int cnt = 0;
+	vi wait(N, -1);
+
+	while( id < N) {
+		if(trough[id] == 'p') {
+			id++;
+			continue;
 		}
-		if(find(all(good), false) == good.end())
-			ret = min(ret, countBit(mask));
+		int r = id+1;
+		while(r < N && trough[r] == '-')
+			r++;
+		id = r;
 	}
-	
-	return ret;
+	tr(it, wait)
+		write(*it);
+	cout << endl;
+	return trough.find('-');
 }
 
 // BEGIN KAWIGIEDIT TESTING
@@ -109,19 +111,12 @@ int CarolsSinging::choose (vector <string> lyrics)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, vector <string> p0, bool hasAnswer, int p1) {
-	cout << "Test " << testNum << ": [" << "{";
-	for (int i = 0; int(p0.size()) > i; ++i) {
-		if (i > 0) {
-			cout << ",";
-		}
-		cout << "\"" << p0[i] << "\"";
-	}
-	cout << "}";
+bool KawigiEdit_RunTest(int testNum, string p0, bool hasAnswer, int p1) {
+	cout << "Test " << testNum << ": [" << "\"" << p0 << "\"";
 	cout << "]" << endl;
-	CarolsSinging *obj;
+	Piglets *obj;
 	int answer;
-	obj = new CarolsSinging();
+	obj = new Piglets();
 	clock_t startTime = clock();
 	answer = obj->choose(p0);
 	clock_t endTime = clock();
@@ -155,22 +150,20 @@ int main() {
 	bool all_right;
 	all_right = true;
 	
-	vector <string> p0;
+	string p0;
 	int p1;
 	
 	{
 	// ----- test 0 -----
-	string t0[] = {"YN","NY"};
-			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 2;
+	p0 = "--p--";
+	p1 = 0;
 	all_right = KawigiEdit_RunTest(0, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	string t0[] = {"YN","YY","YN"};
-			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
+	p0 = "p-p-p";
 	p1 = 1;
 	all_right = KawigiEdit_RunTest(1, p0, true, p1) && all_right;
 	// ------------------
@@ -178,19 +171,33 @@ int main() {
 	
 	{
 	// ----- test 2 -----
-	string t0[] = {"YNN","YNY","YNY","NYY","NYY","NYN"};
-			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 2;
+	p0 = "p--p";
+	p1 = 1;
 	all_right = KawigiEdit_RunTest(2, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	string t0[] = {"YNNYYY","YYNYYY","YNNYYN","NYYNNN","YYYNNN","YYYNNY","NYYYYY","NYNYYY","NNNNYY","YYYYYY","YNNNNN","YYYYNY","YYNNNN","NNYYYN","NNNNYY","YYYNNN","NYNNYN","YNNYYN","YYNNNY","NYYNNY","NNYYYN","YNYYYN","NNNYNY","YYYYNN","YYNYNN","NYYNYY","YYNYYN"};
-			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 4;
+	p0 = "p---p";
+	p1 = 2;
 	all_right = KawigiEdit_RunTest(3, p0, true, p1) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 4 -----
+	p0 = "ppp";
+	p1 = -1;
+	all_right = KawigiEdit_RunTest(4, p0, true, p1) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 5 -----
+	p0 = "p----p";
+	p1 = 3;
+	all_right = KawigiEdit_RunTest(5, p0, true, p1) && all_right;
 	// ------------------
 	}
 	
@@ -202,58 +209,91 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// When the Christmas dinner is over, it's time to sing carols.  Unfortunately, not all the family members know the lyrics to the same carols.  Everybody knows at least one, though.
 // 
-// You are given a vector <string> lyrics.  The j-th character of the i-th element of lyrics is 'Y' if the i-th person knows the j-th carol, and 'N' if he doesn't.  Return the minimal number of carols that must be sung to allow everyone to sing at least once.
+// 
+// It's feeding time in the pig pen, where a trough is divided into n
+// stalls to accommodate n piglets. The rude piglets immediately rush to
+// the trough and distribute themselves arbitrarily among the stalls. After
+// them come the fastidious piglets one at a time, at one-minute intervals.
+// 
+// 
+// 
+// A fastidious piglet doesn't want to feed in just any stall, since he
+// doesn't like to be sandwiched between two piglets. As the trough
+// fills up, however, a piglet who hasn't managed to occupy an end stall will
+// eventually have a neighbor on each side. It is the fastidious
+// piglet's goal to delay this sandwiching as long as possible.
+// Among multiple stalls that afford the same delay, he prefers
+// the leftmost. He makes his selection in the knowledge that all subsequent piglets
+// arriving at the trough will choose a stall according to the same criteria.
+// 
+// 
+// 
+// Given a string describing a trough configuration such that '-'
+// represents an empty stall and 'p' represents an occupied stall, return the
+// zero-based index of the stall chosen by the next piglet. Return -1 if every
+// stall is occupied.
+// 
+// 
 // 
 // 
 // DEFINITION
-// Class:CarolsSinging
+// Class:Piglets
 // Method:choose
-// Parameters:vector <string>
+// Parameters:string
 // Returns:int
-// Method signature:int choose(vector <string> lyrics)
+// Method signature:int choose(string trough)
+// 
+// 
+// NOTES
+// -A fastidious piglet will take a stall at the very end of the trough if possible, preferring the left end to the right end.
+// -All currently empty stalls will eventually be occupied by fastidious piglets.
 // 
 // 
 // CONSTRAINTS
-// -lyrics will contain between 1 and 30 elements, inclusive.
-// -Each element of lyrics will contain between 1 and 10 characters, inclusive.
-// -Each element of lyrics will contain the same number of characters.
-// -Each element of lyrics will contain only 'Y' and 'N' characters.
-// -Each element of lyrics will contain at least one 'Y' character.
+// -trough contains between 1 and 15 characters, inclusive.
+// -Each character in trough is either '-' or 'p'.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// {"YN","NY"}
+// "--p--"
 // 
-// Returns: 2
+// Returns: 0
 // 
-// Both carols need to be sung.
+// An end stall lets the piglet avoid sandwiching altogether.
 // 
 // 1)
-// {"YN","YY","YN"}
+// "p-p-p"
 // 
 // Returns: 1
 // 
-// Everybody knows the first carol, so singing just that one is enough.
+// The piglet is forced to choose a stall that is already sandwiched. As always in the case of a tie, he prefers the leftmost.
 // 
 // 2)
-// {"YNN","YNY","YNY","NYY","NYY","NYN"}
+// "p--p"
+// 
+// Returns: 1
+// 
+// Whichever stall the next piglet chooses, he will be sandwiched by the piglet who follows one minute later.
+// 
+// 3)
+// "p---p"
 // 
 // Returns: 2
 // 
-// Singing the best known carol is not always the optimal strategy. Here, the optimal way is to pick the first two carols even though four people know the third one.
+// If the piglet takes stall 1, he will be sandwiched in one minute. Stalls 2 and 3 allow him a two-minute delay.
 // 
-// 3)
-// {"YNNYYY","YYNYYY","YNNYYN","NYYNNN","YYYNNN","YYYNNY","NYYYYY","NYNYYY","NNNNYY",
-//  "YYYYYY","YNNNNN","YYYYNY","YYNNNN","NNYYYN","NNNNYY","YYYNNN","NYNNYN","YNNYYN",
-//  "YYNNNY","NYYNNY","NNYYYN","YNYYYN","NNNYNY","YYYYNN","YYNYNN","NYYNYY","YYNYYN"}
+// 4)
+// "ppp"
 // 
-// Returns: 4
+// Returns: -1
 // 
+// 5)
+// "p----p"
 // 
+// Returns: 3
 // 
 // END KAWIGIEDIT TESTING
 

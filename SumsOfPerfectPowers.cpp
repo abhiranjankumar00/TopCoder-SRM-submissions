@@ -69,34 +69,46 @@ typedef vector<string> 		vs;
 	#define DEBUG(x)	cout << #x << " = " << x << "\n"
 #endif
 
-class ConcatenateNumber
+class SumsOfPerfectPowers
 {
 public:
-	int getSmallest(int number, int k);
+	int howMany(int lowerBound, int upperBound);
 };
 
-const int sz = 1e5 + 111;
-bool vis[sz];
-
-int ConcatenateNumber::getSmallest (int number, int k) 
+const int sz = 5e6 + 111;
+bool isGood[sz];
+int SumsOfPerfectPowers::howMany (int _lowerBound, int _upperBound) 
 {
-	CL(vis, 0);
+	int64 lowerBound = _lowerBound;
+	int64 upperBound = _upperBound;
+	DEBUG(lowerBound);
+	DEBUG(upperBound);
 
-	int64 ten = 1, num = number;
-	while(num) {
-		ten*= 10;
-		num/=10;
-	}
-	DEBUG(ten);
+	CL(isGood, 0);
+	isGood[0] = isGood[1] = true;
 
-	num = number % k;
-	forab(i, 1, sz) {
-		if(num == 0)
-			return i;
-		num = (num*ten + number ) % k;
+	for(int64 i = 2; i*i < sz; i++) {
+		for(int64 j = i*i; j < sz; j*=i)
+			isGood[j] = true;
 	}
 
-	return -1;
+	vector <int64> arr;
+	forn(i, sz)
+		if(isGood[i])
+			arr.pb(i);
+	DEBUG(arr.size());
+
+	tr(it, arr)
+		tr(jt, arr)
+			if(*it + *jt >= lowerBound && *it + *jt <= upperBound)
+				isGood[*it + *jt] = true;
+
+	int ans = 0;
+	forab(i, lowerBound, upperBound)	if(isGood[i]) {
+		ans++;
+	}
+
+	return ans;
 }
 
 // BEGIN KAWIGIEDIT TESTING
@@ -108,11 +120,11 @@ using namespace std;
 bool KawigiEdit_RunTest(int testNum, int p0, int p1, bool hasAnswer, int p2) {
 	cout << "Test " << testNum << ": [" << p0 << "," << p1;
 	cout << "]" << endl;
-	ConcatenateNumber *obj;
+	SumsOfPerfectPowers *obj;
 	int answer;
-	obj = new ConcatenateNumber();
+	obj = new SumsOfPerfectPowers();
 	clock_t startTime = clock();
-	answer = obj->getSmallest(p0, p1);
+	answer = obj->howMany(p0, p1);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -150,46 +162,9 @@ int main() {
 	
 	{
 	// ----- test 0 -----
-	p0 = 2;
-	p1 = 9;
-	p2 = 9;
-	all_right = KawigiEdit_RunTest(0, p0, p1, true, p2) && all_right;
-	// ------------------
-	}
-	
-	{
-	// ----- test 1 -----
-	p0 = 121;
-	p1 = 11;
-	p2 = 1;
-	all_right = KawigiEdit_RunTest(1, p0, p1, true, p2) && all_right;
-	// ------------------
-	}
-	
-	{
-	// ----- test 2 -----
 	p0 = 1;
-	p1 = 2;
-	p2 = -1;
-	all_right = KawigiEdit_RunTest(2, p0, p1, true, p2) && all_right;
-	// ------------------
-	}
-	
-	{
-	// ----- test 3 -----
-	p0 = 35;
-	p1 = 98765;
-	p2 = 9876;
-	all_right = KawigiEdit_RunTest(3, p0, p1, true, p2) && all_right;
-	// ------------------
-	}
-	
-	{
-	// ----- test 4 -----
-	p0 = 1000000000;
-	p1 = 3;
-	p2 = 3;
-	all_right = KawigiEdit_RunTest(4, p0, p1, true, p2) && all_right;
+	p1 = 100;
+	all_right = KawigiEdit_RunTest(0, p0, p1, false, p2) && all_right;
 	// ------------------
 	}
 	
@@ -201,60 +176,60 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// Given a positive integer number, concatenate one or more copies of number to create an integer that is divisible by k.  Do not add any leading zeroes.  Return the least number of copies needed, or -1 if it is impossible.
+// A non-negative integer n is said to be a sum of two perfect powers if there exist two non-negative integers a and b such that am + bk = n for some positive integers m and k, both greater than 1. Given two non-negative integers lowerBound and upperBound, return the number of integers between lowerBound and upperBound, inclusive, that are sums of two perfect powers.
 // 
 // DEFINITION
-// Class:ConcatenateNumber
-// Method:getSmallest
+// Class:SumsOfPerfectPowers
+// Method:howMany
 // Parameters:int, int
 // Returns:int
-// Method signature:int getSmallest(int number, int k)
+// Method signature:int howMany(int lowerBound, int upperBound)
 // 
 // 
 // CONSTRAINTS
-// -number will be between 1 and 1,000,000,000, inclusive.
-// -k will be between 1 and 100,000, inclusive.
+// -lowerBound will be between 0 and 5000000, inclusive.
+// -upperBound will be between lowerBound and 5000000, inclusive.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// 2
-// 9
+// 0
+// 1
 // 
-// Returns: 9
+// Returns: 2
 // 
-// At least 9 copies are needed, since 222222222 is divisible by 9.
+// 0 and 1 are both sums of two perfect powers since 0 = 0 + 0 and 1 = 12 + 02.
 // 
 // 1)
-// 121
-// 11
+// 5
+// 6
 // 
 // Returns: 1
 // 
-// 121 is divisible by 11.
+// 5 is a sum of two perfect powers since 5 = 22 + 12 while 6 is not.
 // 
 // 2)
-// 1
-// 2
+// 25
+// 30
 // 
-// Returns: -1
+// Returns: 5
 // 
-// You can never get an even number by concatenating only 1's.
+// Only 30 is not a sum of two perfect powers.
 // 
 // 3)
-// 35
-// 98765
+// 103
+// 103
 // 
-// Returns: 9876
+// Returns: 0
 // 
-// The resulting integer could be really big.
+// There may be no desired integers in the range.
 // 
 // 4)
-// 1000000000
-// 3
+// 1
+// 100000
 // 
-// Returns: 3
+// Returns: 33604
 // 
 // 
 // 
