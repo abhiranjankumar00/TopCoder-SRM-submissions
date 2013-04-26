@@ -96,8 +96,9 @@ int main(int argc, char **argv)
 		ss >> N;
 	}
 	else {
-		cout << "Enter number of rooms: ";
-		cin >> N;
+		N = 576;
+6/		cout << "Enter number of rooms: ";
+//		cin >> N;
 	}
 
 	cout << "Goto room number " << roomSelector(N).getRandomRoom() << endl;
