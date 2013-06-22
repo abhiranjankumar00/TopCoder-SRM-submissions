@@ -96,8 +96,8 @@ int main(int argc, char **argv)
 		ss >> N;
 	}
 	else {
-		N = 576;
-6/		cout << "Enter number of rooms: ";
+		N = 578;
+//		cout << "Enter number of rooms: ";
 //		cin >> N;
 	}
 
