@@ -63,11 +63,8 @@ typedef vector<string> 		vs;
 #define write(n)	printf("%d ", n)
 #define writeln(n)	printf("%d\n", n)
 
-#if (0)
-	#define debug 
-#else 
-	#define debug(x)	cout << #x << " = " << x << "\n"
-#endif
+//#define debug(x)
+#define debug(x)	cout << #x << " = " << x << "\n"
 
 class WallGameDiv2
 {
@@ -75,9 +72,59 @@ public:
 	int play(vector <string> costs);
 };
 
-int WallGameDiv2::play (vector <string> costs) 
+vector <string> costs;
+const int oo = 1e8;
+int N, M;
+enum {lleft, rright, top};
+int dp[55][55][3];
+
+bool valid(int x, int y) {
+	return x >= 0 && x < N && y >= 0 && y < M && costs[x][y] != 'x';
+}
+
+int solve(int x, int y, int d) {
+	if(!valid(x, y))
+		return -oo;
+
+	int &ret = dp[x][y][d];
+	if(ret != -1)
+		return ret;
+
+	ret = -oo;
+	int c = costs[x][y]-'0';
+
+	if(x == 0 && y == 0)
+		return ret = c;
+	if(d == top) {
+		ret = max(ret, solve(x-1, y, top) + c);
+		ret = max(ret, solve(x-1, y, lleft) + c);
+		ret = max(ret, solve(x-1, y, rright) + c);
+		return ret;
+	}
+	if(d == lleft) {
+		ret = max(ret, solve(x, y-1, top) + c);
+		ret = max(ret, solve(x, y-1, lleft) + c);
+		return ret;
+	}
+	if(d == rright) {
+		ret = max(ret, solve(x, y+1, top) + c);
+		ret = max(ret, solve(x, y+1, rright) + c);
+		return ret;
+	}
+	assert(0);
+}
+
+int WallGameDiv2::play (vector <string> _costs) 
 {
-	int ret;
+	costs = _costs;
+	N = costs.size(); M = costs.back().size();
+	memset(dp, -1, sizeof(dp));
+
+	int ret = -oo;
+
+	for(int j = 0; j < M; ++j) {
+		ret = max(ret, solve(N-1, j, top));
+	}
 	
 	return ret;
 }
@@ -320,5 +367,6 @@ int main() {
 // 
 // 
 // END KAWIGIEDIT TESTING
+
 
 //Powered by KawigiEdit 2.1.8 (beta) modified by pivanof!

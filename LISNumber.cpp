@@ -63,49 +63,20 @@ typedef vector<string> 		vs;
 #define write(n)	printf("%d ", n)
 #define writeln(n)	printf("%d\n", n)
 
-#if (0)
-	#define debug 
-#else 
-	#define debug(x)	cout << #x << " = " << x << "\n"
-#endif
+//#define debug(x)
+#define debug(x)	cout << #x << " = " << x << "\n"
 
-class TravelOnMars
+class LISNumber
 {
 public:
-	int minTimes(vector <int> range, int startCity, int endCity);
+	int count(vector <int> cardsnum, int K);
 };
 
-
-int TravelOnMars::minTimes (vector <int> range, int startCity, int endCity) 
+int LISNumber::count (vector <int> cardsnum, int K) 
 {
-	queue < int > q;
-	int N = range.size();
-	vector <int> dist(N, -1);
-
-	dist[startCity] = 0;
-	q.push(startCity);
-
-	while(!q.empty()) {
-		int u = q.front();
-		q.pop();
-		int d = dist[u];
-
-		for(int i = 1; i <= range[u]; ++i) {
-			int v = (u + i) % N;
-			if(dist[v] == -1) {
-				dist[v] = d + 1;
-				q.push(v);
-			}
-			v = (u - i) % N;
-			v = (v + N) % N;
-			if(dist[v] == -1) {
-				dist[v] = d + 1;
-				q.push(v);
-			}
-
-		}
-	}
-	return dist[endCity];
+	int ret;
+	
+	return ret;
 }
 
 // BEGIN KAWIGIEDIT TESTING
@@ -114,7 +85,7 @@ int TravelOnMars::minTimes (vector <int> range, int startCity, int endCity)
 #include <string>
 #include <vector>
 using namespace std;
-bool KawigiEdit_RunTest(int testNum, vector <int> p0, int p1, int p2, bool hasAnswer, int p3) {
+bool KawigiEdit_RunTest(int testNum, vector <int> p0, int p1, bool hasAnswer, int p2) {
 	cout << "Test " << testNum << ": [" << "{";
 	for (int i = 0; int(p0.size()) > i; ++i) {
 		if (i > 0) {
@@ -122,13 +93,13 @@ bool KawigiEdit_RunTest(int testNum, vector <int> p0, int p1, int p2, bool hasAn
 		}
 		cout << p0[i];
 	}
-	cout << "}" << "," << p1 << "," << p2;
+	cout << "}" << "," << p1;
 	cout << "]" << endl;
-	TravelOnMars *obj;
+	LISNumber *obj;
 	int answer;
-	obj = new TravelOnMars();
+	obj = new LISNumber();
 	clock_t startTime = clock();
-	answer = obj->minTimes(p0, p1, p2);
+	answer = obj->count(p0, p1);
 	clock_t endTime = clock();
 	delete obj;
 	bool res;
@@ -136,12 +107,12 @@ bool KawigiEdit_RunTest(int testNum, vector <int> p0, int p1, int p2, bool hasAn
 	cout << "Time: " << double(endTime - startTime) / CLOCKS_PER_SEC << " seconds" << endl;
 	if (hasAnswer) {
 		cout << "Desired answer:" << endl;
-		cout << "\t" << p3 << endl;
+		cout << "\t" << p2 << endl;
 	}
 	cout << "Your answer:" << endl;
 	cout << "\t" << answer << endl;
 	if (hasAnswer) {
-		res = answer == p3;
+		res = answer == p2;
 	}
 	if (!res) {
 		cout << "DOESN'T MATCH!!!!" << endl;
@@ -163,59 +134,64 @@ int main() {
 	vector <int> p0;
 	int p1;
 	int p2;
-	int p3;
 	
 	{
 	// ----- test 0 -----
-	int t0[] = {2,1,1,1,1,1};
+	int t0[] = {1,1,1};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 1;
+	p1 = 2;
 	p2 = 4;
-	p3 = 2;
-	all_right = KawigiEdit_RunTest(0, p0, p1, p2, true, p3) && all_right;
+	all_right = KawigiEdit_RunTest(0, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 1 -----
-	int t0[] = {2,1,1,1,1,1};
+	int t0[] = {2};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 4;
-	p2 = 1;
-	p3 = 3;
-	all_right = KawigiEdit_RunTest(1, p0, p1, p2, true, p3) && all_right;
+	p1 = 1;
+	p2 = 0;
+	all_right = KawigiEdit_RunTest(1, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 2 -----
-	int t0[] = {2,1,1,2,1,2,1,1};
+	int t0[] = {36,36,36,36,36};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 2;
-	p2 = 6;
-	p3 = 3;
-	all_right = KawigiEdit_RunTest(2, p0, p1, p2, true, p3) && all_right;
+	p1 = 36;
+	p2 = 1;
+	all_right = KawigiEdit_RunTest(2, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 3 -----
-	int t0[] = {3,2,1,1,3,1,2,2,1,1,2,2,2,2,3};
+	int t0[] = {3,2,11,5,7};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 6;
-	p2 = 13;
-	p3 = 4;
-	all_right = KawigiEdit_RunTest(3, p0, p1, p2, true, p3) && all_right;
+	p1 = 20;
+	p2 = 474640725;
+	all_right = KawigiEdit_RunTest(3, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
 	{
 	// ----- test 4 -----
-	int t0[] = {50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50};
+	int t0[] = {31,4,15,9,26,5,35,8,9,7,9,32,3,8,4,6,26};
 			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
-	p1 = 1;
-	p2 = 49;
-	all_right = KawigiEdit_RunTest(4, p0, p1, p2, false, p3) && all_right;
+	p1 = 58;
+	p2 = 12133719;
+	all_right = KawigiEdit_RunTest(4, p0, p1, true, p2) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 5 -----
+	int t0[] = {27,18,28,18,28,4,5,9,4,5,23,5,36,28,7,4,7,13,5,26,6,24,9,7,7,5,7,24,7,9,36,9,9,9,5,9};
+			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
+	p1 = 116;
+	p2 = 516440918;
+	all_right = KawigiEdit_RunTest(5, p0, p1, true, p2) && all_right;
 	// ------------------
 	}
 	
@@ -227,69 +203,96 @@ int main() {
 	return 0;
 }
 // PROBLEM STATEMENT
-// Bob recently went to Mars.
+// Let A be a sequence of integers.
+// The LISNumber of A is the smallest positive integer L such that A can be obtained by concatenating L strictly increasing sequences.
+// For example, the LISNumber of A = {1, 4, 4, 2, 6, 3} is 4, since we can obtain A as {1, 4} + {4} + {2, 6} + {3}, and there is no way to create A by concatenating 3 (or fewer) strictly increasing sequences.
+// The LISNumber of a strictly increasing sequence is 1.
 // 
-// There are N cities on Mars. The cities all lie on a circular railroad and they are numbered 0 through N-1 along the railroad. More precisely, there is a railroad segment that connects cities N-1 and 0, and for each i (0 <= i <= N-2) there is a railroad segment that connects cities i and i+1. Trains travel along the railroad in both directions.
+// You have N types of cards.
+// For each i, 0 <= i < N, you have cardsnum[i] cards of the i-th type.
+// Each card of the i-th type contains the number i.
 // 
-// You are given a vector <int> range with N elements. For each i: the set of cities that are reachable from city i by a direct train is precisely the set of cities that are within the distance range[i] of city i. (The distance between two cities is the smallest number of railroad segments one needs to travel in order to get from one city to the other. For example, if N=17 and range[2]=3, the cities directly reachable from city 2 are the cities {16,0,1,2,3,4,5}.)
+// You are given the vector <int> cardsnum and an int K.
+// You want to arrange all the cards you have into a row in such a way that the resulting sequence of integers has LISNumber K.
+// Note that you must use all the cards you have, you can only choose their order.
 // 
-// You are also given ints startCity and endCity. Bob starts his tour in the city startCity and wants to end it in the city endCity. Calculate and return the minimum number of succesive direct trains he needs to take.
+// Let X be the number of different valid sequences you can produce.
+// Compute and return the number X, modulo 1,000,000,007.
 // 
 // DEFINITION
-// Class:TravelOnMars
-// Method:minTimes
-// Parameters:vector <int>, int, int
+// Class:LISNumber
+// Method:count
+// Parameters:vector <int>, int
 // Returns:int
-// Method signature:int minTimes(vector <int> range, int startCity, int endCity)
+// Method signature:int count(vector <int> cardsnum, int K)
 // 
 // 
 // CONSTRAINTS
-// -range will contain N elements, where N is between 2 and 50, inclusive.
-// -Each element of range will be between 1 and 50, inclusive.
-// -startCity will be between 0 and N-1, inclusive.
-// -endCity will be between 0 and N-1, inclusive.
-// -startCity and endCity will be different.
+// -cardsnum will contain between 1 and 36 elements, inclusive.
+// -Each element of cardsnum will be between 1 and 36, inclusive.
+// -K will be between 1 and 1296, inclusive.
 // 
 // 
 // EXAMPLES
 // 
 // 0)
-// {2,1,1,1,1,1}
-// 1
-// 4
-// 
-// Returns: 2
-// 
-// Bob wants to get from city 1 to city 4.
-// The optimal solution is to travel from city 1 to city 0, and then (as range[0]=2) from city 0 to city 4.
-// 
-// 1)
-// {2,1,1,1,1,1}
-// 4
-// 1
-// 
-// Returns: 3
-// 
-// This is the same test case as Example 0, only startCity and endCity have been swapped. Note that the answer is now 3 instead of 2.
-// 
-// 2)
-// {2,1,1,2,1,2,1,1}
+// {1, 1, 1}
 // 2
-// 6
-// 
-// Returns: 3
-// 
-// Bob starts in city 2. There are two optimal routes: (2->3->5->6) and (2->1->0->6).
-// 
-// 3)
-// {3,2,1,1,3,1,2,2,1,1,2,2,2,2,3}
-// 6
-// 13
 // 
 // Returns: 4
+// 
+// In this case, there are 3 types of cards and you have one of each. Among the 6 sequences you can make, the following 4 have LISNumber 2:
+// 
+// {0, 2, 1}
+// {1, 0, 2}
+// {1, 2, 0}
+// {2, 0, 1}
+// 
+// 
+// 
+// 1)
+// {2}
+// 1
+// 
+// Returns: 0
+// 
+// The only sequence you can make is {0, 0} and its LISNumber is 2.
+// 
+// 2)
+// {36, 36, 36, 36, 36}
+// 36
+// 
+// Returns: 1
+// 
+// Only the sequence {0, 1, 2, 3, 4, 0, 1, 2, 3, 4, ... (36 times) ... } has LISNumber 36.
+// 
+// 3)
+// {3, 2, 11, 5, 7}
+// 20
+// 
+// Returns: 474640725
+// 
+// 
+// 
+// 4)
+// {31, 4, 15, 9, 26, 5, 35, 8, 9, 7, 9, 32, 3, 8, 4, 6, 26}
+// 58
+// 
+// Returns: 12133719
+// 
+// 
+// 
+// 5)
+// {27, 18, 28, 18, 28, 4, 5, 9, 4, 5, 23, 5,
+//  36, 28, 7, 4, 7, 13, 5, 26, 6, 24, 9, 7,
+//  7, 5, 7, 24, 7, 9, 36, 9, 9, 9, 5, 9}
+// 116
+// 
+// Returns: 516440918
 // 
 // 
 // 
 // END KAWIGIEDIT TESTING
+
 
 //Powered by KawigiEdit 2.1.8 (beta) modified by pivanof!

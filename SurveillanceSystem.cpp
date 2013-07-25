@@ -75,7 +75,7 @@ public:
 	string getContainerInfo(string containers, vector <int> reports, int L);
 };
 
-string SurveillanceSystem::getContainerInfo (string containers, vector <int> reports, int L) 
+string SurveillanceSystem::getContainerInfo (string containers, vector <int> reports, int lssL) 
 {
 	map <int, int> cnt;
 	cnt.clear();

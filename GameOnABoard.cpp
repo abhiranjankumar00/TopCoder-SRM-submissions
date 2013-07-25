@@ -75,10 +75,70 @@ public:
 	int optimalChoice(vector <string> cost);
 };
 
-int GameOnABoard::optimalChoice (vector <string> cost) 
+vector <string> cost;
+int N, M;
+int dist[55][55];
+int X[] = {1, -1, 0, 0};
+int Y[] = {0, 0, 1, -1};
+const int inf = 1000;
+
+int getWeight(int x, int y) {
+   	return cost[x][y] - '0'; 
+}
+bool isValid(int x, int y) {
+   	return x >= 0 && x < N && y >= 0 && y < M;
+}
+
+int bfs(int r, int c) {
+	memset(dist, 1, sizeof(dist));
+	deque <pair <int, int> > dq;
+	dist[r][c] = getWeight(r, c);
+	dq.push_back(make_pair(r, c));
+	int ret = dist[r][c];
+
+	while(!dq.empty()) {
+		pair <int, int> nd = dq.front();
+		int d = dist[nd.first][nd.second]; 
+		dq.pop_front();
+
+		for(int i = 0; i < 4; ++i) {
+			int x = nd.first + X[i];
+			int y = nd.second + Y[i]; 
+
+			if(!isValid(x, y) || dist[x][y] < inf)
+				continue;
+
+			int w = getWeight(x, y);
+			dist[x][y] = d + w;
+			ret = max(ret, dist[x][y]);
+			if(w == 0)
+				dq.push_front(make_pair(x, y));
+			else
+				dq.push_back(make_pair(x, y));
+		}
+	}
+	return ret;
+}
+
+int GameOnABoard::optimalChoice (vector <string> _cost) 
 {
-	int ret;
-	40+
+	cost = _cost;
+	N = cost.size();
+	M = cost[0].size();
+
+/*
+	for(auto it = begin(cost); it != end(cost); ++it) {
+		 cout << *it << "\n";
+	}
+	cout << "\n";
+*/
+	int ret = inf;
+	for(int i = 0; i < N; ++i) {
+		for(int j = 0; j < M; ++j) {
+			ret = min(bfs(i, j), ret);
+		}
+	}
+
 	return ret;
 }
 

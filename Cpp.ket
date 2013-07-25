@@ -63,21 +63,21 @@ typedef vector<string> 		vs;
 #define write(n)	printf("%d ", n)
 #define writeln(n)	printf("%d\n", n)
 
-#if (0)
-	#define debug 
-#else 
-	#define debug(x)	cout << #x << " = " << x << "\n"
-#endif
+//#define debug(x)
+#define debug(x)	cout << #x << " = " << x << "\n"
 
 class <%:class-name%>
 {
 public:
-	<%:return-type%> <%:method-name%>(<%:param-list%>)
-	{
-		<%:return-type%> ret;
-		<%:set-caret%>
-		return ret;
-	}
+
+
+<%:return-type%> <%:method-name%>(<%:param-list%>) {
+	<%:return-type%> ret;
+	<%:set-caret%>
+	return ret;
+}
+
+
 };
 
 <%:testing-code%>

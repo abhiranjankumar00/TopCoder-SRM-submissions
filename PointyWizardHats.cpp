@@ -1,71 +1,73 @@
+#include <iostream>
+#include <ctime>
 #include <vector>
 #include <list>
+#include <queue>
 #include <map>
 #include <set>
-#include <queue>
 #include <deque>
 #include <stack>
 #include <bitset>
 #include <algorithm>
 #include <functional>
 #include <numeric>
+#include <cassert>
 #include <utility>
 #include <sstream>
-#include <iostream>
 #include <iomanip>
 #include <cstdio>
 #include <cmath>
 #include <cstdlib>
-#include <ctime>
-#include <cassert>
-#include <climits>
 #include <cstring>
+#include <climits>
 #include <iterator>
 #include <fstream>
 using namespace std;
 
-typedef long long  int64;
-typedef vector<int> vi;
-typedef string ST;
-typedef stringstream SS;
-typedef vector< vector <int> > vvi;
-typedef pair<int,int> ii;
-typedef vector <string> vs;
-
-#define DEBUG(x)	cout << #x << " = " << x << "\n"
-#define endl 		("\n")
-
-#define	ep		1e-9
+typedef long long 		int64;
+typedef vector<int> 		vi;
+typedef string 			ST;
+typedef stringstream 		SS;
+typedef vector< vector<int> > 	vvi;
+typedef pair<int,int> 		ii;
+typedef vector<string> 		vs;
+/*
+#if __cplusplus > 199711L	// for g++0x, value of __cplusplus must be greater thana 199711L.
+	#define tr(i, c)	for(auto i = begin(c); i != end(c); i++)
+#else
+	#define tr(i, c)	for(typeof((c).begin()) i = (c).begin(); i != (c).end(); i++)
+#endif
+*/
+#define endl		("\n")
+#define tr(i, c)	for(__typeof((c).begin()) i = (c).begin(); i != (c).end(); i++)
 #define PI		M_PI
 #define E 		M_E
+#define	eps		1e-9
 
-#define	CL(a, b)	memset(a, b, sizeof(a))
-#define	mp		make_pair
-#define	pb		push_back
+#define	Sf		scanf
+#define	Pf		printf
+
+#define forn(i, n)	for(int i = 0, lets_stop_here = (int)n; i <  lets_stop_here; i++)
+#define forab(i, a, b)	for(int i = a, lets_stop_here = (int)b; i <= lets_stop_here; i++)
+#define rep(i, a, b)	for(int i = a, lets_stop_here = (int)b; i >= lets_stop_here; i--)
 
 #define	all(c)		(c).begin(), (c).end()
-#define	tr(i, c)	for(__typeof((c).begin()) i = (c).begin(); i != (c).end(); i++)
+#define	cl(a, b)	memset(a, b, sizeof(a))
+#define mp		make_pair
+#define pb		push_back
 
-#define	present(x, c)	((c).find(x) != (c).end())		//map & set//
-#define	cpresent(x, c)	(find(all(c),x) != (c).end())		//vector & list//
-
-#define forn(i, n)	for(int i = 0, loop_ends_here = (int)n; i < loop_ends_here ; i++)
-#define forab(i, a, b)	for(int i = a, loop_ends_here = (int)b; i <= loop_ends_here; i++)
-#define rep(i, a, b)	for(int i = a, loop_ends_here = (int)b; i >= loop_ends_here; i--)
-
-#define Pf		printf
-#define	Sf		scanf
+#define	present(x, c)	((c).find(x) != (c).end())	//map & set//
+#define	cpresent(x, c)	(find( (c).begin(), (c).end(), x) != (c).end())	//vector & list//
 
 #define read(n)		scanf("%d", &n)
 #define write(n)	printf("%d ", n)
 #define writeln(n)	printf("%d\n", n)
 
-/*
-#ifdef DEBUG
-	#undef DEBUG
+#if (0)
+	#define debug 
+#else 
+	#define debug(x)	cout << #x << " = " << x << "\n"
 #endif
-#define DEBUG
-*/
 
 class PointyWizardHats
 {
@@ -73,51 +75,69 @@ public:
 	int getNumHats(vector <int> topHeight, vector <int> topRadius, vector <int> bottomHeight, vector <int> bottomRadius);
 };
 
-vi topHeight, topRadius, botHeight, botRadius;
+vector <int> topHt, botHt, topRd, botRd;
+int N, M;
+vector <int> lt(55), rt(55);
+vector < bool > vis(55);
 
-bool isEdge(int b, int t) {
-	if(botRadius[b] < topRadius[t])
-		return false;
-	return botHeight[b]*topRadius[t] < topHeight[t]*botRadius[b];
+bool isEdge(int l, int r) {
+	return topRd[l] < botRd[r] && topRd[l] * botHt[r] < topHt[l]*botRd[r];
 }
 
-int lt[55], vis[55];
+bool dfs(int l) {
+	if(l == -1)
+		return true;
+	if(vis[l])
+		return false;
+	vis[l] = true;
 
-int dfs(int v) {
-	if(vis[v])
-		return 0;
-	if(v < 0) 
-		return 1;
-	vis[v] = 1;
-	forn(i, topHeight.size())	if(isEdge(v, i)) {
-		if(dfs(lt[i])) {
-			lt[i] = v;
-			return 1;
+	for(int r = 0; r < M; ++r) {
+		if(isEdge(l, r) && dfs(rt[r])) {
+			rt[r] = l;
+			lt[l] = r;
+			return true;
 		}
 	}
-	return 0;
+	return false;
 }
 
-int PointyWizardHats::getNumHats (vector <int> _topHeight, vector <int> _topRadius, vector <int> bottomHeight, vector <int> bottomRadius) 
+int PointyWizardHats::getNumHats (vector <int> topHeight, vector <int> topRadius, vector <int> bottomHeight, vector <int> bottomRadius) 
 {
-	topHeight = _topHeight;
-	topRadius = _topRadius;
-	botHeight = bottomHeight;
-	botRadius = bottomRadius;
+	topHt = topHeight;
+	topRd = topRadius;
+	botHt = bottomHeight;
+	botRd = bottomRadius;
+	N = topHt.size();
+	M = botHt.size();
+
 	int ret = 0;
-
-	forn(i, botRadius.size()) {
-		cout << botRadius[i] << ": ";
-		forn(j, topRadius.size())
-			if(isEdge(i, j))
-				write(j);
-		cout << endl;
+	fill(lt.begin(), lt.end(), -1);
+	fill(rt.begin(), rt.end(), -1);
+/*
+	printf("Tops:    " );
+	for(int i = 0; i < N; ++i) {
+		printf("(%d, %d), ", topHt[i], topRd[i]);
 	}
+	cout << "\n" ;
+	printf("Bottoms: " );
+	for(int i = 0; i < M; ++i) {
+		printf("(%d, %d), ", botHt[i], botRd[i]);
+	}
+	cout << "\n" << "\n";
 
-	CL(lt, -1);
-	forn(i, botHeight.size()) {
-		CL(vis, 0);
-		ret += dfs(i);
+	for(int l = 0; l < N; ++l) {
+		printf("(%d, %d) -> ", topHt[l], topRd[l]);
+		for(int r = 0; r < M; ++r) {
+			if(isEdge(l, r))
+				printf("(%d, %d), ", botHt[r], botRd[r]);
+		}
+		cout << "\n";
+	}
+*/
+	for(int i = 0; i < N; ++i) {
+		fill(vis.begin(), vis.end(), false);
+		if(dfs(i))
+			ret++;
 	}
 	
 	return ret;
@@ -319,6 +339,34 @@ int main() {
 			p3.assign(t3, t3 + sizeof(t3) / sizeof(t3[0]));
 	p4 = 3;
 	all_right = KawigiEdit_RunTest(7, p0, p1, p2, p3, true, p4) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 8 -----
+	int t0[] = {4,1};
+			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
+	int t1[] = {4,2};
+			p1.assign(t1, t1 + sizeof(t1) / sizeof(t1[0]));
+	int t2[] = {2};
+			p2.assign(t2, t2 + sizeof(t2) / sizeof(t2[0]));
+	int t3[] = {4};
+			p3.assign(t3, t3 + sizeof(t3) / sizeof(t3[0]));
+	all_right = KawigiEdit_RunTest(8, p0, p1, p2, p3, false, p4) && all_right;
+	// ------------------
+	}
+	
+	{
+	// ----- test 9 -----
+	int t0[] = {16,14,12};
+			p0.assign(t0, t0 + sizeof(t0) / sizeof(t0[0]));
+	int t1[] = {8,7,6};
+			p1.assign(t1, t1 + sizeof(t1) / sizeof(t1[0]));
+	int t2[] = {5,6,7};
+			p2.assign(t2, t2 + sizeof(t2) / sizeof(t2[0]));
+	int t3[] = {5,6,7};
+			p3.assign(t3, t3 + sizeof(t3) / sizeof(t3[0]));
+	all_right = KawigiEdit_RunTest(9, p0, p1, p2, p3, false, p4) && all_right;
 	// ------------------
 	}
 	
