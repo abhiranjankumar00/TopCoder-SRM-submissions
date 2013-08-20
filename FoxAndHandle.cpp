@@ -1,82 +1,53 @@
-#include <vector>
-#include <list>
-#include <map>
-#include <set>
-#include <queue>
-#include <deque>
-#include <stack>
-#include <bitset>
-#include <algorithm>
-#include <functional>
-#include <numeric>
-#include <utility>
-#include <sstream>
-#include <iostream>
-#include <iomanip>
-#include <cstdio>
-#include <cmath>
-#include <cstdlib>
-#include <ctime>
-#include <cassert>
-#include <climits>
-#include <cstring>
-#include <iterator>
-#include <fstream>
+#include <bits/stdc++.h>
 using namespace std;
-
-typedef long long  int64;
-typedef vector<int> vi;
-typedef string ST;
-typedef stringstream SS;
-typedef vector< vector <int> > vvi;
-typedef pair<int,int> ii;
-typedef vector <string> vs;
-
-#define DEBUG(x)	cout << #x << " = " << x << "\n"
-#define endl 		("\n")
-
-#define	ep		1e-9
-#define PI		M_PI
-#define E 		M_E
-
-#define	CL(a, b)	memset(a, b, sizeof(a))
-#define	mp		make_pair
-#define	pb		push_back
-
-#define	all(c)		(c).begin(), (c).end()
-#define	tr(i, c)	for(__typeof((c).begin()) i = (c).begin(); i != (c).end(); i++)
-
-#define	present(x, c)	((c).find(x) != (c).end())		//map & set//
-#define	cpresent(x, c)	(find(all(c),x) != (c).end())		//vector & list//
-
-#define forn(i, n)	for(int i = 0, loop_ends_here = (int)n; i < loop_ends_here ; i++)
-#define forab(i, a, b)	for(int i = a, loop_ends_here = (int)b; i <= loop_ends_here; i++)
-#define rep(i, a, b)	for(int i = a, loop_ends_here = (int)b; i >= loop_ends_here; i--)
-
-#define Pf		printf
-#define	Sf		scanf
-
-#define read(n)		scanf("%d", &n)
-#define write(n)	printf("%d ", n)
-#define writeln(n)	printf("%d\n", n)
-
-/*
-#ifdef DEBUG
-	#undef DEBUG
-#endif
-#define DEBUG
-*/
 
 class FoxAndHandle
 {
-public:
-	string lexSmallestName(string S);
+	public:
+		string lexSmallestName(string S);
 };
 
-string FoxAndHandle::lexSmallestName (string S) 
+int N;
+string subset, S;
+string ret;
+
+bool isPresent(int idx, vector <int> cnt) {
+	for(int id = idx; id < N; id++)
+		if(cnt[S[id]-'a']>0)
+			cnt[S[id]-'a']--;
+	for(auto it = (cnt).begin(); it != (cnt).end(); ++it) 
+		if(*it>0)
+			return false;
+	return true;
+}
+
+void solve(int idxSet, vector <int> &cnt) {
+	for(int i = 0; i < 26; ++i) if(cnt[i]>0) {
+		for(int j = idxSet; j <= N-1; ++j) if(S[j]==i+'a') {
+			cnt[i]--;
+			if(isPresent(j+1, cnt)) {
+				ret+= (char)(i+'a');
+				solve(j+1, cnt);		
+				return;
+			}
+			cnt[i]++;
+		}
+	}
+}
+
+string FoxAndHandle::lexSmallestName (string _S) 
 {
-	string ret;
-	
+	S=_S;
+	N = S.size();
+	subset = "";
+	vector <int> cnt(26, 0);
+	N = S.size();
+	for(auto it = (S).begin(); it != (S).end(); ++it) 
+		cnt[*it-'a']++;
+	for(int i = 0; i < 26; ++i) 
+		cnt[i]>>=1;
+	ret ="";
+	solve(0, cnt);
 	return ret;
 }
 
@@ -124,58 +95,58 @@ bool KawigiEdit_RunTest(int testNum, string p0, bool hasAnswer, string p1) {
 int main() {
 	bool all_right;
 	all_right = true;
-	
+
 	string p0;
 	string p1;
-	
+
 	{
-	// ----- test 0 -----
-	p0 = "foxfox";
-	p1 = "fox";
-	all_right = KawigiEdit_RunTest(0, p0, true, p1) && all_right;
-	// ------------------
+		// ----- test 0 -----
+		p0 = "foxfox";
+		p1 = "fox";
+		all_right = KawigiEdit_RunTest(0, p0, true, p1) && all_right;
+		// ------------------
 	}
-	
+
 	{
-	// ----- test 1 -----
-	p0 = "ccieliel";
-	p1 = "ceil";
-	all_right = KawigiEdit_RunTest(1, p0, true, p1) && all_right;
-	// ------------------
+		// ----- test 1 -----
+		p0 = "ccieliel";
+		p1 = "ceil";
+		all_right = KawigiEdit_RunTest(1, p0, true, p1) && all_right;
+		// ------------------
 	}
-	
+
 	{
-	// ----- test 2 -----
-	p0 = "abaabbab";
-	p1 = "aabb";
-	all_right = KawigiEdit_RunTest(2, p0, true, p1) && all_right;
-	// ------------------
+		// ----- test 2 -----
+		p0 = "abaabbab";
+		p1 = "aabb";
+		all_right = KawigiEdit_RunTest(2, p0, true, p1) && all_right;
+		// ------------------
 	}
-	
+
 	{
-	// ----- test 3 -----
-	p0 = "bbbbaaaa";
-	p1 = "bbaa";
-	all_right = KawigiEdit_RunTest(3, p0, true, p1) && all_right;
-	// ------------------
+		// ----- test 3 -----
+		p0 = "bbbbaaaa";
+		p1 = "bbaa";
+		all_right = KawigiEdit_RunTest(3, p0, true, p1) && all_right;
+		// ------------------
 	}
-	
+
 	{
-	// ----- test 4 -----
-	p0 = "fedcbafedcba";
-	p1 = "afedcb";
-	all_right = KawigiEdit_RunTest(4, p0, true, p1) && all_right;
-	// ------------------
+		// ----- test 4 -----
+		p0 = "fedcbafedcba";
+		p1 = "afedcb";
+		all_right = KawigiEdit_RunTest(4, p0, true, p1) && all_right;
+		// ------------------
 	}
-	
+
 	{
-	// ----- test 5 -----
-	p0 = "nodevillivedon";
-	p1 = "deilvon";
-	all_right = KawigiEdit_RunTest(5, p0, true, p1) && all_right;
-	// ------------------
+		// ----- test 5 -----
+		p0 = "nodevillivedon";
+		p1 = "deilvon";
+		all_right = KawigiEdit_RunTest(5, p0, true, p1) && all_right;
+		// ------------------
 	}
-	
+
 	if (all_right) {
 		cout << "You're a stud (at least on the example cases)!" << endl;
 	} else {
@@ -273,5 +244,7 @@ int main() {
 // 
 // 
 // END KAWIGIEDIT TESTING
+
+
 
 //Powered by KawigiEdit 2.1.8 (beta) modified by pivanof!

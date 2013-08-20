@@ -1,61 +1,5 @@
-#include <vector>
-#include <list>
-#include <map>
-#include <set>
-#include <queue>
-#include <deque>
-#include <stack>
-#include <bitset>
-#include <algorithm>
-#include <functional>
-#include <numeric>
-#include <utility>
-#include <sstream>
-#include <iostream>
-#include <iomanip>
-#include <cstdio>
-#include <cmath>
-#include <cstdlib>
-#include <ctime>
-#include <cassert>
-#include <climits>
-#include <cstring>
+#include <bits/stdc++.h>
 using namespace std;
-
-typedef long long  int64;
-typedef vector<int> vi;
-typedef string ST;
-typedef stringstream SS;
-typedef vector< vector <int> > vvi;
-typedef pair<int,int> ii;
-typedef vector <string> vs;
-
-#define endl 		("\n")
-#define DEBUG(x)	cout << #x << " = " << x << "\n"
-#define Pf		printf
-#define	Sf		scanf
-
-#define	ep		1e-9
-#define PI		M_PI
-#define E 		M_E
-
-#define	CL(a, b)	memset(a, b, sizeof(a))
-#define	mp		make_pair
-#define	pb		push_back
-
-#define	all(c)		(c).begin(), (c).end()
-#define	tr(i, c)	for(__typeof((c).begin()) i = (c).begin(); i != (c).end(); i++)
-
-#define	present(x, c)	((c).find(x) != (c).end())		//map & set//
-#define	cpresent(x, c)	(find(all(c),x) != (c).end())		//vector & list//
-
-#define forn(i, n)	for(int i = 0, loop_ends_here = (int)n; i < loop_ends_here ; i++)
-#define forab(i, a, b)	for(int i = a, loop_ends_here = (int)b; i <= loop_ends_here; i++)
-#define rep(i, a, b)	for(int i = a, loop_ends_here = (int)b; i >= loop_ends_here; i--)
-
-#define read(n)		scanf("%d", &n)
-#define write(n)	printf("%d ", n)
-#define writeln(n)	printf("%d\n", n)
 
 class PastingPaintingDivOne
 {
@@ -63,22 +7,10 @@ public:
 	vector<long long> countColors(vector <string> clipboard, int T);
 };
 
-
 vector<long long> PastingPaintingDivOne::countColors (vector <string> clipboard, int T) 
 {
-	int64 red = 0, blue = 0, green = 0;
-	int64 curRed = 0, curBlue = 0, curGreen = 0;
-	int64 lastRed = 0, lastBlue = 0, lastGreen = 0;
-	char color[555][555] = {};
-	int N = clipboard.size(), M = clipboard[0].size();
-
-	for(int x = 0; x <= 100 && T>0; x++, T--) {
-		forn(i, N)	forn(j, M)	 {
-		}
-	}
-
 	vector<long long> ret;
-	ret.pb(red); ret.pb(blue); ret.pb(green);
+	
 	return ret;
 }
 
@@ -346,5 +278,7 @@ int main() {
 // This is the image of clipboard in this example.
 // 
 // END KAWIGIEDIT TESTING
+
+
 
 //Powered by KawigiEdit 2.1.8 (beta) modified by pivanof!
