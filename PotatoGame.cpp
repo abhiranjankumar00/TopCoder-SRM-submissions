@@ -1,77 +1,5 @@
-#include <vector>
-#include <list>
-#include <map>
-#include <set>
-#include <queue>
-#include <deque>
-#include <stack>
-#include <bitset>
-#include <algorithm>
-#include <functional>
-#include <numeric>
-#include <utility>
-#include <sstream>
-#include <iostream>
-#include <iomanip>
-#include <cstdio>
-#include <cmath>
-#include <cstdlib>
-#include <ctime>
-#include <cassert>
-#include <climits>
-#include <cstring>
-#include <iterator>
-#include <fstream>
+#include <bits/stdc++.h>
 using namespace std;
-
-typedef long long  int64;
-typedef vector<int> vi;
-typedef string ST;
-typedef stringstream SS;
-typedef vector< vector <int> > vvi;
-typedef pair<int,int> ii;
-typedef vector <string> vs;
-
-//#define DEBUG(x)	cout << #x << " = " << x << "\n"
-#define endl 		("\n")
-
-#define	ep		1e-9
-#define PI		M_PI
-#define E 		M_E
-
-#define	CL(a, b)	memset(a, b, sizeof(a))
-#define	mp		make_pair
-#define	pb		push_back
-
-#define	all(c)		(c).begin(), (c).end()
-#define	tr(i, c)	for(__typeof((c).begin()) i = (c).begin(); i != (c).end(); i++)
-
-#define	present(x, c)	((c).find(x) != (c).end())		//map & set//
-#define	cpresent(x, c)	(find(all(c),x) != (c).end())		//vector & list//
-
-#define forn(i, n)	for(int i = 0, loop_ends_here = (int)n; i < loop_ends_here ; i++)
-#define forab(i, a, b)	for(int i = a, loop_ends_here = (int)b; i <= loop_ends_here; i++)
-#define rep(i, a, b)	for(int i = a, loop_ends_here = (int)b; i >= loop_ends_here; i--)
-
-#define Pf		printf
-#define	Sf		scanf
-
-#define read(n)		scanf("%d", &n)
-#define write(n)	printf("%d ", n)
-#define writeln(n)	printf("%d\n", n)
-
-/*
-#ifdef DEBUG
-	#undef DEBUG
-#endif
-#define DEBUG
-*/
-
-#ifdef ONLINE_JUDGE
-	#define DEBUG(x)
-#else
-	#define DEBUG(x)	cout << #x << " = " << x << "\n"
-#endif
 
 class PotatoGame
 {
@@ -79,13 +7,9 @@ public:
 	string theWinner(int n);
 };
 
-
 string PotatoGame::theWinner (int n) 
 {
-	DEBUG(n);
-	string ret = "Taro";
-	
-	return ret;
+	return (n%5==0||n%5==2)?"Hanako":"Taro";
 }
 
 // BEGIN KAWIGIEDIT TESTING
@@ -160,13 +84,6 @@ int main() {
 	// ------------------
 	}
 	
-	{
-	// ----- test 3 -----
-	p0 = 10000;
-	all_right = KawigiEdit_RunTest(3, p0, false, p1) && all_right;
-	// ------------------
-	}
-	
 	if (all_right) {
 		cout << "You're a stud (at least on the example cases)!" << endl;
 	} else {
@@ -217,5 +134,7 @@ int main() {
 // 
 // 
 // END KAWIGIEDIT TESTING
+
+
 
 //Powered by KawigiEdit 2.1.8 (beta) modified by pivanof!
