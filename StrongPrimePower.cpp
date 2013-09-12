@@ -1,73 +1,5 @@
-#include <iostream>
-#include <ctime>
-#include <vector>
-#include <list>
-#include <queue>
-#include <map>
-#include <set>
-#include <deque>
-#include <stack>
-#include <bitset>
-#include <algorithm>
-#include <functional>
-#include <numeric>
-#include <cassert>
-#include <utility>
-#include <sstream>
-#include <iomanip>
-#include <cstdio>
-#include <cmath>
-#include <cstdlib>
-#include <cstring>
-#include <climits>
-#include <iterator>
-#include <fstream>
+#include <bits/stdc++.h>
 using namespace std;
-
-typedef long long 		int64;
-typedef vector<int> 		vi;
-typedef string 			ST;
-typedef stringstream 		SS;
-typedef vector< vector<int> > 	vvi;
-typedef pair<int,int> 		ii;
-typedef vector<string> 		vs;
-/*
-#if __cplusplus > 199711L	// for g++0x, value of __cplusplus must be greater thana 199711L.
-	#define tr(i, c)	for(auto i = begin(c); i != end(c); i++)
-#else
-	#define tr(i, c)	for(typeof((c).begin()) i = (c).begin(); i != (c).end(); i++)
-#endif
-*/
-#define endl		("\n")
-#define tr(i, c)	for(__typeof((c).begin()) i = (c).begin(); i != (c).end(); i++)
-#define PI		M_PI
-#define E 		M_E
-#define	eps		1e-9
-
-#define	Sf		scanf
-#define	Pf		printf
-
-#define forn(i, n)	for(int i = 0, lets_stop_here = (int)n; i <  lets_stop_here; i++)
-#define forab(i, a, b)	for(int i = a, lets_stop_here = (int)b; i <= lets_stop_here; i++)
-#define rep(i, a, b)	for(int i = a, lets_stop_here = (int)b; i >= lets_stop_here; i--)
-
-#define	all(c)		(c).begin(), (c).end()
-#define	cl(a, b)	memset(a, b, sizeof(a))
-#define mp		make_pair
-#define pb		push_back
-
-#define	present(x, c)	((c).find(x) != (c).end())	//map & set//
-#define	cpresent(x, c)	(find( (c).begin(), (c).end(), x) != (c).end())	//vector & list//
-
-#define read(n)		scanf("%d", &n)
-#define write(n)	printf("%d ", n)
-#define writeln(n)	printf("%d\n", n)
-
-#if (0)
-	#define debug 
-#else 
-	#define debug(x)	cout << #x << " = " << x << "\n"
-#endif
 
 class StrongPrimePower
 {
@@ -75,9 +7,47 @@ public:
 	vector <int> baseAndExponent(string n);
 };
 
-vector <int> StrongPrimePower::baseAndExponent (string n) 
+bool isPrime(long long n){
+	if(n==1)
+		return false;
+	for(long long i = 2; i*i <= n; ++i) {
+		if(n%i==0)
+			return false;
+	}
+	return true;
+}
+
+int check(long long p, long long n) {
+	long long tmp = p*p;
+	int ret = 2;
+	while(tmp < n) {
+		ret++;
+		tmp*=p;
+	}
+	return tmp == n?ret:0;
+}
+
+vector <int> StrongPrimePower::baseAndExponent (string _n) 
 {
+	long long n;
+	stringstream ss(_n);
+	ss >> n;
+
 	vector <int> ret;
+	for(int i = (int)2; i <= (int)100; ++i) {
+		long long p = pow(n, 1.0/i);
+		int tmp;
+		if(isPrime(p)&&(tmp=check(p, n))) {
+			ret.push_back(p);
+			ret.push_back(tmp);
+			return ret;
+		}
+		if(isPrime(p+1)&&(tmp=check(p+1, n))) {
+			ret.push_back(p+1);
+			ret.push_back(tmp);
+			return ret;
+		}
+	}
 	
 	return ret;
 }
@@ -279,5 +249,7 @@ int main() {
 // 
 // 
 // END KAWIGIEDIT TESTING
+
+
 
 //Powered by KawigiEdit 2.1.8 (beta) modified by pivanof!
