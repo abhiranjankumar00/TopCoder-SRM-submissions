@@ -1,5 +1,5 @@
 #TopCoder ContestApplet Preferences File
-#Sat Sep 07 23:47:07 IST 2013
+#Thu Sep 12 22:47:52 IST 2013
 com.sachin.client.tolay.common.LocalPreferences.menufont=Arial
 com.topcoder.client.contestApplet.common.LocalPreferences.menufontsize=10
 com.topcoder.client.contestApplet.common.LocalPreferences.commonclasspath=
@@ -143,7 +143,7 @@ com.topcoder.client.contestApplet.common.LocalPreferences.edstdsyntaxkeywordssty
 com.topcoder.client.contestApplet.common.LocalPreferences.edstdsyntaxdefaultstyle=0
 com.topcoder.client.contestApplet.common.LocalPreferences.edstdsyntaxhighlight=true
 com.topcoder.client.contestApplet.common.LocalPreferences.chalsrcsyntaxhighlight=true
-com.topcoder.client.contestApplet.LocalPreferences.connection.type=No\ Proxy
+com.topcoder.client.contestApplet.LocalPreferences.connection.type=No Proxy
 com.topcoder.client.contestApplet.LocalPreferences.connection.host=
 com.topcoder.client.contestApplet.LocalPreferences.connection.port=
 com.topcoder.client.contestApplet.LocalPreferences.connection.username=
@@ -171,7 +171,7 @@ com.topcoder.client.contentApplet.panels.ChatPanel.moderatedChatQuestionFore=-16
 com.topcoder.jmaContestApplet.ContestApplet.disableEnterExitMsgs=true
 com.topcoder.jmaContestApplet.frames.codingframe.location=0\:52
 com.topcoder.jmaContestApplet.frames.codingframe.size=1366\:692
-com.topcoder.jmaContestApplet.frames.codingframe.dividerloc=276
+com.topcoder.jmaContestApplet.frames.codingframe.dividerloc=258
 com.topcoder.jmaContestApplet.frames.sourceViewer.location=11\:109
 com.topcoder.jmaContestApplet.frames.sourceViewer.size=1357\:688
 com.topcoder.jmaContestApplet.frames.sourceViewer.dividerloc=57
@@ -181,7 +181,7 @@ editor.1.name=KawigiEdit-pfa-2.4.0
 editor.1.entrypoint=kawigi.KawigiEdit
 editor.1.classpath=/home/ranjan/TopCoder/TestPrograms/KawigiEdit-pfa-2.4.0.jar
 editor.1.eager=1
-editor.numplugins=2
+editor.numplugins=1
 editor.2.name=KawigiEdit
 editor.2.entrypoint=kawigi.KawigiEdit
 editor.2.classpath=/home/ranjan/TopCoder/Plugins/KawigiEdit_2.1.8_ahmed_aly_UC_cleaner(beta).jar
@@ -219,13 +219,15 @@ kawigi.testing.font=Monospaced.plain
 kawigi.testing.font.size=12
 kawigi.testing.font.bold=false
 kawigi.testing.font.italic=false
-kawigi.language.cpp.lltype=long\ long
+kawigi.language.cpp.lltype=long long
 kawigi.language.cpp.override=/home/ranjan/TopCoder/TestPrograms/Cpp1.ket
 kawigi.language.cpp.filename=$PROBLEM$.cpp
-kawigi.language.cpp.compiler=g++\ -O2\ -s\ -pipe\ -std\=c++0x\ $PROBLEM$.cpp
+kawigi.language.cpp.compiler=g++ -O2 -s -pipe -std\=c++0x $PROBLEM$.cpp
 kawigi.language.cpp.run=./a.out
 kawigi.language.cpp.llprefix=
 kawigi.language.cpp.llpostfix=ll
+kawigi.language.cpp.cpp11=true
+kawigi.language.cpp.ahmedaly=true
 kawigi.language.vb.filename=$PROBLEM$.vb
 kawigi.language.csharp.filename=$PROBLEM$.cs
 kawigi.language.java.filename=$PROBLEM$.java
@@ -234,4 +236,6 @@ kawigi.file.sync=true
 kawigi.file.prefer=true
 kawigi.localpath=/home/ranjan/TopCoder/TestPrograms
 kawigi.timeout=10
+kawigi.logbydefault=false
+kawigi.ignoretopcodercode=false
 ui.theme=Default
