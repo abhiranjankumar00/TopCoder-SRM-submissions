@@ -1,5 +1,5 @@
 #TopCoder ContestApplet Preferences File
-#Wed Sep 25 08:03:47 IST 2013
+#Thu Sep 26 08:41:04 IST 2013
 com.topcoder.client.contestApplet.common.LocalPreferences.menufontsize=10
 com.topcoder.client.contestApplet.common.LocalPreferences.commonclasspath=
 com.topcoder.client.contestApplet.common.LocalPreferences.edstdindent=true
@@ -170,8 +170,8 @@ com.topcoder.client.contentApplet.panels.ChatPanel.moderatedChatQuestionFore=-16
 com.topcoder.jmaContestApplet.ContestApplet.disableEnterExitMsgs=true
 com.topcoder.jmaContestApplet.frames.codingframe.location=0\:52
 com.topcoder.jmaContestApplet.frames.codingframe.size=1366\:692
-com.topcoder.jmaContestApplet.frames.codingframe.dividerloc=258
-com.topcoder.jmaContestApplet.frames.sourceViewer.location=1\:80
+com.topcoder.jmaContestApplet.frames.codingframe.dividerloc=515
+com.topcoder.jmaContestApplet.frames.sourceViewer.location=0\:52
 com.topcoder.jmaContestApplet.frames.sourceViewer.size=1366\:692
 com.topcoder.jmaContestApplet.frames.sourceViewer.dividerloc=57
 com.topcoder.jmaContesntApplet.ContestApplet.enableTimestamps=true
