@@ -72,76 +72,82 @@ class FairWorkload
 public:
 	int getMostWork(vector <int> folders, int workers);
 };
-/*
+
 vi folders;
 int workers, N;
 
-bool isValidPartition(int val) {
-	vi partition(1, 0);
-	tr(it, folders) {
-		if(partition.back() + *it <= val)
-			partition.back() += *it;
-		else
-			partition.pb(*it);
-		if(partition.back() > val || *it > val)
-			return false;
-	}
-	return partition.size() <= workers;
+/*
+bool pred(int maxLoad) {
+  int curLoad = 0;
+  int k = 1;
+  for(int i = 0; i < (int)folders.size(); ++i) {
+    if(curLoad + folders[i] > maxLoad) {
+      curLoad = folders[i];
+      k++;
+    }
+    else
+      curLoad += folders[i];
+  }
+  return k <= workers;
 }
 
-int binarySearch(int low = *min_element(all(folders)), int high = accumulate(all(folders), 0)) {
-	if(low == high)	return low;
-
-	int mid = (low + high)/2;
-	return isValidPartition(mid) ? binarySearch(low, mid) : binarySearch(mid+1, high);
+int binarySearch(int l, int r) {
+  if(l == r) {
+    assert(pred(l));
+    return l;
+  }
+  int mid = (l+r)/2;
+  if(pred(mid))
+    return binarySearch(l, mid);
+  else
+    return binarySearch(mid+1, r);
 }
 
-int FairWorkload::getMostWork (vector <int> folders, int workers) {
-	::folders = folders, ::workers = workers, N = folders.size();
-	return binarySearch();
+int solve() {
+  int l = *max_element(folders.begin(), folders.end());
+  int r = accumulate(folders.begin(), folders.end(), 0);
+  return binarySearch(l, r);
 }
 */
 
-vi folders;
-int workers, N;
-
 int sum[20][20];
-int Ans[20][20];
+int dp[20][20];
 
 int Sum(int l, int r) {
-	int &ret = sum[l][r];
-	if(ret > -1)
-		return ret;
-	return ret = folders[l] + ( l == r ? 0 : Sum(l+1, r) );
+  if(l > r)
+    return 0;
+  if(l == r)
+    return folders[l];
+  int &ret = sum[l][r];
+  return ret = ret > -1 ? ret : Sum(l, r-1) + folders[r];
 }
 
-const int INF = (int)1E8;
+int findMin(int id, int k){
+  if(k > id+1)
+    return (int)1e8;
+  if(k == 1)
+    return Sum(0, id);
+  int &ret = dp[id][k];
+  if(ret > -1)
+    return ret;
+  ret = (int)1e8;
+  for(int j = 0; j < (int)id; ++j) {
+    ret = min(ret, max(findMin(j, k-1), Sum(j+1, id) ));
+  }
+  return ret;
+}
 
-int solve(int idx = 0, int k = workers) {
-	if(N - idx == 0 && k == 0)	return 0;
-	if(N - idx == 0 || k == 0)	return INF;
-
-	int &ret = Ans[idx][k];
-	if(ret > -1)
-		return ret;
-
-	ret = INF;
-
-	forab(i, idx, N-1) {
-		ret = min(ret, max(Sum(idx, i), solve(i+1, k-1)));
-	}
-
-	return ret;
+int solve() {
+  memset(sum, -1, sizeof(sum));
+  memset(dp, -1, sizeof(dp));
+  return findMin(N-1, workers);
 }
 
 int FairWorkload::getMostWork (vector <int> folders, int workers) 
 {
-	DEBUG(INF);
 	::folders = folders;
 	::workers = workers;
 	N = folders.size();
-	CL(sum, -1);
-	CL(Ans, -1);
 	return solve();
 }
 
