@@ -47,6 +47,8 @@ long long getN(long long cnt) {
  
 int main()
 {
+    cout << "INT_MAX = " << INT_MAX << "\n";
+    return 0;
 	int N;
 	long long tmp = 333333336ll;
 	N = 1000000;

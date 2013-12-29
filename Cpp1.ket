@@ -7,10 +7,9 @@ public:
 	<%:return-type%> <%:method-name%>(<%:param-list%>);
 };
 
-<%:return-type%> <%:class-name%>::<%:method-name%> (<%:param-list%>) 
+<%:return-type%> <%:class-name%>::<%:method-name%> (<%:param-list%>)
 {
-	<%:return-type%> ret;
-	<%:set-caret%>
+	<%:return-type%> ret;<%:set-caret%>
 	return ret;
 }
 
