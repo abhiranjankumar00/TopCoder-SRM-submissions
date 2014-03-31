@@ -17,11 +17,20 @@ import System.FilePath
 import System.Random
 -- }}}
 
+mx :: Int
+mx = 10^9
+
+mn :: Int
+mn = mx - 10^5
+
 main :: IO ()
 main = do
-  getRandList 50 >>= putStrLn. intercalate ", ". map show
-  print 1100
-  return ()
+  print. replicate 50 $ 1
+  print 10
+  print 1
+  print mn
+  print mx
+
 
 getRandList :: Int -> IO [Int]
 getRandList 0 = return []

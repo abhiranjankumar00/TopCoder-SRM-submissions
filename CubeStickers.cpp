@@ -30,17 +30,18 @@ class CubeStickers
 public:
 	string isPossible(vector <string> sticker)
 	{
-		int cnt = 0;
-		map<string, int> m;
-		tr(it, sticker)
-			m[*it]++;
-		tr(it, m)
-			if(it->second >= 2)
-				cnt+=2;
-			else
-				cnt++;
-		if(cnt>=6)	return "YES";
-		return "NO";
+        int twoSum = 0, oneSum = 0;
+        map <string, int> mp;
+        for(int i = 0; i < (int)sticker.size(); ++i) {
+            mp[sticker[i]]++;
+        }
+        for(auto it = (mp).begin(); it != (mp).end(); ++it) {
+            if(it->second == 1)
+                oneSum++;
+            else
+                twoSum+=2;
+        }
+        return twoSum + oneSum >= 6 ? "YES" : "NO";
 	}
 };
 
