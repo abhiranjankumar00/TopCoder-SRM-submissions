@@ -4,16 +4,16 @@ using namespace std;
 class <%:class-name%>
 {
 public:
-	<%:return-type%> <%:method-name%>(<%:param-list%>);
+    <%:return-type%> <%:method-name%>(<%:param-list%>)
+    {
+        <%:return-type%> ret;<%:set-caret%>
+        return ret;
+    }
 };
 
-<%:return-type%> <%:class-name%>::<%:method-name%> (<%:param-list%>)
-{
-	<%:return-type%> ret;<%:set-caret%>
-	return ret;
-}
-
 <%:testing-code%>
+
+
 
 
 
