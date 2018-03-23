@@ -1,90 +1,94 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-bool isBetween(int x, int lhs, int rhs) {
+bool inBetween(int x, int lhs, int rhs) {
 	return lhs <= x && x <= rhs;
-}
-
-class Flower{
-  public:
-	int ht, bloom, wilt;
-
-	Flower(int _ht, int _bloom, int _wilt) {
-		ht = _ht;
-		bloom = _bloom;
-		wilt = _wilt;
-	}
-
-	vector<Flower> v;
-	bool operator<(const Flower& other) const {
-		return this->ht > other.ht;
-	}
-
-	bool blocks(const Flower &other) const {
-
-		function<bool(Flower, Flower)> overlaps = [](const Flower& a, const Flower& b) {
-			return isBetween(a.bloom, b.bloom, b.wilt) || isBetween(a.wilt, b.bloom, b.wilt);
-		};
-
-		if(this->ht > other.ht)
-			return overlaps(*this, other) || overlaps(other, *this);
-
-		return false;
-	}
-
-	string toString() const {
-		return to_string(ht);
-	}
-};
-
-vector<Flower> dfs(const Flower &flower, set<Flower> &visited, map<Flower, vector<Flower>>& blocks) {
-	if(visited.find(flower) != visited.end())
-		return {};
-	visited.insert(flower);
-	for(const auto &f: blocks[flower]) {
-		if(visited.find(f) == visited.end()) {
-
-		}
-	}
-	return {};
 }
 
 class FlowerGarden
 {
-public:
-    vector <int> getOrdering(vector <int> height, vector <int> bloom, vector <int> wilt)
-    {
-		vector<Flower> flowers;
-		for(int i = 0; i < (int)height.size(); i++)
-			flowers.push_back(Flower(height[i], bloom[i], wilt[i]));
-		sort(flowers.begin(), flowers.end());
+	vector <int> height;
+	vector <int> bloom;
+	vector <int> wilt;
+	vector<int> ret;
+	int n;
 
-		cout << "Flowers: ";
-		for(auto f: flowers)
-			printf("%d[%d-%d], ", f.ht, f.bloom, f.wilt);
-		cout << endl;
+	bool liesIn(int i, int j) {
+		return inBetween(bloom[i], bloom[j], wilt[j]) || inBetween(wilt[i], bloom[j], wilt[j]);
+	}
 
-		map<Flower, vector<Flower>> blocks;
+	bool doesIntersects(int i, int j) {
+		return liesIn(i, j) || liesIn(j, i);
+	}
 
-		for(int i = 0; i < flowers.size(); i++) {
-			for(int j = 0; j < flowers.size(); j++) {
-				if(i != j && flowers[i].blocks(flowers[j]))
-					blocks[flowers[i]].push_back(flowers[j]);
+	bool blocks(int i, int j) {
+		return height[i] > height[j] && doesIntersects(i, j);
+	}
+
+	vector<vector<int>> graph;
+	set<int> visited;
+
+	bool inReturn(int i) {
+		return find(ret.begin(), ret.end(), i) != ret.end();
+	}
+
+	void updateGraph() {
+		graph = vector<vector<int>>(n);
+		for(int i = 0; i < n; i++) {
+			for(int j = 0; j < n; j++) {
+				if(i != j && blocks(i, j)) {
+					graph[i].push_back(j);
+				}
 			}
 		}
-		for(auto &farr: blocks)
-			sort(farr.second.begin(), farr.second.end());
-
-
-		cout << "Blocking arrays: " << endl;
-		for(auto farr: blocks) {
-			cout << farr.first.toString() << ": ";
-			for(auto f: farr.second)
-				cout << f.toString() << " ";
+		/*
+		cout << "Graph: " << endl;
+		for(int i = 0; i < n; i++) {
+			printf("%d: ", height[i]);
+			for(int j = 0; j < (int)graph[i].size(); j++) {
+				printf("%d: ", height[graph[i][j]]);
+			}
 			cout << endl;
 		}
+		cout << endl;
+		*/
+	}
 
-        vector <int> ret;
+public:
+    vector <int> getOrdering(vector <int> _height, vector <int> _bloom, vector <int> _wilt)
+    {
+		height = _height;
+		bloom = _bloom;
+		wilt = _wilt;
+		n = height.size();
+		updateGraph();
+
+		while(ret.size() < n) {
+			int maxHt = -1, maxIdx = -1;
+			for(int i = 0; i < n; i++) {
+				if(not inReturn(height[i])) {
+					int childCnt = 0;
+					for(int j =0 ; j < (int)graph[i].size(); j++) {
+						if(not inReturn(height[graph[i][j]]))
+							childCnt++;
+					}
+					//printf("Child# for %d: %d\n",T height[i], childCnt);
+					if(childCnt == 0 && height[i] > maxHt ) {
+						maxHt = height[i];
+						maxIdx = i;
+					}
+				}
+
+			}
+			ret.push_back(maxHt);
+			/*
+			printf("ret: ");
+			for(auto x: ret)
+				cout << x << " ";
+			cout << endl << endl;
+			*/
+		}
+
         return ret;
     }
 };
