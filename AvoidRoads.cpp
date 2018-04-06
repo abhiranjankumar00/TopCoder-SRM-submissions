@@ -4,7 +4,7 @@ using namespace std;
 class AvoidRoads
 {
 	set<pair<pair<int, int>, pair<int, int>>> invalidPaths;
-	map<pair<pair<int, int>, int>, long long> memo;
+	map<pair<int, int>, long long> memo;
 	int R, C;
 
 	bool isValid(int r1, int c1, int r2, int c2) {
@@ -12,29 +12,21 @@ class AvoidRoads
 		return (invalidPaths.find(key) == invalidPaths.end());
 	}
 
-	long long nPaths(int r, int c, int k) {
-		if(r < 0 || c < 0 || k < 0)
-			return 0ll;
-		if(r > R || c > C)
+	long long nPaths(int r, int c) {
+		if(r < 0 || c < 0)
 			return 0ll;
 
-		if(k == 0)
-			return (r == 0 && c == 0) ? 1ll : 0ll;
+		if(r == 0 && c == 0)
+			return 1ll;
 
-		pair<pair<int, int>, int> key = {{r, c}, k};
+		pair<int, int> key = {r, c};
 		if(memo.find(key) != memo.end())
 			return memo[key];
 
-		long long d1 = isValid(r-1, c, r, c) ? nPaths(r-1, c, k-1) : 0;
-		long long d2 = isValid(r, c-1, r, c) ? nPaths(r, c-1, k-1) : 0;
-		long long d3 = isValid(r+1, c, r, c) ? nPaths(r+1, c, k-1) : 0;
-		long long d4 = isValid(r, c+1, r, c) ? nPaths(r, c+1, k-1) : 0;
+		long long d1 = isValid(r-1, c, r, c) ? nPaths(r-1, c) : 0ll;
+		long long d2 = isValid(r, c-1, r, c) ? nPaths(r, c-1) : 0ll;
 
-		memo[key] = d1 + d2 + d3 + d4;
-		/*
-		if(memo[key] != 0 && memo[key] < 10)
-			printf("r = %d, c = %d, k = %d, ret = %lld\n", r, c, k, memo[key]);
-		*/
+		memo[key] = d1 + d2;
 		return memo[key];
 
 	}
@@ -51,12 +43,7 @@ public:
 			invalidPaths.insert({{r2, c2}, {r1, c1}});
 		}
 
-		/*
-		for(auto x: invalidPaths)
-			printf("(%d, %d) -> (%d, %d)\n", x.first.first, x.first.second, x.second.first, x.second.second);
-		cout << endl;
-		*/
-        return nPaths(R, C, R+C);
+        return nPaths(R, C);
     }
 };
 
